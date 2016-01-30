@@ -106,6 +106,17 @@ class Imdb extends \Imdb\Title {
         ];
     }
 
+    public function mainGenre()
+    {
+        return parent::genre();
+    }
+
+    public function genre()
+    {
+        $genres = (array) $this->genres();
+        return implode($genres, ',');
+    }
+
     protected function rate_vote()
     {
         parent::rate_vote();

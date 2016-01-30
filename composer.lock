@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "229a5b8a28515dd91223edd649ffac7d",
-    "content-hash": "76272b2f03c32e645bf40b99c506c472",
+    "hash": "94a87cfe5f178a267b3326bcf4c44dd4",
+    "content-hash": "ddd8b8f51d6c7bdc0a14f833765332a1",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -727,36 +727,37 @@
         },
         {
             "name": "imdbphp/imdbphp",
-            "version": "v2.6.1",
+            "version": "v3.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tboothman/imdbphp.git",
-                "reference": "d8f24276e3b9b9ed962ebbea1d81f60ff535c805"
+                "reference": "ca875941049260b72f9550e52f2c6ec7af42e5f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tboothman/imdbphp/zipball/d8f24276e3b9b9ed962ebbea1d81f60ff535c805",
-                "reference": "d8f24276e3b9b9ed962ebbea1d81f60ff535c805",
+                "url": "https://api.github.com/repos/tboothman/imdbphp/zipball/ca875941049260b72f9550e52f2c6ec7af42e5f7",
+                "reference": "ca875941049260b72f9550e52f2c6ec7af42e5f7",
                 "shasum": ""
             },
             "require": {
-                "php": ">5.0"
+                "php": ">5.3"
             },
             "require-dev": {
-                "phpunit/phpunit": ">3.7"
+                "mockery/mockery": "~0.9",
+                "phpunit/phpunit": "~3.7"
             },
             "type": "library",
             "autoload": {
-                "classmap": [
-                    ""
-                ]
+                "psr-0": {
+                    "": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0"
             ],
             "description": "Library for retrieving film and tv information from IMDb",
-            "time": "2015-05-19 10:23:23"
+            "time": "2016-01-27 18:46:24"
         },
         {
             "name": "intervention/image",

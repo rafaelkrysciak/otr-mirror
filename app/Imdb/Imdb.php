@@ -1,26 +1,18 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: rafael
- * Date: 22.03.2015
- * Time: 19:45
- */
-
-namespace App\Imdb;
+<?php namespace App\Imdb;
 
 
-use App\Services\ImdbService;
+use Imdb\Config;
 
 /**
  * Class Imdb
  * @package App\Imdb
  */
-class Imdb extends \imdb {
+class Imdb extends \Imdb\Title {
 
     /**
-     * @param \mdb_config $config
+     * @param Config $config
      */
-    public function __construct(\mdb_config $config)
+    public function __construct(Config $config)
     {
         parent::__construct('0', $config);
     }
@@ -54,15 +46,15 @@ class Imdb extends \imdb {
     /**
      * get the mpaa for a selected country
      *
-     * @param $country country name i.e. Germany
+     * @param string $country country name i.e. Germany
      * @return string
      */
-    public function mpaaForCountry($country)
+    public function mpaaForCountry($country = 'Germany')
     {
         $mpaas = (array) $this->mpaa();
         $mpaa = null;
-        if(array_key_exists('Germany', $mpaas)) {
-            $mpaa = $mpaas['Germany'];
+        if(array_key_exists($country, $mpaas)) {
+            $mpaa = $mpaas[$country];
         }
         return $mpaa;
     }
@@ -74,7 +66,7 @@ class Imdb extends \imdb {
      */
     public function countries()
     {
-        return parent::country();
+        return (array) parent::country();
     }
 
     /**
@@ -114,19 +106,15 @@ class Imdb extends \imdb {
         ];
     }
 
-    protected function rate_vote() {
+    protected function rate_vote()
+    {
         parent::rate_vote();
-        if(empty($this->main_rating)) {
-            if (preg_match('!<span[^>]*itemprop="ratingValue">(\d{1,2}[\.,]\d)!i',$this->page["Title"],$match)){
-                $this->main_rating = str_replace(',', '.', $match[1]);
-            }
+        if (preg_match('!<span[^>]*itemprop="ratingCount">([\d\.,]+)</span!i',$this->page["Title"],$match)){
+            $votes = str_replace(array('.', ','), '', $match[1]);
+            $this->main_votes = (int)$votes;
+        }else{
+            $this->main_votes = 0;
         }
-        if(empty($this->main_votes)) {
-		    if (preg_match('!<span[^>]*itemprop="ratingCount">([\d\.,]+)</span!i',$this->page["Title"],$match)){
-    		    $votes = str_replace(array('.', ','), '', $match[1]);
-        		$this->main_votes = (int)$votes;
-		    }
-	    }
     }
 
 

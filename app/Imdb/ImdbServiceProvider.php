@@ -21,7 +21,7 @@ class ImdbServiceProvider extends ServiceProvider{
     {
         $this->app->bindShared('App\Imdb\Imdb', function($app)
         {
-            $imdbConfig = new \mdb_config(base_path().'/config/imdb.ini');
+            $imdbConfig = new \Imdb\Config(base_path().'/config/imdb.ini');
             $imdbConfig->cachedir = storage_path().'/imdb_cache/';
             $imdbConfig->photodir = public_path().'/imdb/';
             return new Imdb($imdbConfig);

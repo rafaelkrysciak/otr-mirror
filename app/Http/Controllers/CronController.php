@@ -115,7 +115,12 @@ class CronController extends Controller
     {
 		set_time_limit(2400);
 		
-        $nodes = Node::get();
+        //$nodes = Node::get();
+		// @ToDo: Workaround becaouse 500 Internal Server Error
+		$nodeIds = [1,2,3,4];
+		$key = array_rand($nodeIds);
+		$node = Node::find($nodeIds[$key]);
+		$nodes = [$node];
 
         $count = 0;
         foreach ($nodes as $node) {
@@ -138,7 +143,7 @@ class CronController extends Controller
             Log::error($e);
         }
 
-        return ['status' => 'OK'];
+        return ['status' => 'OK', 'node' => $node->short_name];
     }
 
 
@@ -209,6 +214,8 @@ class CronController extends Controller
      */
     public function distroSyncFiles(DistroService $distroService)
     {
+        set_time_limit(1200);
+
         $distros = Distro::all();
 
         $count = 0;

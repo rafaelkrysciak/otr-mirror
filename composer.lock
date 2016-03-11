@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "94a87cfe5f178a267b3326bcf4c44dd4",
-    "content-hash": "ddd8b8f51d6c7bdc0a14f833765332a1",
+    "hash": "524d196154ef1c7d4121ae407737e860",
+    "content-hash": "ec0f9902e3038ae5da45c337e26f40e8",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1647,6 +1647,51 @@
                 "purchase"
             ],
             "time": "2016-01-13 07:03:27"
+        },
+        {
+            "name": "openpsa/universalfeedcreator",
+            "version": "v1.8.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flack/UniversalFeedCreator.git",
+                "reference": "84ae676afd49e5c5bf3f0657ce521cd421ef6bdf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flack/UniversalFeedCreator/zipball/84ae676afd49e5c5bf3f0657ce521cd421ef6bdf",
+                "reference": "84ae676afd49e5c5bf3f0657ce521cd421ef6bdf",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Flack",
+                    "email": "flack@contentcontrol-berlin.de",
+                    "homepage": "http://www.contentcontrol-berlin.de/"
+                }
+            ],
+            "description": "RSS and Atom feed generator by Kai Blankenhorn",
+            "keywords": [
+                "atom",
+                "georss",
+                "gpx",
+                "opml",
+                "pie",
+                "rss"
+            ],
+            "time": "2014-08-04 12:34:50"
         },
         {
             "name": "paragonie/random_compat",

@@ -115,21 +115,11 @@ class OtrEpgService
 
             try {
 
-                $updatedRows = TvProgram::where([
+                $tvProgramExists = TvProgram::where([
                     'start'   => DB::raw("CAST('" . $epgData['start']->format('Y-m-d H:i:s') . "' as DATETIME)"),
                     'station' => $epgData['station']
-                ])->update([
-                    'otr_epg_id'  => $epgData['otr_epg_id'],
-                    'end'         => $epgData['end'],
-                    'length'      => $epgData['length'],
-                    'type'        => $epgData['type'],
-                    'description' => $epgData['description'],
-                    'genre_id'    => $epgData['genre_id'],
-                    'fsk'         => $epgData['fsk'],
-                    'language'    => $epgData['language'],
-                    'org_title'   => $epgData['org_title'],
-                ]);
-                if ($updatedRows == 0) {
+                ])->exists();
+                if (!$tvProgramExists) {
                     TvProgram::create($epgData);
                 }
 //                TvProgram::updateOrCreate([

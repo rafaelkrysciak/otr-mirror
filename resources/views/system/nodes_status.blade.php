@@ -1,6 +1,7 @@
 @extends('app')
 
 @section('content')
+	<h1>Node Status</h1>
     @foreach($nodes as $node)
         <div data-nodeid="{{$node->id}}" class="node-info">
         @include('system.nodes_status_partial', [

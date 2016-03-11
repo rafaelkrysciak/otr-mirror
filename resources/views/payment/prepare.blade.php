@@ -180,7 +180,7 @@
                         <dt>Inhaber</dt>
                         <dd>Edyta Krysciak</dd>
                         <dt>IBAN</dt>
-                        <dd>DE46 1203 0000 1002 7083 84</dd>
+                        <dd>DE60 1203 0000 1039 1326 99</dd>
                         <dt>BIC</dt>
                         <dd>BYLADEM1001</dd>
                         <dt>Bank</dt>
@@ -188,7 +188,7 @@
                     </dl>
                     <div class="alert alert-danger" role="alert">
                         <strong><i class="glyphicon glyphicon-warning-sign"></i> Wichtig:</strong><br>
-                        Bitte benutze als Verwendungszweck deine Email-Adresse, mit der du dich bei HQ-Mirror registriert hast.
+                        Bitte benutze als Verwendungszweck deine Email-Adresse (z.B. musterman(at)example.com), mit der du dich bei HQ-Mirror registriert hast.
                         Ansonsten kann die Zahlung nicht zugeordnet werden.
                     </div>
                 </div>

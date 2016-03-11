@@ -20,6 +20,13 @@ class DistroService {
         $this->otrkeyFileService = $otrkeyFileService;
     }
 
+
+    /**
+     * @param Distro $distro
+     * @param $filename
+     *
+     * @return string
+     */
     public function generateDownloadLink(Distro $distro, $filename)
     {
         if($distro->type == 'ftp') {

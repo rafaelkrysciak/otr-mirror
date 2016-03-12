@@ -51,7 +51,12 @@ class Imdb extends \Imdb\Title {
      */
     public function mpaaForCountry($country = 'Germany')
     {
-        $mpaas = (array) $this->mpaa();
+        try {
+            $mpaas = (array) $this->mpaa();
+        } catch(\Exception $e) {
+            return null;
+        }
+
         $mpaa = null;
         if(array_key_exists($country, $mpaas)) {
             $mpaa = $mpaas[$country];

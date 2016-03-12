@@ -21,7 +21,9 @@
 });
 
 
-Route::get('test', function(\App\Services\FilmMapperService $mapperService, \Illuminate\Http\Request $request) {
+Route::get('test', function(\App\Imdb\Imdb $imdb, \Illuminate\Http\Request $request) {
+    $imdb->setid(5312220);
+    var_dump($imdb->is_serial(), $imdb->get_episode_details());
     //$mapperService->cleanUpDoubles();
     //dd(session()->get('_previous'));
 });

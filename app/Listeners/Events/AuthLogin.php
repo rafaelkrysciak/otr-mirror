@@ -1,4 +1,4 @@
-<?php namespace App\Handlers\Events;
+<?php namespace App\Listeners\Events;
 
 use App\User;
 use Carbon\Carbon;

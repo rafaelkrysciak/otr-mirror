@@ -26,7 +26,7 @@ class ApaiIOServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bindShared('ApaiIO\ApaiIO', function ($app) {
+        $this->app->singleton('ApaiIO\ApaiIO', function ($app) {
             $conf = new GenericConfiguration();
             $conf->setCountry(Config::get('aws.country'))
                 ->setAccessKey(Config::get('aws.pa_key'))

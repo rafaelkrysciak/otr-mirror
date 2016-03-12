@@ -15,7 +15,7 @@ class EventServiceProvider extends ServiceProvider {
 			'EventListener',
 		],
 		'auth.login' => [
-			'App\Handlers\Events\AuthLogin',
+			'App\Listeners\Events\AuthLogin',
 		],
 	];
 

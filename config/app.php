@@ -136,6 +136,7 @@ return [
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Html\HtmlServiceProvider',
+		'Illuminate\Broadcasting\BroadcastServiceProvider',
 
 		/*
 		 * Application Service Providers...
@@ -147,6 +148,8 @@ return [
 		'App\Providers\RouteServiceProvider',
 		'App\Providers\BladeServiceProvider',
 		'App\Providers\ApaiIOServiceProvider',
+
+		Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
 		'App\Imdb\ImdbServiceProvider',
 

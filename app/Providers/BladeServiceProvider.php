@@ -12,13 +12,6 @@ class BladeServiceProvider  extends ServiceProvider {
      */
     public function register()
     {
-        Blade::extend(function($value, $compiler)
-        {
-            $pattern = $compiler->createMatcher('byteToSize');
-            $replace = '$1<?php echo byteToSize$2; ?>';
-
-            return preg_replace($pattern, $replace, $value);
-        });
     }
 
     public function map() {}

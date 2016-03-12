@@ -1,5 +1,5 @@
 <ul class="nav nav-tabs" role="tablist">
-@foreach($episodes->fetch('station')->toBase()->unique() as $station)
+@foreach($episodes->pluck('station')->toBase()->unique() as $station)
     <li role="presentation" class="{{$station == $activeStation ? 'active':''}}"><a href="#{{md5($station)}}" aria-controls="{{md5($station)}}" role="tab" data-toggle="tab">{{$station}}</a></li>
 @endforeach
 </ul>

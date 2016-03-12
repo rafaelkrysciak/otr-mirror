@@ -170,7 +170,7 @@ class TvProgramController extends Controller
 
             $user = Auth::user();;
             if ($user) {
-                $userLists = $user->getListsForTvPrograms($items->fetch('tv_program_id')->toArray());
+                $userLists = $user->getListsForTvPrograms($items->pluck('tv_program_id')->toArray());
             } else {
                 $userLists = [
                     User::FAVORITE   => [],

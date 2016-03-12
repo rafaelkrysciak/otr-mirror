@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\Controller;
 use App\User;
-use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Auth\Guard;
 use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Validator;
 
 class AuthController extends Controller {
 
@@ -21,21 +22,64 @@ class AuthController extends Controller {
 
 	use AuthenticatesAndRegistersUsers;
 
+
 	/**
 	 * Create a new authentication controller instance.
-	 *
-	 * @param  \Illuminate\Contracts\Auth\Guard  $auth
-	 * @param  \Illuminate\Contracts\Auth\Registrar  $registrar
-	 * @return void
 	 */
-	public function __construct(Guard $auth, Registrar $registrar)
+	public function __construct()
 	{
-		$this->auth = $auth;
-		$this->registrar = $registrar;
-
 		$this->middleware('guest', ['except' => ['getLogout', 'getConfirmation', 'getConfirmationMail']]);
 	}
 
+	/**
+	 * @param $user
+	 */
+	public function sendConfirmationMail($user)
+	{
+		$subject = 'Bestätige deine Registrierung bei HQ-Mirror.de';
+
+		\Mail::send('emails.confirmation', compact('subject', 'user'), function ($message) use ($user, $subject) {
+			$message->to($user->email)
+				->subject($subject);
+		});
+	}
+
+	/**
+	 * Get a validator for an incoming registration request.
+	 *
+	 * @param  array  $data
+	 * @return \Illuminate\Contracts\Validation\Validator
+	 */
+	public function validator(array $data)
+	{
+		return Validator::make($data, [
+			'name' => 'required|max:255',
+			'email' => 'required|email|max:255|unique:users',
+			'password' => 'required|confirmed|min:6',
+		]);
+	}
+
+	/**
+	 * Create a new user instance after a valid registration.
+	 *
+	 * @param  array  $data
+	 * @return User
+	 */
+	public function create(array $data)
+	{
+		$confirmation_code = str_random(30);
+
+		$user = User::create([
+			'name' => $data['name'],
+			'email' => $data['email'],
+			'password' => bcrypt($data['password']),
+			'confirmation_code' => $confirmation_code,
+		]);
+
+		$this->sendConfirmationMail($user);
+
+		return $user;
+	}
 
 	public function getLogin()
 	{
@@ -58,7 +102,7 @@ class AuthController extends Controller {
 	}
 
 
-	public function getConfirmation($confirmation_code = null)
+	public function getConfirmation($confirmation_code = null, Guard $auth)
 	{
 		$user = User::where('confirmation_code','=',$confirmation_code)->first();
 		if($user) {
@@ -71,7 +115,7 @@ class AuthController extends Controller {
 			flash()->error('Der Bestätigungs-Link ist ungültig.');
 		}
 
-		if($this->auth->guest()) {
+		if($auth->guest()) {
 			return redirect('/auth/login');
 		} else {
 			return redirect('/');
@@ -80,7 +124,7 @@ class AuthController extends Controller {
 	}
 
 
-	public function getConfirmationMail($email, Registrar $registrar)
+	public function getConfirmationMail($email, Registrar $registrar, Guard $auth)
 	{
 		$user = User::where('email','=',$email)->first();
 
@@ -103,7 +147,7 @@ class AuthController extends Controller {
 
 		flash('Bestätigungs-Mail wurde geschickt.');
 
-		if($this->auth->guest()) {
+		if($auth->guest()) {
 			return redirect('auth/login');
 		} else {
 			return redirect('/');

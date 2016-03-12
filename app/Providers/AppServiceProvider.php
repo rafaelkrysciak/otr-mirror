@@ -11,7 +11,10 @@ class AppServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		//
+
+		\Blade::directive('byteToSize', function($expression) {
+			return "<?php echo byteToSize{$expression}; ?>";
+		});
 	}
 
 	/**

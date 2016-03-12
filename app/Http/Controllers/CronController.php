@@ -384,8 +384,8 @@ class CronController extends Controller
                 $q = $tvProgram->title . ' ' . $tvProgram->director;
                 $q .= $tvProgram->year > 0 ? ' ' . $tvProgram->year : '';
                 $imdbId = $imdbService->searchWithGoogle($q, $tvProgram->language);
-                $imdbId = $imdbService->getSeriesIdIfEpisode($imdbId);
                 if ($imdbId) {
+                    $imdbId = $imdbService->getSeriesIdIfEpisode($imdbId);
                     $film = Film::byImdbId($imdbId)->first();
                     if (!$film) { // create
 

@@ -158,7 +158,8 @@ class FilmMapperService
     {
         $doubleTitles = FilmMapper::groupBy('org_title')
             ->havingRaw('count(*) > 1')
-            ->lists('org_title');
+            ->lists('org_title')
+            ->toArray();
 
 
         foreach ($doubleTitles as $doubleTitle) {

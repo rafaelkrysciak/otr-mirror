@@ -166,7 +166,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         $userLists = $user->tvPrograms()
             ->newPivotStatementForId($TvProgram)
-            ->lists('type');
+            ->pluck('type');
 
         return [
             User::FAVORITE   => in_array(User::FAVORITE, $userLists) ? 'list-active' : '',

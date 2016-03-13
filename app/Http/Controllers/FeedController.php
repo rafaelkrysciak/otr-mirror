@@ -97,7 +97,7 @@ class FeedController extends Controller
 
             if ($row->film->filmStars->count() > 0) {
                 $description .= 'Mit: ';
-                $description .= implode(', ', $row->film->filmStars->take(4)->lists('star')).' * ';
+                $description .= implode(', ', $row->film->filmStars->take(4)->lists('star')->toArray()).' * ';
             }
 
             if ($row->film->directors()) {

@@ -11,16 +11,6 @@
 |
 */
 
-\Illuminate\Support\Facades\Event::listen('illuminate.query', function ($sql, $values, $time) {
-    if (!config('app.debug')) return;
-
-    foreach ($values as $value) {
-        $sql = preg_replace('/\?/', "'" . substr($value, 0, 50) . "'", $sql, 1);
-    }
-    \Illuminate\Support\Facades\Log::debug('[' . str_pad($time, 10, " ", STR_PAD_LEFT) . '] ' . $sql);
-});
-
-
 Route::get('test', function(\App\Imdb\Imdb $imdb, \Illuminate\Http\Request $request) {
     $imdb->setid(5312220);
     var_dump($imdb->is_serial(), $imdb->get_episode_details());

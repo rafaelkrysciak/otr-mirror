@@ -74,7 +74,8 @@ class FilmMapperController extends Controller
 
         $languages = Station::groupBy('language_short')
             ->orderBy('language')
-            ->lists('language', 'language_short');
+            ->lists('language', 'language_short')
+            ->toArray();
 
         return view('film-mapper.verifier_index', compact('mappers', 'languages', 'language'));
     }
@@ -115,7 +116,8 @@ class FilmMapperController extends Controller
 
         $languages = Station::groupBy('language_short')
             ->orderBy('language')
-            ->lists('language', 'language_short');
+            ->lists('language', 'language_short')
+            ->toArray();
 
         $films = [];
 
@@ -195,7 +197,8 @@ class FilmMapperController extends Controller
 
         $languages = Station::groupBy('language_short')
             ->orderBy('language')
-            ->lists('language', 'language_short');
+            ->lists('language', 'language_short')
+            ->toArray();
 
         return view('film-mapper.edit', compact('filmMapper', 'films', 'languages'));
     }

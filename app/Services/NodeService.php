@@ -110,7 +110,7 @@ class NodeService
      */
     public function refreshDatabase(Node $node)
     {
-        $keepFileIds = $node->otrkeyFiles()->wherePivot('status', '!=', 'downloaded')->lists('otrkeyfile_id');
+        $keepFileIds = $node->otrkeyFiles()->wherePivot('status', '!=', 'downloaded')->lists('otrkeyfile_id')->toArray();
 
         $result = $this->execOrFail($node, 'listFiles', [], "Can't get file list from node");
 

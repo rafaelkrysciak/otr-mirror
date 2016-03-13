@@ -20,7 +20,7 @@ class TvProgramsView extends Model
         if(empty($lang)) return;
 
         $stations = Cache::remember(__METHOD__.'::'.$lang, 60, function () use ($lang) {
-            return Station::where('language','=',$lang)->lists('tvprogram_name');
+            return Station::where('language','=',$lang)->lists('tvprogram_name')->toArray();
         });
 
         $query->whereIn('station', $stations);

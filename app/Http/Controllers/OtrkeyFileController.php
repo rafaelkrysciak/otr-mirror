@@ -12,7 +12,7 @@ class OtrkeyFileController extends Controller {
 
     public function plainList()
     {
-        $awsFiles = AwsOtrkeyFile::lists('otrkeyfile_id');
+        $awsFiles = AwsOtrkeyFile::lists('otrkeyfile_id')->toArray();
 
         $files = TvProgramsView::with('node')
             ->orderBy('start', 'desc')

@@ -31,7 +31,7 @@ class StatService
             ->groupBy('tv_programs_view.tv_program_id')
             ->orderByRaw('sum(downloads) desc')
             ->limit($limit)
-            ->lists('tv_programs_view.tv_program_id');
+            ->pluck('tv_programs_view.tv_program_id');
 
         $collection = new Collection();
 
@@ -60,7 +60,7 @@ class StatService
             ->groupBy('tv_program_id')
             ->orderByRaw('sum(views) desc')
             ->limit($limit)
-            ->lists('tv_program_id');
+            ->pluck('tv_program_id');
 
         $collection = new Collection();
 
@@ -203,7 +203,8 @@ class StatService
             ->groupBy('event_date')
             ->orderBy('event_date', 'desc')
             ->limit($days)
-            ->lists('sum', 'event_date');
+            ->lists('sum', 'event_date')
+            ->toArray();
 
         $viewStats = array_reverse($viewStats);
 
@@ -222,7 +223,8 @@ class StatService
             ->groupBy('event_date')
             ->orderBy('event_date', 'desc')
             ->limit($days)
-            ->lists('sum', 'event_date');
+            ->lists('sum', 'event_date')
+            ->toArray();
 
         $downloadStats = array_reverse($downloadStats);
 

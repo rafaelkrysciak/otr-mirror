@@ -116,7 +116,7 @@ class TvProgramController extends Controller
         $lists = [];
         if ($user) {
             // User list (favorites and watched)
-            $lists = $user->getListsForTvPrograms($items->lists('tv_program_id'));
+            $lists = $user->getListsForTvPrograms($items->lists('tv_program_id')->toArray());
         }
 
         // $date: user as day header in the view
@@ -222,7 +222,7 @@ class TvProgramController extends Controller
                 ->get();
 
             if(Auth::user()) {
-                $seriesLists = Auth::user()->getListsForTvPrograms($episodes->lists('tv_program_id'));
+                $seriesLists = Auth::user()->getListsForTvPrograms($episodes->lists('tv_program_id')->toArray());
             }
         }
 
@@ -468,7 +468,7 @@ class TvProgramController extends Controller
         $lists = [];
         if ($user) {
             // User list (favorites and watched)
-            $lists = $user->getListsForTvPrograms($downloadsCurrentPage->lists('tv_program_id'));
+            $lists = $user->getListsForTvPrograms($downloadsCurrentPage->lists('tv_program_id')->toArray());
         }
 
         return view('tvprogram/top100', compact('paginator', 'lists'));

@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use App\User;
-use Illuminate\Auth\Guard;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Validator;

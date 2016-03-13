@@ -86,7 +86,7 @@ class OtrEpgService
             'programlink',
         ];
 
-        $languages = Station::groupBy('tvprogram_name')->lists('language_short', 'tvprogram_name');
+        $languages = Station::groupBy('tvprogram_name')->lists('language_short', 'tvprogram_name')->toArray();
 
         $count = 0;
         foreach ($rows as $row) {

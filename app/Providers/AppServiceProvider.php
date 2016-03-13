@@ -1,5 +1,6 @@
 <?php namespace App\Providers;
 
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider {
@@ -15,6 +16,21 @@ class AppServiceProvider extends ServiceProvider {
 		\Blade::directive('byteToSize', function($expression) {
 			return "<?php echo byteToSize{$expression}; ?>";
 		});
+
+		if (config('app.debug')) {
+
+			\DB::listen(function (QueryExecuted $queryExecuted) {
+				if (!config('app.debug')) return;
+
+				$sql = $queryExecuted->sql;
+
+				foreach ($queryExecuted->bindings as $value) {
+					$sql = preg_replace('/\?/', "'" . substr($value, 0, 50) . "'", $sql, 1);
+				}
+				\Log::debug('[' . str_pad($queryExecuted->time, 10, " ", STR_PAD_LEFT) . '] ' . $sql);
+			});
+
+		}
 	}
 
 	/**

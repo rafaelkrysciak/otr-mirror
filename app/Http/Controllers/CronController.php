@@ -357,6 +357,7 @@ class CronController extends Controller
             }
         }
 
+        return ['status' => 'OK'];
     }
 
 

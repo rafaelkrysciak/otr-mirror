@@ -34,4 +34,10 @@ return [
 		'secret' => '',
 	],
 
+	// credentials for loggly.com
+	'loggly' => array(
+		'key'	=> '09ae7b19-13cf-4e0d-9315-125c72518a2a',
+		'tag'	=> 'HQM',
+	),
+
 ];

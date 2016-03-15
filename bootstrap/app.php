@@ -11,6 +11,11 @@
 |
 */
 
+use \Monolog\Handler\RotatingFileHandler;
+use \Monolog\Formatter\LineFormatter;
+use \Monolog\Handler\LogglyHandler;
+use \Monolog\Logger;
+
 $app = new Illuminate\Foundation\Application(
 	realpath(__DIR__.'/../')
 );
@@ -40,6 +45,17 @@ $app->singleton(
 	'Illuminate\Contracts\Debug\ExceptionHandler',
 	'App\Exceptions\Handler'
 );
+
+$app->configureMonologUsing(function($monolog)
+{
+	$logglyHandler = new LogglyHandler(config('services.loggly.key'), Logger::INFO);
+	$logglyHandler->setTag(config('services.loggly.tag'));
+	$monolog->pushHandler($logglyHandler);
+
+	$localHanddler = new RotatingFileHandler(storage_path('logs/hqm.log'), config('app.log_max_files', 5), Logger::DEBUG);
+	$localHanddler->setFormatter(new LineFormatter(null, null, true, true));
+	$monolog->pushHandler($localHanddler);
+});
 
 /*
 |--------------------------------------------------------------------------

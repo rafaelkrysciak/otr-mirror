@@ -42,4 +42,15 @@ class CleanUpDatabase {
 
         return DB::delete($sql);
     }
+
+
+    public function cleanOtrkeyFileNodeRelation()
+    {
+        $sql = "DELETE FROM node_otrkeyfile
+            WHERE
+              status IN ('deleted','requested')
+              AND created_at < current_timestamp - interval 1 Month";
+
+        return DB::delete($sql);
+    }
 }

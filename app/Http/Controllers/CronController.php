@@ -284,6 +284,13 @@ class CronController extends Controller
             Log::error($e);
         }
 
+        try {
+            $deleted = $cleanUpDatabase->cleanOtrkeyFileNodeRelation();
+            Log::info("$deleted Node Relations deleted.");
+        } catch (\Exception $e) {
+            Log::error($e);
+        }
+
 
         $nodes = Node::get();
         foreach ($nodes as $node) {

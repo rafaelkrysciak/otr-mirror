@@ -100,6 +100,14 @@ class NodeService
     }
 
 
+    public function ftpUpload(Node $node, $filename, $url)
+    {
+        $result = $this->execOrFail($node, 'ftpUpload', [$filename, $url], "Problem during upload");
+
+        return $result;
+    }
+
+
     /**
      * Read files from node an update database status
      *
@@ -116,20 +124,24 @@ class NodeService
 
         $files = [];
         foreach ($result['data'] as $data) {
-            $file = OtrkeyFile::where('name', $data['filename'])->first();
+            try {
+                $file = OtrkeyFile::where('name', $data['filename'])->first();
 
-            if (is_null($file)) {
-                $file = $this->otrkeyFileService->createByFilename($data['filename']);
-            }
+                if (is_null($file)) {
+                    $file = $this->otrkeyFileService->createByFilename($data['filename']);
+                }
 
-            $file->size = $data['size'];
-            $file->checksum = $data['md5sum'];
-            $file->save();
+                $file->size = $data['size'];
+                $file->checksum = $data['md5sum'];
+                $file->save();
 
-            $files[$file->id] = ['status' => 'downloaded'];
+                $files[$file->id] = ['status' => 'downloaded'];
 
-            if (in_array($file->id, $keepFileIds)) {
-                unset($keepFileIds[array_search($file->id, $keepFileIds)]);
+                if (in_array($file->id, $keepFileIds)) {
+                    unset($keepFileIds[array_search($file->id, $keepFileIds)]);
+                }
+            } catch (\Exception $e) {
+                Log::error($e->getMessage());
             }
         }
 
@@ -202,11 +214,11 @@ class NodeService
 
         $files = OtrkeyFile::with('nodes')
             ->join('node_otrkeyfile', 'id', '=', 'otrkeyfile_id')
-            ->join('stations', 'otrkey_files.station','=','stations.otrkeyfile_name')
+            ->join('stations', 'otrkey_files.station', '=', 'stations.otrkeyfile_name')
             ->availableInHq()
             ->notOlderThen(Carbon::now()->subDays(config('keep_files_on_all_nodes_days', 4)))
-            ->where('node_otrkeyfile.status','=',Node::STATUS_DOWNLOADED)
-            ->where('stations.language_short','=','de')
+            ->where('node_otrkeyfile.status', '=', Node::STATUS_DOWNLOADED)
+            ->where('stations.language_short', '=', 'de')
             ->groupBy('otrkey_files.id')
             ->having(DB::raw('count(*)'), '<', $nodes->count())
             ->limit(50)
@@ -217,7 +229,7 @@ class NodeService
                 $url = $this->generateDownloadLink($file->availableFiles->first(), $file->name, DownloadService::PREMIUM);
                 $missingNodes = $nodes->diff($file->nodes);
                 foreach ($missingNodes as $node) {
-                    if(!config('app.debug')) {
+                    if (!config('app.debug')) {
                         $this->fetchFile($node, $url);
                     }
                     Log::debug("[rebalance] Download to {$node->short_name} : {$url}");
@@ -240,7 +252,7 @@ class NodeService
                 ->get();
             foreach ($files as $file) {
                 $url = $this->generateDownloadLink($file->node, $file->name, DownloadService::PREMIUM);
-                if(!config('app.debug')) {
+                if (!config('app.debug')) {
                     $this->fetchFile($node, $url);
                 }
                 Log::debug("[rebalance] Filling free node {$node->short_name} : {$url}");
@@ -264,7 +276,7 @@ class NodeService
 
                 try {
                     foreach ($toDelete as $node) {
-                        if(!config('app.debug')) {
+                        if (!config('app.debug')) {
 
                             $this->deleteFile($node, $file->name);
 

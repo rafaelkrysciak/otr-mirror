@@ -78,22 +78,14 @@ class NodeController extends Controller
     public function abortDownload($nodeId, $downloadId, NodeService $nodeService)
     {
         $node = Node::findOrFail($nodeId);
-
-        $nodeService->abortDownload($node, $downloadId);
-
-        $client = new Client($node->url, 5, ['X-Auth: ' . $node->key]);
-        $downloads = $client->execute('listDownloads');
-        if (!is_array($downloads) || $downloads['status'] != 'OK') {
-            return is_array($downloads) ? $downloads : ['status' => 'NOK', 'message' => "Couldn't retrieve download list"];
+        try {
+            $nodeService->abortDownload($node, $downloadId);
+        } catch(\Exception $e) {
+            Log::error($e);
+            return ['status' => 'NOK', 'message' => $e->getMessage()];
         }
 
-        foreach ($downloads['data'] as $download) {
-            if ($download['id'] == $downloadId) break;
-        }
-
-        $result = $client->execute('breakAddFile', [$download['url']]);
-
-        return is_array($result) ? $result : ['status' => 'NOK', 'message' => "Couldn't abort download"];
+        return ['status' => 'OK'];
     }
 
 
@@ -158,7 +150,7 @@ class NodeController extends Controller
                 ->orderBy('free_disk_space', 'desc')->limit(1)->get();
         } else {
             $nodes = Node::where('id', '!=', $srcNodeId)
-                ->where('id', '=', $nodeId);
+                ->where('id', '=', $nodeId)->get();
         }
 
         $errors = [];
@@ -210,7 +202,7 @@ class NodeController extends Controller
     public function copyFile()
     {
         $rows = Node::all();
-
+        $nodes = [];
         foreach ($rows as $row) {
             $nodes[$row->id] = $row->short_name . ' (Free: ' . byteToSize($row->free_disk_space) . ')';
         }
@@ -226,7 +218,7 @@ class NodeController extends Controller
     public function addFile()
     {
         $rows = Node::all();
-
+        $nodes = [];
         foreach ($rows as $row) {
             $nodes[$row->id] = $row->short_name . ' (Free: ' . byteToSize($row->free_disk_space) . ')';
         }

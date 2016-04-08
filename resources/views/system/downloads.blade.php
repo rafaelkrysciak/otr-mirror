@@ -43,7 +43,7 @@
                     Canceled
                 @elseif($download['size'] != $download['downloaded'] && !$download['endtime'])
                     <a
-                            href="{{ url('system/abort-download', ['nodeId' => $download['node']->id, 'downloadId' => $download['id']]) }}"
+                            href="{{ url('node/abort-download', ['nodeId' => $download['node']->id, 'downloadId' => $download['id']]) }}"
                             class="cancel btn btn-danger"
                             role="button">
                         Cancel

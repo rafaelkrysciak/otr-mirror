@@ -49,7 +49,7 @@
 
 @section('scripts')
     @parent
-    <script src="{{ asset('/js/fancybox/jquery.fancybox.js') }}"></script>
+    <script src="{{ asset('/js/fancybox/jquery.fancybox.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             $(".fancybox").fancybox({
@@ -66,5 +66,5 @@
 
 @section('head')
     @parent
-    <link href="{{ asset('/js/fancybox/jquery.fancybox.css') }}" rel="stylesheet">
+    <link href="{{ asset('/js/fancybox/jquery.fancybox.min.css') }}" rel="stylesheet">
 @stop

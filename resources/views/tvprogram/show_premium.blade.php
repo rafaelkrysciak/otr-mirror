@@ -245,7 +245,7 @@
 
 @section('scripts')
     @parent
-    <script src="{{ asset('/js/fancybox/jquery.fancybox.js') }}"></script>
+    <script src="{{ asset('/js/fancybox/jquery.fancybox.min.js') }}"></script>
     @include('film-mapper.javascript')
     @include('partials.js-add-to-list')
     <script>
@@ -275,5 +275,5 @@
 @stop
 
 @section('head')
-    <link href="{{ asset('/js/fancybox/jquery.fancybox.css') }}" rel="stylesheet">
+    <link href="{{ asset('/js/fancybox/jquery.fancybox.min.css') }}" rel="stylesheet">
 @stop

@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-md-5" style="overflow: hidden;">
                     @if($tvProgram->film && $tvProgram->film->amazon_image)
-                        <a href="{{$tvProgram->film->imageResize(650)}}"
+                        <a id="cover" href="{{$tvProgram->film->imageResize(650)}}"
                            class="fancybox">
                             <img class="img-r_esponsive center-block cover" src="{{$tvProgram->film->imageResize(437)}}">
                         </a>
@@ -86,24 +86,24 @@
 
                     <br><br>
                     @if($tvProgram->film && $tvProgram->film->amazon_link)
-                        <a href="{{$tvProgram->film->amazon_link}}" target="_blank"
+                        <a id="amazon-link" href="{{$tvProgram->film->amazon_link}}" target="_blank"
                            class="btn btn-warning">
                             <i class="zocial amazon"></i> DVD/BluRay kaufen
                         </a>
                     @else
-                        <a href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=dvd&linkCode=ur2&tag=hqmi-21&keywords={!! urlencode($tvProgram->title) !!}"
+                        <a id="amazon-link" href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=dvd&linkCode=ur2&tag=hqmi-21&keywords={!! urlencode($tvProgram->title) !!}"
                            target="_blank" class="btn btn-warning">
                             <i class="zocial amazon"></i> DVD/BluRay kaufen
                         </a>
                     @endif
                     @if($tvProgram->film && $tvProgram->film->trailer)
-                        <a href="{{$tvProgram->film->trailerUrl()}}"
+                        <a id="trailer" href="{{$tvProgram->film->trailerUrl()}}"
                            class="btn btn-default fancybox fancybox.iframe">
                             Trailer
                         </a>
                     @endif
                     @if($tvProgram->film && $tvProgram->film->dvdkritik)
-                        <a href="{{$tvProgram->film->reviewUrl()}}"
+                        <a id="review" href="{{$tvProgram->film->reviewUrl()}}"
                            class="btn btn-default fancybox fancybox.iframe">
                             Kritik
                         </a>
@@ -161,7 +161,7 @@
                                     @endif
                                 </td>
                                 <td class="vert-align nowrap">
-                                    <a href="{{url('download', ['user' => Auth::user() ? Auth::user()->id:'guest', 'token' => $token[$file->id], 'filename' => $file->name])}}" class="btn btn-primary">
+                                    <a href="{{url('download', ['user' => Auth::user() ? Auth::user()->id:'guest', 'token' => $token[$file->id], 'filename' => $file->name])}}" class="btn btn-primary download">
                                         <i class="glyphicon glyphicon-download-alt"></i> Download
                                     </a>
                                 </td>
@@ -267,7 +267,33 @@
                 height		: '90%',
                 openEffect	: 'fade',
                 closeEffect	: 'fade',
-                padding     : 0
+                padding     : 0,
+                afterLoad   : function() {
+                    var id = this.element[0].id;
+                    try {
+                        ga('send','event','FilmPage',id);
+                    }
+                    catch(err) {}
+                }
+            });
+            $('.zocial.amazon').parent('a').click(function() {
+                try {
+                    ga('send','event','FilmPage','amazon-link');
+                }
+                catch(err) {}
+            });
+            $('a.download').click(function() {
+                @if(!Auth::user())
+                    var user = 'guest';
+                @elseif(!Auth::user()->isPremium())
+                    var user = 'registerd';
+                @else
+                    var user = 'premium';
+                @endif
+                try {
+                    ga('send','event','Download',user);
+                }
+                catch(err) {}
             });
         });
     </script>

@@ -23,7 +23,11 @@
                 <i class="fa fa-diamond"></i> Premium -50% <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
-                <li><a href="{{ url('payment/prepare') }}"> Bestellen </a></li>
+                @if(Auth::user()->isPremium())
+                    <li><a href="{{ url('payment/prepare') }}"> Verlängern </a></li>
+                @else
+                    <li><a href="{{ url('payment/prepare') }}"> Jetzt zugreifen </a></li>
+                @endif
                 <li><a href="{{ url('payment/transactions') }}"> Transaktionen </a></li>
                 @if(Auth::user() && Auth::user()->isAdmin())
                     <li><a href="{{ url('payment/all-transactions') }}"> Alle Transaktionen </a></li>
@@ -32,7 +36,7 @@
             </ul>
         </li>
     @else
-        <li><a href="{{ url('payment/prepare') }}"><i class="fa fa-diamond"></i> Premium</a></li>
+        <li><a href="{{ url('payment/prepare') }}"  style="color: #ff0000;font-weight: bold;"><i class="fa fa-diamond"></i> Premium -50% </a></li>
     @endif
 
     <li class="dropdown">

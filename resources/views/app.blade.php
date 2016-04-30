@@ -20,25 +20,21 @@
 	<link href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" rel="stylesheet">
 
 
-	@if(!(Auth::user() && Auth::user()->isAdmin()))
-		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js"></script>
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-					m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-			ga('create', 'UA-32685473-1', 'auto');
-			ga('send', 'pageview');
-
-		</script>
-	@else
-		<script>
+	<script>
+		@if(Auth::user() && Auth::user()->isAdmin())
+			var userStatus = 'admin';
 			window.csrfToken = '{{csrf_token()}}';
 			window.appKey = '{{env('API_KEY')}}';
-		</script>
-	@endif
+		@elseif(Auth::user() && Auth::user()->isPremium())
+			var userStatus = 'premium';
+		@elseif(Auth::user())
+			var userStatus = 'registered';
+		@else
+			var userStatus = 'guest';
+		@endif
+	</script>
+
 
 	<!-- Fonts -->
 	<link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -51,6 +47,18 @@
 	<![endif]-->
 </head>
 <body>
+@if(!(Auth::user() && Auth::user()->isAdmin()))
+	<!-- Google Tag Manager -->
+	<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-NMSQLM"
+					  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+				new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+				j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+				'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+		})(window,document,'script','dataLayer','GTM-NMSQLM');</script>
+	<!-- End Google Tag Manager -->
+@endif
+
 @if(!Request::has('nomenu'))
 	<a href="#top" class="go-top"><i class="glyphicon glyphicon-menu-up"></i></a>
 	<nav class="navbar navbar-default" id="top">

@@ -267,33 +267,7 @@
                 height		: '90%',
                 openEffect	: 'fade',
                 closeEffect	: 'fade',
-                padding     : 0,
-                afterLoad   : function() {
-                    var id = this.element[0].id;
-                    try {
-                        ga('send','event','FilmPage',id);
-                    }
-                    catch(err) {}
-                }
-            });
-            $('.zocial.amazon').parent('a').click(function() {
-                try {
-                    ga('send','event','FilmPage','amazon-link');
-                }
-                catch(err) {}
-            });
-            $('a.download').click(function() {
-                @if(!Auth::user())
-                    var user = 'guest';
-                @elseif(!Auth::user()->isPremium())
-                    var user = 'registerd';
-                @else
-                    var user = 'premium';
-                @endif
-                try {
-                    ga('send','event','Download',user);
-                }
-                catch(err) {}
+                padding     : 0
             });
         });
     </script>

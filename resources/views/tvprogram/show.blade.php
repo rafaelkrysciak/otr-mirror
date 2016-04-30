@@ -152,26 +152,9 @@
             lessLink: '<a href="#">&lang; Weniger</a>'
         });
         $('a.download').click(function() {
-            @if(!Auth::user())
-            var user = 'guest';
-            @elseif(!Auth::user()->isPremium())
-            var user = 'registerd';
-            @else
-            var user = 'premium';
-            @endif
-            try {
-                ga('send','event','Download',user);
-            }
-            catch(err) {}
             @if(!Auth::user() || !Auth::user()->isPremium())
             $('#premiumTeaserModal').modal();
             @endif
-        });
-        $('.zocial.amazon').parent('a').click(function() {
-            try {
-                ga('send','event','FilmPage','amazon-link');
-            }
-            catch(err) {}
         });
     </script>
 @stop

@@ -238,8 +238,11 @@ class TvProgramController extends Controller
         }
 
         $statService->trackView($tvProgram->id);
+
         if(Auth::user() && Auth::user()->isPremium() && $tvProgram->film && $tvProgram->film->id > 0) {
             return view('tvprogram.show_premium', compact('tvProgram', 'lists', 'token', 'relatedItems', 'episodes', 'seriesLists'));
+        } elseif($tvProgram->film && $tvProgram->film->id > 0) {
+            return view('tvprogram.show_film', compact('tvProgram', 'lists', 'token', 'relatedItems', 'episodes', 'seriesLists'));
         } else {
             return view('tvprogram.show', compact('tvProgram', 'lists', 'token', 'relatedItems', 'tvseries'));
         }

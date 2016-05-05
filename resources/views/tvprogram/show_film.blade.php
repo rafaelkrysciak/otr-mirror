@@ -52,35 +52,23 @@
 
                     <strong>Genre:</strong>
                     @foreach($tvProgram->film->genres() as $genre)
-                        @if($tvProgram->film->tvseries)
-                            <a href="{{route('seriesview', ['genres[]' => strtolower($genre)])}}">{{$genre}}</a>,
-                        @else
-                            <a href="{{route('filmview', ['genres[]' => strtolower($genre)])}}">{{$genre}}</a>,
-                        @endif
+                        {{$genre}},
                     @endforeach
 
                     <h3>Stab</h3>
                     <strong>Regie:</strong>
                     @foreach($tvProgram->film->directors() as $director)
-                        @if($tvProgram->film->tvseries)
-                            <a href="{{route('seriesview', ['q' => $director])}}">{{$director}}</a>,
-                        @else
-                            <a href="{{route('filmview', ['q' => $director])}}">{{$director}}</a>,
-                        @endif
+                        {{$director}},
                     @endforeach
                     <br><br>
 
                     <div class="stab">
                         <table class="table-striped" style="width: 100%;">
                             @foreach($tvProgram->film->filmStars as $filmStars)
-                            <tr>
-                                @if($tvProgram->film->tvseries)
-                                    <td><a href="{{route('seriesview', ['q' => $filmStars->star])}}">{{$filmStars->star}}</a></td>
-                                @else
-                                    <td><a href="{{route('filmview', ['q' => $filmStars->star])}}">{{$filmStars->star}}</a></td>
-                                @endif
-                                <td class="text-right">{{$filmStars->role}}</td>
-                            </tr>
+                                <tr>
+                                    <td>{{$filmStars->star}}</td>
+                                    <td class="text-right">{{$filmStars->role}}</td>
+                                </tr>
                             @endforeach
                         </table>
                     </div>
@@ -98,18 +86,8 @@
                             <i class="zocial amazon"></i> DVD/BluRay kaufen
                         </a>
                     @endif
-                    @if($tvProgram->film && $tvProgram->film->trailer)
-                        <a id="trailer" href="{{$tvProgram->film->trailerUrl()}}"
-                           class="btn btn-default fancybox fancybox.iframe">
-                            Trailer
-                        </a>
-                    @endif
-                    @if($tvProgram->film && $tvProgram->film->dvdkritik)
-                        <a id="review" href="{{$tvProgram->film->reviewUrl()}}"
-                           class="btn btn-default fancybox fancybox.iframe">
-                            Kritik
-                        </a>
-                    @endif
+                    <a id="trailer" href="#" class="btn btn-default disabled">Trailer</a>
+                    <a id="review" href="#" class="btn btn-default disabled">Kritik</a>
                 </div>
             </div>
             @if($tvProgram->film->description)
@@ -123,8 +101,9 @@
                 <div class="text-justify description">
                     {!! $tvProgram->description !!}
                 </div>
-            @endif			
-			
+            @endif
+            <br>
+            @include('partials.ad_728x90')
             <br>
             @if($tvProgram->otrkeyFiles->isEmpty())
                 <div class="alert alert-warning" role="alert">
@@ -172,14 +151,12 @@
                     @endforeach
                 </table>
             @endif
+            @include('partials.ad_728x90')
             <div class="row">
-                @if(count($episodes) > 0)
-                    <hr>
-                    @include('tvprogram.tvseries_episodes', ['episodes' => $episodes, 'seriesLists' => $seriesLists, 'activeStation' => $tvProgram->station])
-                @elseif(count($relatedItems) > 0)
-                    <hr>
-                    @include('partials.tv_programs_list', ['caption' => 'Ähnliche Sendungen','items' => $relatedItems])
-                @endif
+            @if(count($relatedItems) > 0)
+                <hr>
+                @include('partials.tv_programs_list', ['caption' => 'Ähnliche Sendungen','items' => $relatedItems])
+            @endif
             </div>
         </div>
         <div class="col-md-3">
@@ -187,27 +164,20 @@
                 @include('partials.preview', ['otrkeyFile' => $tvProgram->otrkeyFiles[0]])
             @endif
             {{-- Favorite / Seen buttons --}}
-            <br><br>
-            <div class="btn-group-vertical btn-group-lg center-block" role="group">
-                <button type="button" class="btn btn-default add-to-list {{$tvProgram->film->belongsToUser(Auth::user()) ? 'list-active':''}}" data-list="films" data-id="{{$tvProgram->film->id}}">
-                    <strong><i class="glyphicon glyphicon-heart"></i>
-                        @if($tvProgram->film->tvseries)
-                            Meine Serie
-                        @else
-                            Mein Film
-                        @endif
-                    </strong>
-                </button>
-                <button type="button" class="btn btn-default add-to-list {{$lists[\App\User::FAVORITE]}}" data-list="{{\App\User::FAVORITE}}" data-id="{{$tvProgram->id}}">
-                    <strong><i class="glyphicon glyphicon-star"></i> Sendung Merken</strong>
-                </button>
-                <button type="button" class="btn btn-default add-to-list {{$lists[\App\User::WATCHED]}}" data-list="{{\App\User::WATCHED}}" data-id="{{$tvProgram->id}}">
-                    <strong><i class="glyphicon glyphicon-ok-circle"></i> Sendung Gesehen</strong>
-                </button>
-            </div>
+            @if(Auth::user())
+                <br><br>
+                <div class="btn-group-vertical btn-group-lg center-block" role="group">
+                    <button type="button" class="btn btn-default add-to-list {{$lists[\App\User::FAVORITE]}}" data-list="{{\App\User::FAVORITE}}" data-id="{{$tvProgram->id}}">
+                        <strong><i class="glyphicon glyphicon-star"></i> Merken</strong>
+                    </button>
+                    <button type="button" class="btn btn-default add-to-list {{$lists[\App\User::WATCHED]}}" data-list="{{\App\User::WATCHED}}" data-id="{{$tvProgram->id}}">
+                        <strong><i class="glyphicon glyphicon-ok-circle"></i> Gesehen</strong>
+                    </button>
+                </div>
+            @endif
             <br>
                 @include('tvprogram.internet_search', ['tvProgram' => $tvProgram])
-                <br>
+            <br>
             {{-- Admin Actions --}}
             @if(Auth::user() && Auth::user()->isAdmin())
                 <br>
@@ -216,46 +186,57 @@
                        data-toggle="modal" data-target="#iframeModal" data-remote="">
                         <i class="glyphicon glyphicon-edit"></i> Edit
                     </a>
-                    @if($tvProgram->film_id)
                     <a href="{{url('film/'.$tvProgram->film_id.'/edit')}}" class="btn btn-default"
                        data-toggle="modal" data-target="#iframeModal" data-remote="">
                         <i class="glyphicon glyphicon-edit"></i> Film Edit
                     </a>
-                    @endif
                     <a href="{{url('tvprogram', ['tv_program_id' => $tvProgram->id])}}" class="btn btn-danger"
                        data-method="delete" data-confirm="Are you sure?">
                         <i class="glyphicon glyphicon-remove"></i> Delete
                     </a>
-
                     <button type="button" class="btn @if($tvProgram->film_mapper_id) btn-primary @else btn-default @endif"
                             data-toggle="modal" data-target="#iframeModal" data-remote=""
-                            @if($tvProgram->film_mapper_id)
-                                data-src="{{action('FilmMapperController@edit', ['film_mapper' => $tvProgram->film_mapper_id])}}">
-                            @else
-                                data-src="{{action('FilmMapperController@fromTvProgram', ['tv_program_id' => $tvProgram->id])}}">
-                            @endif
+                        @if($tvProgram->film_mapper_id)
+                            data-src="{{action('FilmMapperController@edit', ['film_mapper' => $tvProgram->film_mapper_id])}}">
+                        @else
+                            data-src="{{url('film-mapper/create/'.$tvProgram->id)}}">
+                        @endif
                         <i class="glyphicon glyphicon-link"></i> Mapper
                     </button>
                 </div>
             @endif
+            <br>
+            <div class="row center-block">
+                @include('partials.ad_160x600')
+            </div>
             <br><br>
         </div>
     </div>
+    @if(Auth::user() && Auth::user()->isAdmin())
+        @include('film-mapper.modal')
+    @endif
 
-    @include('film-mapper.modal')
+    @if(!Auth::user() || !Auth::user()->isPremium())
+        @include('payment.teaser_modal')
+    @endif
+@stop
+
+@section('head')
+    @if($tvProgram->film && $tvProgram->film->amazon_image)
+        <meta property="og:image" content="{{$tvProgram->film->imageResize(650)}}" />
+    @endif
 @stop
 
 @section('scripts')
     @parent
-    <script src="{{ asset('/js/fancybox/jquery.fancybox.min.js') }}"></script>
     @include('film-mapper.javascript')
     @include('partials.js-add-to-list')
     <script>
         $('.description').readmore({
             collapsedHeight: 44,
             speed: 300,
-            moreLink: '<a href="#">Mehr &raquo;</a>',
-            lessLink: '<a href="#">&laquo; Weniger</a>'
+            moreLink: '<a href="#">Mehr &rang;</a>',
+            lessLink: '<a href="#">&lang; Weniger</a>'
         });
         $('.stab').readmore({
             collapsedHeight: 160,
@@ -263,22 +244,10 @@
             moreLink: '<a href="#">Mehr &raquo;</a>',
             lessLink: '<a href="#">&laquo; Weniger</a>'
         });
-        $(document).ready(function() {
-            $(".fancybox").fancybox({
-                width		: '95%',
-                height		: '90%',
-                openEffect	: 'fade',
-                closeEffect	: 'fade',
-                padding     : 0
-            });
+        $('a.download').click(function() {
+            @if(!Auth::user() || !Auth::user()->isPremium())
+            $('#premiumTeaserModal').modal();
+            @endif
         });
     </script>
-
-@stop
-
-@section('head')
-    <link href="{{ asset('/js/fancybox/jquery.fancybox.min.css') }}" rel="stylesheet">
-    @if($tvProgram->film && $tvProgram->film->amazon_image)
-        <meta property="og:image" content="{{$tvProgram->film->imageResize(650)}}" />
-    @endif
 @stop

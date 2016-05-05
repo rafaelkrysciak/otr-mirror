@@ -1,4 +1,4 @@
-<div class="carousel" style="width:250px;">
+<div class="carousel" style="width:250px;min-height:188px;">
     <div class="previews">
         <div class="preview active"><img src="/img/hqm_preview.jpg" /></div>
         @for($i=0;$i<10;$i++)

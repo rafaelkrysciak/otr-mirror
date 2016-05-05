@@ -13,7 +13,7 @@
     <div class="jumbotron">
         <div class="row">
             <div class="col-md-8">
-                <h1>Premium Angebot</h1>
+                <h1><b>Nur noch für kurz Zeit</b><br>Premium Angebot</h1>
                 <p>
                     Mit einem Premium-Account erhältst du Zugang zu schnellen Downloads und umfassendem <a href="#filme">Film-</a> und <a href="#serien">Serienverzeichnis</a>.
                     Außerdem stehen dir noch viele <a href="#zusatzinformationen">Zusatzinformationen</a> zu ausgewählten Sendungen zur Verfügung.<br>

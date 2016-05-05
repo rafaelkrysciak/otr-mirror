@@ -281,4 +281,9 @@
     @if($tvProgram->film && $tvProgram->film->amazon_image)
         <meta property="og:image" content="{{$tvProgram->film->imageResize(650)}}" />
     @endif
+    <meta property="og:description" content="{{$tvProgram->description}}" />
+    <meta property="og:title" content="{{$tvProgram->title.' '.$tvProgram->station.' '.$tvProgram->start->format('Y-m-d H:i')}}" />
+    <meta property="og:type" content="video.movie" />
+    <meta property="og:site_name" content="HQ-Mirror" />
+    <meta property="og:url" content="{{url('tvprogram/show',['id' => $tvProgram->id])}}?utm_source=facebook.com&utm_medium=sideshare&utm_campaign=none" />
 @stop

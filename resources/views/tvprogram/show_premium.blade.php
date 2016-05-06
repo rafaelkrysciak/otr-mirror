@@ -120,7 +120,7 @@
             @endif
             @if($tvProgram->description)
                 <h3>EPG Beschreibung:</h3>
-                <div class="text-justify description">
+                <div class="text-justify description nocontent">
                     {!! $tvProgram->description !!}
                 </div>
             @endif			
@@ -172,7 +172,7 @@
                     @endforeach
                 </table>
             @endif
-            <div class="row">
+            <div class="row nocontent">
                 @if(count($episodes) > 0)
                     <hr>
                     @include('tvprogram.tvseries_episodes', ['episodes' => $episodes, 'seriesLists' => $seriesLists, 'activeStation' => $tvProgram->station])

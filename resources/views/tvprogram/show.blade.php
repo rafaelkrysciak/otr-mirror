@@ -21,7 +21,7 @@
                 <dt>Dauer:</dt>
                 <dd><i class="glyphicon glyphicon-asterisk"></i> {{$tvProgram->length}} Minuten</dd>
                 <dt>Beschreibung:</dt>
-                <dd class="text-justify"><span class="description">{{$tvProgram->description}}</span></dd>
+                <dd class="text-justify"><span class="description nocontent">{{$tvProgram->description}}</span></dd>
             </dl>
             @include('partials.ad_728x90')
             <br>
@@ -72,7 +72,7 @@
                 </table>
             @endif
             @include('partials.ad_728x90')
-            <div class="row">
+            <div class="row nocontent">
             @if(count($relatedItems) > 0)
                 <hr>
                 @include('partials.tv_programs_list', ['caption' => 'Ähnliche Sendungen','items' => $relatedItems])

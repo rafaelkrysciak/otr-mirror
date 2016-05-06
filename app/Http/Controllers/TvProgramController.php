@@ -127,76 +127,13 @@ class TvProgramController extends Controller
 
 
     /**
-     * @param SearchService $searchService
      *
      * @return \Illuminate\View\View
      */
-    public function search(SearchService $searchService)
+    public function search()
     {
-
         $q = trim(Input::get('q'));
-        $page = Input::get('page', 1);
-        $lang = Input::get('language', 'all');
-        $perPage = 100;
-
-        $availableLanguages = TvProgramsView::select(\DB::raw('language, count(distinct tv_program_id) as cnt'))
-            ->groupBy('language')
-            ->orderByRaw('count(*) DESC')
-            ->get()
-            ->toArray();
-
-        $languages = ['all' => 'Alle Sprachen'];
-        foreach ($availableLanguages as $language) {
-            $languages[$language['language']] = $language['language'] . ' (' . $language['cnt'] . ')';
-        }
-
-
-        if (!empty($q)) {
-
-            $items = $searchService->search($q, $lang)
-                ->groupBy('tv_program_id')
-                ->forPage($page, $perPage)
-                ->get();
-
-            $count = $searchService->search($q, $lang)
-                ->distinct()
-                ->count('tv_program_id');
-
-            $paginator = new LengthAwarePaginator($items, $count, $perPage, $page);
-            $paginator->setPath('/tvprogram/search')->appends(['q' => $q, 'language' => $lang]);
-            Paginator::presenter(function () use ($paginator) {
-                return new BootstrapThreePresenter($paginator);
-            });
-
-            $user = Auth::user();;
-            if ($user) {
-                $userLists = $user->getListsForTvPrograms($items->pluck('tv_program_id')->toArray());
-            } else {
-                $userLists = [
-                    User::FAVORITE   => [],
-                    User::DOWNLOADED => [],
-                    User::WATCHED    => [],
-                ];
-            }
-
-            foreach ($items as $item) {
-                $lists[$item->tv_program_id] = [
-                    User::FAVORITE   => in_array($item->tv_program_id, $userLists[User::FAVORITE]) ? 'list-active' : '',
-                    User::DOWNLOADED => in_array($item->tv_program_id, $userLists[User::DOWNLOADED]) ? 'list-active' : '',
-                    User::WATCHED    => in_array($item->tv_program_id, $userLists[User::WATCHED]) ? 'list-active' : '',
-                ];
-            }
-        } else {
-            $paginator = new LengthAwarePaginator([], 0, $perPage, $page, ['path' => '/tvprogram']);
-            Paginator::presenter(function () use ($paginator) {
-                return new BootstrapThreePresenter($paginator);
-            });
-        }
-
-        $date = '';
-
-        return view('tvprogram.search', compact('paginator', 'date', 'lists', 'q', 'languages', 'lang'));
-
+        return view('tvprogram.search', compact('q'));
     }
 
 

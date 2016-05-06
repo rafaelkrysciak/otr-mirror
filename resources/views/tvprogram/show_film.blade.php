@@ -98,7 +98,7 @@
             @endif
             @if($tvProgram->description)
                 <h3>EPG Beschreibung:</h3>
-                <div class="text-justify description">
+                <div class="text-justify description nocontent">
                     {!! $tvProgram->description !!}
                 </div>
             @endif
@@ -152,7 +152,7 @@
                 </table>
             @endif
             @include('partials.ad_728x90')
-            <div class="row">
+            <div class="row nocontent">
             @if(count($relatedItems) > 0)
                 <hr>
                 @include('partials.tv_programs_list', ['caption' => 'Ähnliche Sendungen','items' => $relatedItems])

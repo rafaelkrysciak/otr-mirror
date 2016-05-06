@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="msvalidate.01" content="C7A1EAA9CAE9E604B1A09E48D3703949" />
-	<title>HQ-Mirror: @yield('title')</title>
+	<title>@yield('title') - HQ-Mirror</title>
 
 	@yield('head')
 

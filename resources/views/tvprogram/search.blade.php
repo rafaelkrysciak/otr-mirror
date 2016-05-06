@@ -29,6 +29,6 @@
         })();
     </script>
     <div id="cse" style="width: 100%;">
-        <gcse:searchresults-only></gcse:searchresults-only>
+        <gcse:searchresults-only linktarget="_parent"></gcse:searchresults-only>
     </div>
 @stop

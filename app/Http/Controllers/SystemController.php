@@ -32,13 +32,14 @@ class SystemController extends Controller
          */
         $sitemap = App::make("sitemap");
         $sitemap->setCache('laravel.sitemap', 3600);
-
-        if (!$sitemap->isCached()) {
+        $count = 0;
+        //if (!$sitemap->isCached()) {
             $tvPrograms = TvProgramsView::orderBy('start', 'desc')->groupBy('tv_program_id')->get();
             foreach ($tvPrograms as $tvProgram) {
                 $sitemap->add('tvprogram/show/' . $tvProgram->tv_program_id, $tvProgram->start, '1.0', 'weekly');
+                //if($count++ > 100) break;
             }
-        }
+        //}
 
         return $sitemap->render('xml');
     }

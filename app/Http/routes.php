@@ -11,11 +11,20 @@
 |
 */
 
-Route::get('test', function(\App\Imdb\Imdb $imdb, \Illuminate\Http\Request $request) {
-    $imdb->setid(5312220);
-    var_dump($imdb->is_serial(), $imdb->get_episode_details());
-    //$mapperService->cleanUpDoubles();
-    //dd(session()->get('_previous'));
+Route::get('test123', function(\App\Services\NodeService $nodeService) {
+    //phpinfo();
+    exit;
+    Log::info('call test123');
+
+    $node = \App\Node::find(5);
+    try {
+        $result = $nodeService->ftpUpload($node,
+            'gush.avengers.2.an.axel.braun.parody.mp4',
+            'ftp://rafael:Utakasoke#1@s03.hq-mirror.de//var/www/otrkeys/import/test.file');
+        return $result;
+    } catch(Exception $e) {
+        var_dump($e->getMessage());
+    }
 });
 
 /**
@@ -50,6 +59,7 @@ Route::get('cron/aws-delete-old-files', 'CronController@awsDeleteOldFiles');
 Route::get('cron/clean-database', 'CronController@cleanDatabase');
 Route::get('cron/refresh-imdb-data', 'CronController@refreshImdbData');
 Route::get('cron/find-mapper-rules', 'CronController@findMapperRules');
+Route::get('cron/generate-sitemap', 'CronController@generateSitemap');
 
 Route::get('file/plain-list', 'OtrkeyFileController@plainList');
 

@@ -105,6 +105,7 @@
                 <li><a href="{{ url('cron/clean-database') }}"> Clean Database </a></li>
                 <li><a href="{{ url('cron/refresh-imdb-data') }}"> Refresh IMDb Data </a></li>
                 <li><a href="{{ url('cron/find-mapper-rules') }}"> Find Mapper Rules </a></li>
+                <li><a href="{{ url('cron/generate-sitemap') }}"> Generate sitemap.xml </a></li>
             </ul>
         </li>
     @endif

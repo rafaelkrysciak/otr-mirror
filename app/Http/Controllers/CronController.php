@@ -413,4 +413,23 @@ class CronController extends Controller
         return ['status' => 'OK'];
     }
 
+
+    public function generateSitemap()
+    {
+        /**
+         * @var $sitemap \Roumen\Sitemap\Sitemap
+         */
+        $sitemap = \App::make("sitemap");
+
+        $tvPrograms = TvProgramsView::orderBy('start', 'desc')->groupBy('tv_program_id')->get();
+
+        foreach ($tvPrograms as $tvProgram) {
+            $sitemap->add(\URL::to('tvprogram/show/' . $tvProgram->tv_program_id), $tvProgram->start, '1.0', 'weekly');
+        }
+
+        $sitemap->store('xml', 'sitemap');
+
+        return ['status' => 'OK'];
+    }
+
 }

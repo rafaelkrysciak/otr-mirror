@@ -141,6 +141,18 @@
     @endif
 @stop
 
+@section('head')
+    <meta property="og:description" content="{{$tvProgram->description}}" />
+    <meta property="description" content="{{$tvProgram->description}}" />
+    <meta property="og:title" content="{{$tvProgram->title.' '.$tvProgram->station.' '.$tvProgram->start->format('Y-m-d H:i')}}" />
+    <meta property="og:type" content="video.movie" />
+    <meta property="og:site_name" content="HQ-Mirror" />
+    <meta property="og:url" content="{{url('tvprogram/show',['id' => $tvProgram->id])}}" />
+    @if($tvProgram->otrkeyFiles->isEmpty())
+        <meta name="robots" content="noindex">
+    @endif
+@stop
+
 @section('scripts')
     @parent
     @include('film-mapper.javascript')

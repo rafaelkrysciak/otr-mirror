@@ -232,6 +232,9 @@
     <meta property="og:type" content="video.movie" />
     <meta property="og:site_name" content="HQ-Mirror" />
     <meta property="og:url" content="{{url('tvprogram/show',['id' => $tvProgram->id])}}" />
+    @if($tvProgram->otrkeyFiles->isEmpty())
+        <meta name="robots" content="noindex">
+    @endif
 @stop
 
 @section('scripts')

@@ -282,6 +282,9 @@
         <meta property="og:image" content="{{$tvProgram->film->imageResize(580)}}" />
         <meta property="thumbnail" content="{{$tvProgram->film->imageResize(580)}}" />
     @endif
+    @if($tvProgram->otrkeyFiles->isEmpty())
+        <meta name="robots" content="noindex">
+    @endif
     <meta property="og:description" content="{{$tvProgram->description}}" />
     <meta property="og:title" content="{{$tvProgram->title.' '.$tvProgram->station.' '.$tvProgram->start->format('Y-m-d H:i')}}" />
     <meta property="og:type" content="video.movie" />

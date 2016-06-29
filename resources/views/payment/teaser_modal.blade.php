@@ -6,7 +6,7 @@
                 <h4 class="modal-title" id="myModalLabel">Download startet sofort ...</h4>
             </div>
             <div class="modal-body">
-                <h1>Schau dir doch mal die Vorteile eines Premium-Accounts <small><a href="{{url('payment/prepare')}}#bestellen">&raquo; Bestellen</a></small></h1>
+                <h1>Schau dir doch mal die Vorteile eines Premium-Accounts <a class="btn btn-lg btn-primary" href="{{url('payment/prepare')}}#bestellen">&raquo; Jetzt zugreifen!</a></h1>
                 <hr>
                 @include('payment._benefits')
             </div>

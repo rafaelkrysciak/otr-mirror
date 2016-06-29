@@ -12,17 +12,14 @@
 
     <div class="jumbotron">
         <div class="row">
-            <div class="col-md-8">
-                <h1><b>Nur noch für kurz Zeit</b><br>Premium Angebot</h1>
+            <div class="col-md-12">
+                <h1><i class="glyphicon glyphicon-king"></i> Premium Angebot</h1>
                 <p>
                     Mit einem Premium-Account erhältst du Zugang zu schnellen Downloads und umfassendem <a href="#filme">Film-</a> und <a href="#serien">Serienverzeichnis</a>.
                     Außerdem stehen dir noch viele <a href="#zusatzinformationen">Zusatzinformationen</a> zu ausgewählten Sendungen zur Verfügung.<br>
                 </p>
 
                 <p><a class="btn btn-danger btn-lg" href="#bestellen" role="button">Jetzt Bestellen</a></p>
-            </div>
-            <div class="col-md-4">
-                <img src="{{asset('img/50prozent.png')}}" width="300">
             </div>
         </div>
     </div>
@@ -104,7 +101,7 @@
                     <h3 class="text-center"><i class="glyphicon glyphicon-king"></i> Premium User</h3>
                 </div>
                 <div class="panel-body text-center">
-                    <p class="lead" style="font-size:28px">ab <strong><span style="text-decoration: line-through;">2,00 €</span></strong> <strong><span style="color: #ff0000;">1,00 €</span></strong> / Monat</p>
+                    <p class="lead" style="font-size:28px">ab <strong>1,25 €</strong> / Monat</p>
                 </div>
                 <ul class="list-group list-group-flush text-center">
                     <li class="list-group-item">
@@ -136,28 +133,19 @@
                     </li>
                 </ul>
                 <div class="panel-footer">
-                    <a href="{{url('payment/purchase/1')}}" role="button" class="btn btn-primary btn-lg btn-block disabled" style="text-decoration: line-through;">
-                        <i class="fa fa-cc-paypal"></i> <strong>&nbsp;&nbsp;3,49 €</strong>&nbsp;&nbsp;&nbsp;&nbsp;1 Monat&nbsp;&nbsp;&nbsp;&nbsp;<small>(3,49 €/Monat)</small>
+
+                    <a href="{{url('payment/purchase/1')}}" role="button" class="btn btn-success btn-lg btn-block">
+                        <i class="fa fa-cc-paypal"></i> <strong>&nbsp;&nbsp;2,50 €</strong>&nbsp;&nbsp;&nbsp;&nbsp;1 Monat&nbsp;&nbsp;&nbsp;&nbsp;<small>(2,50 €/Monat)</small>
                     </a>
 
-                    <a href="{{url('payment/purchase/1')}}" role="button" class="btn btn-danger btn-lg btn-block">
-                        <i class="fa fa-cc-paypal"></i> <strong>&nbsp;&nbsp;1,75 €</strong>&nbsp;&nbsp;&nbsp;&nbsp;1 Monat&nbsp;&nbsp;&nbsp;&nbsp;<small>(1,75 €/Monat)</small>
+                    <a href="{{url('payment/purchase/2')}}" role="button" class="btn btn-success btn-lg btn-block">
+                        <i class="fa fa-cc-paypal"></i> <strong>10,50 €</strong>&nbsp;&nbsp;&nbsp;&nbsp;6 Monate&nbsp;&nbsp;<small>(1,75 €/Monat)</small>
                     </a>
 
-                    <a href="{{url('payment/purchase/2')}}" role="button" class="btn btn-primary btn-lg btn-block disabled" style="text-decoration: line-through;">
-                        <i class="fa fa-cc-paypal"></i> <strong>14,99 €</strong>&nbsp;&nbsp;&nbsp;&nbsp;6 Monate&nbsp;&nbsp;<small>(2,50 €/Monat)</small>
+                    <a href="{{url('payment/purchase/3')}}" role="button" class="btn btn-success btn-lg btn-block">
+                        <i class="fa fa-cc-paypal"></i> <strong>15,00 €</strong>&nbsp;&nbsp;12 Monate&nbsp;&nbsp;<small>(1,25 €/Monat)</small>
                     </a>
-                    <a href="{{url('payment/purchase/2')}}" role="button" class="btn btn-danger btn-lg btn-block">
-                        <i class="fa fa-cc-paypal"></i> <strong>7,50 €</strong>&nbsp;&nbsp;&nbsp;&nbsp;6 Monate&nbsp;&nbsp;<small>(1,25 €/Monat)</small>
-                    </a>
-
-                    <a href="{{url('payment/purchase/3')}}" role="button" class="btn btn-primary btn-lg btn-block disabled" style="text-decoration: line-through;">
-                        <i class="fa fa-cc-paypal"></i> <strong>23,99 €</strong>&nbsp;&nbsp;12 Monate&nbsp;&nbsp;<small>(2,00 €/Monat)</small>
-                    </a>
-                    <a href="{{url('payment/purchase/3')}}" role="button" class="btn btn-danger btn-lg btn-block">
-                        <i class="fa fa-cc-paypal"></i> <strong>12,00 €</strong>&nbsp;&nbsp;12 Monate&nbsp;&nbsp;<small>(1,00 €/Monat)</small>
-                    </a>
-                    <button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#bank-transfer">
+                    <button type="button" class="btn btn-info btn-lg btn-block" data-toggle="modal" data-target="#bank-transfer">
                         <i class="glyphicon glyphicon-credit-cardglyphicon glyphicon-credit-card"></i> Überweisung</small>
                     </button>
                 </div>

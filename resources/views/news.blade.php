@@ -1,6 +1,24 @@
 @extends('app')
 
 @section('content')
+<h1>Keine spanischen Sendungen mehr <small>(02.07.2016)</small></h1>
+<br>
+<div class="row">
+	<div class="col-md-12">
+		Leider können wir keine spanischen Sendungen mehr bereitstellen. 
+		Es gibt sehr viele Sendungen die in der Qualität HQ oder HD zur Verfügung stehen. Die nehmen sehr viel Platz auf den Servern, werden aber kaum welche runter geladen.
+		<br>
+		Um mehr Platz für die deutsche und englischen Sendungen zu schaffen, werden wir die spanischen Aufnahmen aufgeben.
+		<br>
+		Die Umstellung findet am 9 Juli statt.
+		<br>
+		Ich hoffe ihr habt Verständnis dafür.
+	    <br><br>
+		<p><strong>Rafael</strong></p>
+
+	</div>
+</div>
+{{--
     <h1>Liblings Filme und Serien an einem Platz <small>(05.07.2015)</small></h1>
     <br>
     <div class="row">
@@ -23,6 +41,5 @@
         </div>
     </div>
     <p>Ich wünsche euch viel Spaß beim durchstöbern unseres Archivs.</p>
-    <br>
-    <p><strong>Rafael</strong></p>
+--}}
 @stop

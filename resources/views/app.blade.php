@@ -81,9 +81,9 @@
 	</nav>
 @endif
 	<div class="container">
-		@if(!Session::has('news_seen') && false)
+		@if(!Session::has('news_seen'))
 		<div class="alert alert-info" role="alert">
-			<strong>Neu!</strong> Für Premium User: Liblings Filme und Serien an einem Platz. <a href="{{url('/news')}}">Mehr erfahren</a>
+			<strong>Achtung!</strong> Ab 9. Juli werden keine spanischen Sendungen mehr bereit gestellt. <a href="{{url('/news')}}">Mehr erfahren</a>
 		</div>
 		@endif
 		@include('flash::message')

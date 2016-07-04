@@ -101,7 +101,7 @@
                     <h3 class="text-center"><i class="glyphicon glyphicon-king"></i> Premium User</h3>
                 </div>
                 <div class="panel-body text-center">
-                    <p class="lead" style="font-size:28px">ab <strong>1,25 €</strong> / Monat</p>
+                    <p class="lead" style="font-size:28px">ab <strong>1,25 €</strong><sup>*</sup> / Monat</p>
                 </div>
                 <ul class="list-group list-group-flush text-center">
                     <li class="list-group-item">
@@ -135,21 +135,22 @@
                 <div class="panel-footer">
 
                     <a href="{{url('payment/purchase/1')}}" role="button" class="btn btn-success btn-lg btn-block">
-                        <i class="fa fa-cc-paypal"></i> <strong>&nbsp;&nbsp;2,50 €</strong>&nbsp;&nbsp;&nbsp;&nbsp;1 Monat&nbsp;&nbsp;&nbsp;&nbsp;<small>(2,50 €/Monat)</small>
+                        <i class="fa fa-cc-paypal"></i> <strong>&nbsp;&nbsp;2,50 €</strong><sup>*</sup>&nbsp;&nbsp;&nbsp;&nbsp;1 Monat&nbsp;&nbsp;&nbsp;&nbsp;<small>(2,50 €/Monat)</small>
                     </a>
 
                     <a href="{{url('payment/purchase/2')}}" role="button" class="btn btn-success btn-lg btn-block">
-                        <i class="fa fa-cc-paypal"></i> <strong>10,50 €</strong>&nbsp;&nbsp;&nbsp;&nbsp;6 Monate&nbsp;&nbsp;<small>(1,75 €/Monat)</small>
+                        <i class="fa fa-cc-paypal"></i> <strong>10,50 €</strong><sup>*</sup>&nbsp;&nbsp;&nbsp;&nbsp;6 Monate&nbsp;&nbsp;<small>(1,75 €/Monat)</small>
                     </a>
 
                     <a href="{{url('payment/purchase/3')}}" role="button" class="btn btn-success btn-lg btn-block">
-                        <i class="fa fa-cc-paypal"></i> <strong>15,00 €</strong>&nbsp;&nbsp;12 Monate&nbsp;&nbsp;<small>(1,25 €/Monat)</small>
+                        <i class="fa fa-cc-paypal"></i> <strong>15,00 €</strong><sup>*</sup>&nbsp;&nbsp;12 Monate&nbsp;&nbsp;<small>(1,25 €/Monat)</small>
                     </a>
                     <button type="button" class="btn btn-info btn-lg btn-block" data-toggle="modal" data-target="#bank-transfer">
                         <i class="glyphicon glyphicon-credit-cardglyphicon glyphicon-credit-card"></i> Überweisung</small>
                     </button>
                 </div>
             </div>
+            <p style="color:#aaa;"><sup>*</sup> Endpreis, keine Ausweisung der MwSt. nach § 19 UStG</p>
         </div>
     </div>
 

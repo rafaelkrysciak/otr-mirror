@@ -86,6 +86,13 @@ class OtrkeyFile extends Model {
                         ->where('updated_at', '>', Carbon::now()->subMinutes(config('retry_download_after_minutes', 30)));
                 });
         });
+
+        // Exclude Spanish stations
+        $query->whereNotIn('otrkey_files.station', function ($query) {
+            $query->select('otrkeyfile_name')
+                ->from('stations')
+                ->where('language_short','=','es');
+        });
     }
 
     public function scopeAvailableInHq($query)

@@ -108,6 +108,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/Readmore.js/2.0.5/readmore.min.js"></script>
 	<script src="{{ asset('/js/jquery.carousel/jquery.carousel.js') }}"></script>
 	<script src="{{ asset('/js/hqm.js') }}"></script>
+	<script type="text/javascript" src="//cdn.jsdelivr.net/cookie-bar/1/cookiebar-latest.min.js?tracking=1&thirdparty=1&always=1&top=1&privacyPage=http%3A%2F%2Fwww.hq-mirror.de%2Fimpressum"></script>
 
 	@yield('scripts')
 

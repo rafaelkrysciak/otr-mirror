@@ -182,7 +182,7 @@
                 @endif
             </div>
             <hr>
-            @include('tvprogram.disqus', ['url' => url('tvprogram', ['tv_program_id' => $tvProgram->id]), 'identifier' => $tvProgram->id])
+            @include('tvprogram.disqus', ['url' => url('tvprogram/show',['id' => $tvProgram->id]), 'identifier' => $tvProgram->id])
         </div>
         <div class="col-md-3">
             @if(!$tvProgram->otrkeyFiles->isEmpty())
@@ -206,7 +206,7 @@
                 <button type="button" class="btn btn-default add-to-list {{$lists[\App\User::WATCHED]}}" data-list="{{\App\User::WATCHED}}" data-id="{{$tvProgram->id}}">
                     <strong><i class="glyphicon glyphicon-ok-circle"></i> Sendung Gesehen</strong>
                 </button>
-                <a class="btn btn-default" href="#disqus_thread">
+                <a class="btn btn-default" href="{{url('tvprogram/show',['id' => $tvProgram->id])}}#disqus_thread">
                     <i class="glyphicon glyphicon-comment"></i> Kommentare
                 </a>
             </div>

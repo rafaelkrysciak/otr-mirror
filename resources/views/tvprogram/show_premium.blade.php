@@ -181,6 +181,8 @@
                     @include('partials.tv_programs_list', ['caption' => 'Ähnliche Sendungen','items' => $relatedItems])
                 @endif
             </div>
+            <hr>
+            @include('tvprogram.disqus', ['url' => url('tvprogram', ['tv_program_id' => $tvProgram->id]), 'identifier' => $tvProgram->id])
         </div>
         <div class="col-md-3">
             @if(!$tvProgram->otrkeyFiles->isEmpty())
@@ -204,6 +206,9 @@
                 <button type="button" class="btn btn-default add-to-list {{$lists[\App\User::WATCHED]}}" data-list="{{\App\User::WATCHED}}" data-id="{{$tvProgram->id}}">
                     <strong><i class="glyphicon glyphicon-ok-circle"></i> Sendung Gesehen</strong>
                 </button>
+                <a class="btn btn-default" href="#disqus_thread">
+                    <i class="glyphicon glyphicon-comment"></i> Kommentare
+                </a>
             </div>
             <br>
                 @include('tvprogram.internet_search', ['tvProgram' => $tvProgram])
@@ -273,7 +278,7 @@
             });
         });
     </script>
-
+    <script id="dsq-count-scr" src="//hqmirror.disqus.com/count.js" async></script>
 @stop
 
 @section('head')

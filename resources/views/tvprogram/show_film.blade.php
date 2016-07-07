@@ -158,23 +158,28 @@
                 @include('partials.tv_programs_list', ['caption' => 'Ähnliche Sendungen','items' => $relatedItems])
             @endif
             </div>
+            <hr>
+            @include('tvprogram.disqus', ['url' => url('tvprogram/show',['id' => $tvProgram->id]), 'identifier' => $tvProgram->id])
         </div>
         <div class="col-md-3">
             @if(!$tvProgram->otrkeyFiles->isEmpty())
                 @include('partials.preview', ['otrkeyFile' => $tvProgram->otrkeyFiles[0]])
             @endif
             {{-- Favorite / Seen buttons --}}
-            @if(Auth::user())
-                <br><br>
-                <div class="btn-group-vertical btn-group-lg center-block" role="group">
+            <br><br>
+            <div class="btn-group-vertical btn-group-lg center-block" role="group">
+                @if(Auth::user())
                     <button type="button" class="btn btn-default add-to-list {{$lists[\App\User::FAVORITE]}}" data-list="{{\App\User::FAVORITE}}" data-id="{{$tvProgram->id}}">
                         <strong><i class="glyphicon glyphicon-star"></i> Merken</strong>
                     </button>
                     <button type="button" class="btn btn-default add-to-list {{$lists[\App\User::WATCHED]}}" data-list="{{\App\User::WATCHED}}" data-id="{{$tvProgram->id}}">
                         <strong><i class="glyphicon glyphicon-ok-circle"></i> Gesehen</strong>
                     </button>
-                </div>
-            @endif
+                @endif
+                <a class="btn btn-default" href="#disqus_thread">
+                    <i class="glyphicon glyphicon-comment"></i> <span class="disqus-comment-count" data-disqus-identifier="{{$tvProgram->id}}">Kommentare</span>
+                </a>
+            </div>
             <br>
                 @include('tvprogram.internet_search', ['tvProgram' => $tvProgram])
             <br>
@@ -260,4 +265,5 @@
             @endif
         });
     </script>
+    <script id="dsq-count-scr" src="//hqmirror.disqus.com/count.js" async></script>
 @stop

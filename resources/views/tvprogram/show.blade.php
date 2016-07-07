@@ -86,20 +86,20 @@
                 @include('partials.preview', ['otrkeyFile' => $tvProgram->otrkeyFiles[0]])
             @endif
             {{-- Favorite / Seen buttons --}}
-            @if(Auth::user())
-                <br><br>
-                <div class="btn-group-vertical btn-group-lg center-block" role="group">
+            <br><br>
+            <div class="btn-group-vertical btn-group-lg center-block" role="group">
+                @if(Auth::user())
                     <button type="button" class="btn btn-default add-to-list {{$lists[\App\User::FAVORITE]}}" data-list="{{\App\User::FAVORITE}}" data-id="{{$tvProgram->id}}">
                         <strong><i class="glyphicon glyphicon-star"></i> Merken</strong>
                     </button>
                     <button type="button" class="btn btn-default add-to-list {{$lists[\App\User::WATCHED]}}" data-list="{{\App\User::WATCHED}}" data-id="{{$tvProgram->id}}">
                         <strong><i class="glyphicon glyphicon-ok-circle"></i> Gesehen</strong>
                     </button>
-                    <a class="btn btn-default" href="{{url('tvprogram/show',['id' => $tvProgram->id])}}#disqus_thread">
-                        <i class="glyphicon glyphicon-comment"></i> Kommentare
-                    </a>
-                </div>
-            @endif
+                @endif
+                <a class="btn btn-default" href="#disqus_thread">
+                    <i class="glyphicon glyphicon-comment"></i> <span class="disqus-comment-count" data-disqus-identifier="{{$tvProgram->id}}">Kommentare</span>
+                </a>
+            </div>
             <br>
                 @include('tvprogram.internet_search', ['tvProgram' => $tvProgram])
             <br>

@@ -118,7 +118,6 @@ class FilmFilterService
         'all'      => 'Alle',
         'deutsch'  => 'Deutsch',
         'englisch' => 'Englisch',
-        'spanisch' => 'Spanisch',
     ];
 
 

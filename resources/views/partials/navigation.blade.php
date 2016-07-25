@@ -8,7 +8,6 @@
             <li><a href="{{ url('tvprogram') }}"> Alle Sprachen </a></li>
             <li><a href="{{ url('tvprogram/Deutsch') }}"> Deutsch </a></li>
             <li><a href="{{ url('tvprogram/Englisch') }}"> Englisch </a></li>
-            <li><a href="{{ url('tvprogram/Spanisch') }}"> Spanisch </a></li>
         </ul>
     </li>
     @if(Auth::user() && Auth::user()->isPremium())

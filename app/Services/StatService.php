@@ -4,14 +4,12 @@ use App\Node;
 use App\OtrkeyFile;
 use App\StatDownload;
 use App\StatView;
-use App\TvProgram;
 use App\TvProgramsView;
-use App\User;
+use Cache;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Session;
-use \DB;
-use \Cache;
 
 class StatService
 {
@@ -76,21 +74,22 @@ class StatService
     /**
      * Get list of OtrkeyFiles order by download count
      *
+     * @param int $limit count of rows
+     *
      * @return Collection of OtrkeyFile
      */
     public function getFilesForDelete($limit = 100)
     {
-        $files = OtrkeyFile::leftJoin('stat_downloads', 'stat_downloads.otrkey_file_id', '=', 'otrkey_files.id')
+        $files = OtrkeyFile::leftJoin('stat_downloads', function ($join) {
+            $join->on('stat_downloads.otrkey_file_id', '=', 'otrkey_files.id')
+                ->where('stat_downloads.event_date', '>', Carbon::now()->subMonths(4));
+        })
             ->whereIn('otrkey_files.id', function ($query) {
                 $query->select('otrkeyfile_id')
                     ->from('node_otrkeyfile')
                     ->where('status', '=', Node::STATUS_DOWNLOADED);
             })
-            ->where('start', '<', Carbon::now()->subDays(14))
-            ->where(function($query) {
-                $query->whereNull('stat_downloads.event_date')
-                    ->orWhere('stat_downloads.event_date','>',Carbon::now()->subMonths(2));
-            })
+            ->where('start', '<', Carbon::now()->subMonths(1))
             ->groupBy('otrkey_files.id')
             ->orderByRaw('SUM(downloads) + SUM(aws_downloads), otrkey_files.start')
             ->limit($limit)
@@ -122,6 +121,20 @@ class StatService
 
 
     /**
+     * @param $tv_program_id
+     *
+     * @return \App\StatView
+     */
+    protected function getStatViewRecord($tv_program_id)
+    {
+        return StatView::firstOrCreate([
+            'event_date'    => Carbon::now()->format('Y-m-d'),
+            'tv_program_id' => $tv_program_id
+        ]);
+    }
+
+
+    /**
      * @param $otrkey_file_id
      */
     public function trackDownload($otrkey_file_id)
@@ -134,27 +147,6 @@ class StatService
 
         if (!in_array($otrkey_file_id, $downloads)) {
             $stat->downloads++;
-            Session::push('downloads', $otrkey_file_id);
-        }
-
-        $stat->save();
-    }
-
-
-    /**
-     * @param $otrkey_file_id
-     */
-    public function trackAwsDownload($otrkey_file_id)
-    {
-        $downloads = Session::get('downloads', []);
-
-        $stat = $this->getStatDownloadRecord($otrkey_file_id);
-
-        $stat->aws_total_downloads++;
-
-        if (!in_array($otrkey_file_id, $downloads)) {
-            $stat->aws_downloads++;
-            $downloads[] = $otrkey_file_id;
             Session::push('downloads', $otrkey_file_id);
         }
 
@@ -179,56 +171,23 @@ class StatService
 
 
     /**
-     * @param $tv_program_id
-     *
-     * @return \App\StatView
+     * @param $otrkey_file_id
      */
-    protected function getStatViewRecord($tv_program_id)
+    public function trackAwsDownload($otrkey_file_id)
     {
-        return StatView::firstOrCreate([
-            'event_date'    => Carbon::now()->format('Y-m-d'),
-            'tv_program_id' => $tv_program_id
-        ]);
-    }
+        $downloads = Session::get('downloads', []);
 
+        $stat = $this->getStatDownloadRecord($otrkey_file_id);
 
-    /**
-     * @param int $days
-     *
-     * @return array
-     */
-    public function viewsPerDay($days = 30)
-    {
-        $viewStats = StatView::selectRaw('event_date, SUM(views) as sum')
-            ->groupBy('event_date')
-            ->orderBy('event_date', 'desc')
-            ->limit($days)
-            ->lists('sum', 'event_date')
-            ->toArray();
+        $stat->aws_total_downloads++;
 
-        $viewStats = array_reverse($viewStats);
+        if (!in_array($otrkey_file_id, $downloads)) {
+            $stat->aws_downloads++;
+            $downloads[] = $otrkey_file_id;
+            Session::push('downloads', $otrkey_file_id);
+        }
 
-        return $viewStats;
-    }
-
-
-    /**
-     * @param int $days
-     *
-     * @return array
-     */
-    public function downloadsPerDay($days = 30)
-    {
-        $downloadStats = StatDownload::selectRaw('event_date, SUM(downloads) as sum')
-            ->groupBy('event_date')
-            ->orderBy('event_date', 'desc')
-            ->limit($days)
-            ->lists('sum', 'event_date')
-            ->toArray();
-
-        $downloadStats = array_reverse($downloadStats);
-
-        return $downloadStats;
+        $stat->save();
     }
 
 
@@ -267,6 +226,46 @@ class StatService
         ksort($data);
 
         return array_values($data);
+    }
+
+
+    /**
+     * @param int $days
+     *
+     * @return array
+     */
+    public function downloadsPerDay($days = 30)
+    {
+        $downloadStats = StatDownload::selectRaw('event_date, SUM(downloads) as sum')
+            ->groupBy('event_date')
+            ->orderBy('event_date', 'desc')
+            ->limit($days)
+            ->lists('sum', 'event_date')
+            ->toArray();
+
+        $downloadStats = array_reverse($downloadStats);
+
+        return $downloadStats;
+    }
+
+
+    /**
+     * @param int $days
+     *
+     * @return array
+     */
+    public function viewsPerDay($days = 30)
+    {
+        $viewStats = StatView::selectRaw('event_date, SUM(views) as sum')
+            ->groupBy('event_date')
+            ->orderBy('event_date', 'desc')
+            ->limit($days)
+            ->lists('sum', 'event_date')
+            ->toArray();
+
+        $viewStats = array_reverse($viewStats);
+
+        return $viewStats;
     }
 
 

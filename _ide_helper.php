@@ -13802,6 +13802,7 @@ namespace {
          * Flash an information message.
          *
          * @param string $message
+         * @return $this 
          * @static 
          */
         public static function info($message){
@@ -13846,11 +13847,12 @@ namespace {
          *
          * @param string $message
          * @param string $title
+         * @param string $level
          * @return $this 
          * @static 
          */
-        public static function overlay($message, $title = 'Notice'){
-            return \Laracasts\Flash\FlashNotifier::overlay($message, $title);
+        public static function overlay($message, $title = 'Notice', $level = 'info'){
+            return \Laracasts\Flash\FlashNotifier::overlay($message, $title, $level);
         }
         
         /**

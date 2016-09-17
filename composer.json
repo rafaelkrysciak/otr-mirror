@@ -9,7 +9,7 @@
 		"vinelab/http": "~1.2",
 		"fguillot/json-rpc": "1.*",
 		"laravelcollective/html": "~5.0",
-		"laracasts/flash": "~1.3",
+		"laracasts/flash": "2.*",
 		"roumen/sitemap": "~2.6",
 		"aws/aws-sdk-php": "~3.0",
 		"aws/aws-sdk-php-laravel": "~3.1",

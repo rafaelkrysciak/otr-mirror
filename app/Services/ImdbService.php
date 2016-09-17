@@ -2,31 +2,22 @@
 
 use \App\Imdb\Imdb;
 
+/**
+ * Class ImdbService
+ * @package App\Services
+ */
 class ImdbService
 {
 
-    /**
-     * An imdb API implementation
-     * @var Imdb $imdb
-     */
-    protected $imdb;
-
-
-    /**
-     * Create a new ImdbService instance
+	/**
+     * @param $imdbId
      *
-     * @param Imdb $imdb
+     * @return mixed
      */
-    public function __construct(Imdb $imdb)
-    {
-        $this->imdb = $imdb;
-    }
-
-
     public function getSeriesIdIfEpisode($imdbId)
     {
-        $this->imdb->setid($imdbId);
-        $episodeDetails = $this->imdb->get_episode_details();
+        $imdb = $this->getImdbObject($imdbId);
+        $episodeDetails = $imdb->get_episode_details();
         if (array_key_exists('imdbid', $episodeDetails)) {
             return $episodeDetails['imdbid'];
         } else {
@@ -35,24 +26,22 @@ class ImdbService
     }
 
 
-    public function getImdbObject($imdbId)
-    {
-        $this->imdb->setid($imdbId);
-
-        return $this->imdb;
-    }
-
-
+	/**
+     * @param $imdbId
+     * @param array $fields
+     *
+     * @return array
+     * @throws \Exception
+     */
     public function getImdbData($imdbId, $fields = [])
     {
+        $imdb = $this->getImdbObject($imdbId);
 
-        $this->imdb->setid($imdbId);
-
-        if (!$this->imdb->title()) {
-            throw new \Exception("ImdbId $imdbId not found");
+        if (!$imdb->title()) {
+            throw new \Exception("ImdbId $imdb not found");
         }
 
-        $imdbData = $this->imdb->toMetadataArray();
+        $imdbData = $imdb->toMetadataArray();
 
         if (count($fields) > 0) {
             foreach ($imdbData as $field => $value) {
@@ -71,15 +60,22 @@ class ImdbService
      */
     public function savePhoto($imdbId)
     {
-        $this->imdb->setid($imdbId);
-        $this->imdb->photo_localurl();
+        $imdb = $this->getImdbObject($imdbId);
+        $imdb->photo_localurl();
     }
 
 
+	/**
+     * @param $imdbId
+     * @param int $count
+     *
+     * @return array
+     */
     public function cast($imdbId, $count = 30)
     {
-        $this->imdb->setid($imdbId);
-        $castData = $this->imdb->cast($clean = true);
+        $imdb = $this->getImdbObject($imdbId);
+
+        $castData = $imdb->cast($clean = true);
 
         $cast = [];
 
@@ -91,6 +87,12 @@ class ImdbService
     }
 
 
+	/**
+     * @param $q
+     * @param string $language
+     *
+     * @return mixed
+     */
     public function searchWithGoogle($q, $language = 'de')
     {
         $cacheKey = __METHOD__ . $q . $language;
@@ -122,6 +124,21 @@ class ImdbService
                 return $matches[1];
             }
         };
+    }
+
+
+	/**
+     * @param $imdbId
+     *
+     * @return Imdb
+     */
+    protected function getImdbObject($imdbId)
+    {
+        if(is_a($imdbId, 'App\Imdb\Imdb')) {
+            return $imdbId;
+        }
+
+        return Imdb::factory($imdbId);
     }
 
 }

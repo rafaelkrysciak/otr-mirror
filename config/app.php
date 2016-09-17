@@ -152,8 +152,6 @@ return [
 
 		Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
-		'App\Imdb\ImdbServiceProvider',
-
 		'Vinelab\Http\HttpServiceProvider',
 		'Roumen\Sitemap\SitemapServiceProvider',
 		'Laracasts\Flash\FlashServiceProvider',

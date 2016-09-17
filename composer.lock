@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "395d8f50aa54cc45d898e85543663c00",
-    "content-hash": "e6f9c7b34a3e763c7b0531520444feba",
+    "hash": "341fd999cf357b89e49da15bffd850f4",
+    "content-hash": "8157298249af35494e3d69e33b64a314",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -457,6 +457,54 @@
             "description": "A simple Json-RPC client/server library that just works",
             "homepage": "https://github.com/fguillot/JsonRPC",
             "time": "2014-11-22 20:32:14"
+        },
+        {
+            "name": "fzaninotto/faker",
+            "version": "v1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fzaninotto/Faker.git",
+                "reference": "44f9a286a04b80c76a4e5fb7aad8bb539b920123"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/44f9a286a04b80c76a4e5fb7aad8bb539b920123",
+                "reference": "44f9a286a04b80c76a4e5fb7aad8bb539b920123",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.3|^7.0"
+            },
+            "require-dev": {
+                "ext-intl": "*",
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": []
+            },
+            "autoload": {
+                "psr-4": {
+                    "Faker\\": "src/Faker/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Zaninotto"
+                }
+            ],
+            "description": "Faker is a PHP library that generates fake data for you.",
+            "keywords": [
+                "data",
+                "faker",
+                "fixtures"
+            ],
+            "time": "2016-04-29 12:21:54"
         },
         {
             "name": "google/apiclient",
@@ -964,24 +1012,26 @@
                     "email": "taylorotwell@gmail.com"
                 }
             ],
+            "abandoned": "laravelcollective/html",
             "time": "2015-01-01 16:31:18"
         },
         {
             "name": "imdbphp/imdbphp",
-            "version": "v3.3.0",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tboothman/imdbphp.git",
-                "reference": "fbdded6feff49671d6c97c729c76e38a20ed1c1c"
+                "reference": "c90e0d17be73cf8274de2bd9c3ebed7d2def7f3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tboothman/imdbphp/zipball/fbdded6feff49671d6c97c729c76e38a20ed1c1c",
-                "reference": "fbdded6feff49671d6c97c729c76e38a20ed1c1c",
+                "url": "https://api.github.com/repos/tboothman/imdbphp/zipball/c90e0d17be73cf8274de2bd9c3ebed7d2def7f3a",
+                "reference": "c90e0d17be73cf8274de2bd9c3ebed7d2def7f3a",
                 "shasum": ""
             },
             "require": {
-                "php": ">5.3"
+                "php": ">5.3",
+                "psr/log": "~1.0"
             },
             "require-dev": {
                 "mockery/mockery": "~0.9",
@@ -990,7 +1040,11 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "": "src/"
+                    "BrowserEmulator": "src/"
+                },
+                "psr-4": {
+                    "Imdb\\": "src/Imdb",
+                    "MoviePosterDb\\": "src/MoviePosterDb"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -998,7 +1052,7 @@
                 "GPL-2.0"
             ],
             "description": "Library for retrieving film and tv information from IMDb",
-            "time": "2016-04-17 13:42:04"
+            "time": "2016-09-14 19:29:14"
         },
         {
             "name": "intervention/image",
@@ -3405,6 +3459,48 @@
                 "xml"
             ],
             "time": "2015-02-26 17:08:05"
+        },
+        {
+            "name": "vinelab/rss",
+            "version": "v1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Vinelab/RSS.git",
+                "reference": "87ce95ce0e73b3d4d57e0b7870b5d68defb29dbc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Vinelab/RSS/zipball/87ce95ce0e73b3d4d57e0b7870b5d68defb29dbc",
+                "reference": "87ce95ce0e73b3d4d57e0b7870b5d68defb29dbc",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "5.*",
+                "php": ">=5.4.0",
+                "vinelab/http": "*"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Vinelab\\Rss": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Abed Halawi",
+                    "email": "abed.halawi@vinelab.com"
+                }
+            ],
+            "description": "An elegant RSS 2.0 parser.",
+            "time": "2015-10-14 09:26:25"
         },
         {
             "name": "vlucas/phpdotenv",

@@ -17,17 +17,19 @@
 		"omnipay/paypal": "~2.4",
 		"paypal/rest-api-sdk-php": "~1.7",
 		"intervention/image": "~2.2",
-		"imdbphp/imdbphp": "~3.1",
+		"imdbphp/imdbphp": "~4.1",
 		"exeu/apai-io": "^1.8",
 		"google/apiclient": "^1.1",
 		"openpsa/universalfeedcreator": "^1.8",
-		"barryvdh/laravel-ide-helper": "^2.1"
+		"barryvdh/laravel-ide-helper": "^2.1",
+		"vinelab/rss": "^1.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "~4.0",
 		"phpspec/phpspec": "~2.1",
 		"symfony/dom-crawler": "~3.0",
-		"symfony/css-selector": "~3.0"
+		"symfony/css-selector": "~3.0",
+		"fzaninotto/faker": "^1.6"
 	},
 	"autoload": {
 		"classmap": [

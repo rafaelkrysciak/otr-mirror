@@ -10,11 +10,20 @@ use Imdb\Config;
 class Imdb extends \Imdb\Title {
 
     /**
+     * @param string $imdbId
      * @param Config $config
      */
-    public function __construct(Config $config)
+    public function __construct($imdbId, Config $config)
     {
-        parent::__construct('0', $config);
+        parent::__construct($imdbId, $config);
+    }
+
+    public static function factory($imdbId)
+    {
+        $imdbConfig = new \Imdb\Config(base_path().'/config/imdb.ini');
+        $imdbConfig->cachedir = storage_path().'/imdb_cache/';
+        $imdbConfig->photodir = public_path().'/imdb/';
+        return new Imdb($imdbId, $imdbConfig);
     }
 
     /**

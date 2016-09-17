@@ -48,9 +48,11 @@ $app->singleton(
 
 $app->configureMonologUsing(function($monolog)
 {
-	$logglyHandler = new LogglyHandler(config('services.loggly.key'), Logger::INFO);
-	$logglyHandler->setTag(config('services.loggly.tag'));
-	$monolog->pushHandler($logglyHandler);
+	if(config('services.loggly.key')) {
+		$logglyHandler = new LogglyHandler(config('services.loggly.key'), Logger::INFO);
+		$logglyHandler->setTag(config('services.loggly.tag'));
+		$monolog->pushHandler($logglyHandler);
+	}
 
 	$localHanddler = new RotatingFileHandler(storage_path('logs/hqm.log'), config('app.log_max_files', 5), Logger::DEBUG);
 	$localHanddler->setFormatter(new LineFormatter(null, null, true, true));

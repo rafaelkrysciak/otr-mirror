@@ -136,7 +136,6 @@ return [
 		'Illuminate\Translation\TranslationServiceProvider',
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
-		'Illuminate\Html\HtmlServiceProvider',
 		'Illuminate\Broadcasting\BroadcastServiceProvider',
 
 		/*
@@ -160,6 +159,8 @@ return [
 		'Intervention\Image\ImageServiceProvider',
 
 		'Ignited\LaravelOmnipay\LaravelOmnipayServiceProvider',
+
+		Collective\Html\HtmlServiceProvider::class,
 	],
 
 	/*
@@ -207,8 +208,8 @@ return [
 		'URL'       => 'Illuminate\Support\Facades\URL',
 		'Validator' => 'Illuminate\Support\Facades\Validator',
 		'View'      => 'Illuminate\Support\Facades\View',
-		'Form'      => 'Illuminate\Html\FormFacade',
-		'Html'      => 'Illuminate\Html\HtmlFacade',
+		'Form' => Collective\Html\FormFacade::class,
+		'Html' => Collective\Html\HtmlFacade::class,
 		'Flash'     => 'Laracasts\Flash\Flash',
 		'AWS'       => 'Aws\Laravel\AwsFacade',
 		'Omnipay'   => 'Ignited\LaravelOmnipay\Facades\OmnipayFacade',

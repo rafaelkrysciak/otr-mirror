@@ -128,7 +128,7 @@
     <div class="form-group">
         <div class="checkbox">
             <label for="tvseries">
-                {!! Form::checkbox('tvseries', '1', false, ['id' => 'tvseries']) !!} TV Series
+                {!! Form::checkbox('tvseries', 1, null, ['id' => 'tvseries']) !!} TV Series
             </label>
         </div>
     </div>

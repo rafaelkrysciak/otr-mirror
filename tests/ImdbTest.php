@@ -22,10 +22,11 @@ class ImdbTest extends TestCase
             ->type('tt0075314', 'imdb_id')
             ->press('Create')
             ->see('Taxi Driver')
+            ->see('name="country" type="text" value="USA"')
             ->see('Robert De Niro')
             ->see('Travis Bickle')
             ->see('option value="16" selected')
-            ->see('1976')
+            ->see('name="year" type="text" value="1976"')
             ->see('<input id="tvseries" name="tvseries" type="checkbox" value="1">');
     }
 
@@ -48,10 +49,47 @@ class ImdbTest extends TestCase
     }
 
 
-    public function testNoAccess()
+    public function testSeriesFromEpisode()
     {
         $imdbService = new \App\Services\ImdbService();
+
         $id = $imdbService->getSeriesIdIfEpisode('5973910');
         $this->assertEquals('0898266', $id);
+
+        $id = $imdbService->getSeriesIdIfEpisode('5521890');
+        $this->assertEquals('0413573', $id);
+
+        $id = $imdbService->getSeriesIdIfEpisode('5257552');
+        $this->assertEquals('2741602', $id);
+
     }
+
+
+    public function testGoogleSearchSeries()
+    {
+        $imdbService = new \App\Services\ImdbService();
+        $episode = $imdbService->searchWithGoogle('The Big Bang Theory The Conjugal Conjecture');
+        $this->assertEquals('3603372', $episode);
+        $series = $imdbService->getSeriesIdIfEpisode($episode);
+        $this->assertEquals('0898266', $series);
+    }
+
+    public function testGoogleSearchSeriesFromEpisode()
+    {
+        $imdbService = new \App\Services\ImdbService();
+        $episode = $imdbService->searchWithGoogle('Empire: Light in Darkness');
+        $this->assertEquals('5506788', $episode);
+        $series = $imdbService->getSeriesIdIfEpisode($episode);
+        $this->assertEquals('3228904', $series);
+    }
+
+    public function testIsNotSerial()
+    {
+        $imdb = \App\Imdb\Imdb::factory('0348656');
+        $this->assertFalse($imdb->is_serial());
+
+        $imdb = \App\Imdb\Imdb::factory('0216817');
+        $this->assertFalse($imdb->is_serial());
+    }
+
 }

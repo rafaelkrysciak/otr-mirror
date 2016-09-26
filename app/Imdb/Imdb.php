@@ -18,6 +18,12 @@ class Imdb extends \Imdb\Title {
         parent::__construct($imdbId, $config);
     }
 
+
+	/**
+     * @param $imdbId
+     *
+     * @return Imdb
+     */
     public static function factory($imdbId)
     {
         $imdbConfig = new \Imdb\Config(base_path().'/config/imdb.ini');
@@ -120,22 +126,34 @@ class Imdb extends \Imdb\Title {
         ];
     }
 
+
+	/**
+     * @return string
+     */
     public function mainGenre()
     {
         return parent::genre();
     }
 
+
+	/**
+     * @return string
+     */
     public function genre()
     {
         $genres = (array) $this->genres();
         return implode($genres, ',');
     }
 
+
+	/**
+     *
+     */
     protected function rate_vote()
     {
         parent::rate_vote();
         if (preg_match('!<span[^>]*itemprop="ratingCount">([\d\.,]+)</span!i',$this->page["Title"],$match)){
-            $votes = str_replace(array('.', ','), '', $match[1]);
+            $votes = str_replace(['.', ','], '', $match[1]);
             $this->main_votes = (int)$votes;
         }else{
             $this->main_votes = 0;
@@ -143,6 +161,9 @@ class Imdb extends \Imdb\Title {
     }
 
 
+	/**
+     * @return array
+     */
     public function cast()
     {
         return parent::cast($clean = true);

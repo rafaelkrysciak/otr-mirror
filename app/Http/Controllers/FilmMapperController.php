@@ -210,6 +210,7 @@ class FilmMapperController extends Controller
      * @param  int $id
      * @param Request $request
      * @param FilmMapperService $filmMapperService
+     * @param ImdbService $imdbService
      *
      * @return Response
      */

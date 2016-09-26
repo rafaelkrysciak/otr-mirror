@@ -55,6 +55,10 @@ class FilmMapperService
             $query->where('director', '=', $filmMapper->director);
         }
 
+        if (!empty($filmMapper->channel)) {
+            $query->where('station', '=', $filmMapper->channel);
+        }
+
         if ($filmMapper->verified) {
             $query->update([
                 'title'            => $filmMapper->new_title,

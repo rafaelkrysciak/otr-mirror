@@ -70,13 +70,14 @@ class NodeService
 	 * @param $function
 	 * @param array $params
 	 * @param null $message
+	 * @param int $timeout
 	 *
 	 * @return mixed
 	 * @throws \Exception
 	 */
-	protected function execOrFail(Node $node, $function, $params = [], $message = null)
+	protected function execOrFail(Node $node, $function, $params = [], $message = null, $timeout = 30)
 	{
-		$result = $this->exec($node, $function, $params);
+		$result = $this->exec($node, $function, $params, $message, $timeout);
 		if (!is_array($result)) {
 			throw new \Exception($node->short_name . ': ' . $message);
 		}
@@ -98,11 +99,11 @@ class NodeService
 	 *
 	 * @return mixed
 	 */
-	protected function exec(Node $node, $function, $params = [], $message = null)
+	protected function exec(Node $node, $function, $params = [], $message = null, $timeout = 30)
 	{
 		$client = new Client($node->url);
 		$client->getHttpClient()->withHeaders(['X-Auth: ' . $node->key]);
-		$client->getHttpClient()->withTimeout(30);
+		$client->getHttpClient()->withTimeout($timeout);
 
 		return $client->execute($function, $params);
 	}
@@ -413,13 +414,14 @@ class NodeService
 
 	/**
 	 * @param Node $node
-	 * @param $url
+	 * @param string $url
+	 * @param int $timeout
 	 *
 	 * @return mixed
 	 * @throws \Exception
 	 */
-	public function fetchFile(Node $node, $url)
+	public function fetchFile(Node $node, $url, $timeout = 30)
 	{
-		return $this->execOrFail($node, 'addFile', [$url], "Download failed");
+		return $this->execOrFail($node, 'addFile', [$url], "Download failed", $timeout);
 	}
 }

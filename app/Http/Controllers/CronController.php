@@ -26,6 +26,7 @@ use App\TvProgramsView;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use \Log;
+use Vinelab\Rss\Rss;
 
 class CronController extends Controller
 {
@@ -77,26 +78,38 @@ class CronController extends Controller
     public function nodeStartDownloads(DistroService $distroService, NodeService $nodeService)
     {
         $nodes = Node::all()->getIterator();
+        Log::info(__METHOD__." selected nodes");
 
         $files = OtrkeyFile::with('distros')
             ->forDownload()
             ->orderBy('start')
-            ->limit($nodes->count() * 5)
+            ->limit($nodes->count() * 4)
             ->get();
+        Log::info(__METHOD__." selected files");
 
         foreach ($files as $file) {
+            Log::info(__METHOD__." Start processing file {$file->name}");
+
             $node = next($nodes) ?: reset($nodes);
+            Log::info(__METHOD__." Node Selected: {$node->short_name}");
 
             $file->nodes()->detach($node);
+            Log::info(__METHOD__." Detach file from node: {$node->short_name} {$file->name}");
+
             $file->nodes()->attach($node, ['status' => Node::STATUS_REQUESTED]);
+            Log::info(__METHOD__." Attach file to node: {$node->short_name} {$file->name}");
 
-            $url = $distroService->generateDownloadLink($file->distros->first(), $file->name);
+            foreach($file->distros as $distro) {
+                $url = $distroService->generateDownloadLink($distro, $file->name);
+                Log::info(__METHOD__." generateDownloadLink: $url");
 
-            try {
-                $nodeService->fetchFile($node, $url);
-                Log::info("Download request to {$node->short_name} - download $url");
-            } catch (\Exception $e) {
-                Log::error($e);
+                try {
+                    $nodeService->fetchFile($node, $url, 10);
+                    Log::info(__METHOD__." Download request to {$node->short_name} - download $url");
+                    break;
+                } catch (\Exception $e) {
+                    Log::error($e);
+                }
             }
         }
 
@@ -429,6 +442,21 @@ class CronController extends Controller
 
         $sitemap->store('xml', 'sitemap');
 
+        return ['status' => 'OK'];
+    }
+
+
+    public function readHighlights(Rss $rss)
+    {
+        $feed = $rss->feed('http://www.onlinetvrecorder.com/rss/highlights_future.php');
+        foreach ($feed->articles() as $article) {
+            try {
+                TvProgram::where('otr_epg_id','=',$article->epg_id)
+                    ->update(['highlight' => true]);
+            } catch(\Exception $e) {
+                \Log::error($e);
+            }
+        }
         return ['status' => 'OK'];
     }
 

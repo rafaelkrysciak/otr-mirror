@@ -81,7 +81,7 @@
 	</nav>
 @endif
 	<div class="container">
-		@if(!Session::has('news_seen'))
+		@if(!Session::has('news_seen') && false)
 		<div class="alert alert-info" role="alert">
 			<strong>Achtung!</strong> Ab 9. Juli werden keine spanischen Sendungen mehr bereit gestellt. <a href="{{url('/news')}}">Mehr erfahren</a>
 		</div>

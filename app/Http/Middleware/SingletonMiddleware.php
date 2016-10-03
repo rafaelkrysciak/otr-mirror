@@ -19,8 +19,8 @@ class SingletonMiddleware {
 		$this->file = storage_path().'/app/singleton_'.str_replace('/','_',$request->decodedPath());
 
 		if(file_exists($this->file)) {
-			if(filectime($this->file) > (time()-(60*30))) {
-				return response('Locked', 423);
+			if(filectime($this->file) > (time()-(60*10))) {
+				return response('Locked since '.date('Y-m-d H:i:s', filectime($this->file)), 423);
 			}
 		}
 

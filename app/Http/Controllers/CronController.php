@@ -99,7 +99,9 @@ class CronController extends Controller
             $file->nodes()->attach($node, ['status' => Node::STATUS_REQUESTED]);
             Log::info(__METHOD__." Attach file to node: {$node->short_name} {$file->name}");
 
-            foreach($file->distros as $distro) {
+            $distros = $file->distros->shuffle();
+
+            foreach($distros as $distro) {
                 $url = $distroService->generateDownloadLink($distro, $file->name);
                 Log::info(__METHOD__." generateDownloadLink: $url");
 
@@ -108,7 +110,7 @@ class CronController extends Controller
                     Log::info(__METHOD__." Download request to {$node->short_name} - download $url");
                     break;
                 } catch (\Exception $e) {
-                    Log::error($e);
+                    Log::error(__METHOD__.' '.$e->getMessage());
                 }
             }
         }
@@ -128,33 +130,44 @@ class CronController extends Controller
     {
 		set_time_limit(2400);
 		
-        //$nodes = Node::get();
+        $nodes = Node::get();
 		// @ToDo: Workaround becaouse 500 Internal Server Error
-		$nodeIds = [1,2,3,4];
-		$key = array_rand($nodeIds);
-		$node = Node::find($nodeIds[$key]);
-		$nodes = [$node];
+        //$node = Node::get()->random();
+		//$nodes = [$node];
+
+        $startTotal = microtime(true);
 
         $count = 0;
         foreach ($nodes as $node) {
             try {
+                $start = microtime(true);
                 $count += $nodeService->refreshDatabase($node);
+                Log::info(__METHOD__.' '.$node->short_name.' refreshDatabase done '.(microtime(true) - $start).'ms');
             } catch (\Exception $e) {
                 Log::error($e);
             }
         }
         try {
+            $start = microtime(true);
             $otrkeyFileService->matchTvPrograms();
+            Log::info(__METHOD__.' matchTvPrograms done '.(microtime(true) - $start).'ms');
         } catch (\Exception $e) {
             Log::error($e);
         }
 
         try {
+            $start = microtime(true);
             $tvProgramService->createView();
+            Log::info(__METHOD__.' createView done '.(microtime(true) - $start).'ms');
+
+            $start = microtime(true);
             $tvProgramService->createFilmView();
+            Log::info(__METHOD__.' createFilmView done '.(microtime(true) - $start).'ms');
         } catch (\Exception $e) {
             Log::error($e);
         }
+
+        Log::info(__METHOD__.' done total '.(microtime(true) - $startTotal).'ms');
 
         return ['status' => 'OK', 'node' => $node->short_name];
     }

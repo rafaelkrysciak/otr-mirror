@@ -89,7 +89,7 @@ class StatService
                     ->from('node_otrkeyfile')
                     ->where('status', '=', Node::STATUS_DOWNLOADED);
             })
-            ->where('start', '<', Carbon::now()->subMonths(1))
+            ->where('start', '<', Carbon::now()->subDays(18))
             ->groupBy('otrkey_files.id')
             ->orderByRaw('SUM(downloads) + SUM(aws_downloads), otrkey_files.start')
             ->limit($limit)

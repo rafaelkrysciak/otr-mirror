@@ -60,6 +60,7 @@ Route::get('cron/clean-database', 'CronController@cleanDatabase');
 Route::get('cron/refresh-imdb-data', 'CronController@refreshImdbData');
 Route::get('cron/find-mapper-rules', 'CronController@findMapperRules');
 Route::get('cron/generate-sitemap', 'CronController@generateSitemap');
+Route::get('cron/read-highlights', 'CronController@readHighlights');
 
 Route::get('file/plain-list', 'OtrkeyFileController@plainList');
 

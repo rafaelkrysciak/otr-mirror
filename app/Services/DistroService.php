@@ -76,7 +76,7 @@ class DistroService {
         foreach($rows as $row) {
             $fileData = str_getcsv(trim($row), ';');
             if(count($fileData) != 4) {
-                Log::debug('Distro data error: '.implode(',', $fileData));
+                Log::debug($distro->host.': Distro data error: '.implode(',', $fileData));
                 continue;
             }
             $count++;
@@ -89,7 +89,7 @@ class DistroService {
                 $otrkeyFile = OtrkeyFile::updateOrCreate(['name' => $fileData['name']], $fileData);
                 $otrkeyFileIds[] = $otrkeyFile->id;
             } catch(QueryException $e) {
-                Log::info($e);
+                Log::info($distro->host.': '.$e->getMessage());
             }
         }
         $distro->otrkeyFiles()->sync($otrkeyFileIds);

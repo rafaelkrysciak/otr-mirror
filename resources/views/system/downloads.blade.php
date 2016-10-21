@@ -1,12 +1,56 @@
 @extends('app')
 
 @section('content')
+    <table class="table table-condensed">
+        <tr>
+            <th>Node</th>
+            <th>Count</th>
+            <th>Active</th>
+            <th>Zombi</th>
+            <th>Broken</th>
+            <th>Success</th>
+            <th>Internal</th>
+        </tr>
+        @foreach($nodeStats as $nodeName => $nodeStat)
+            <tr>
+                <th>{{$nodeName}}</th>
+                <td>{{$nodeStat['count']}}</td>
+                <td>{{$nodeStat['active']}}</td>
+                <td>{{$nodeStat['zombi']}}</td>
+                <td>{{$nodeStat['broken']}}</td>
+                <td>{{$nodeStat['success']}}</td>
+                <td>{{$nodeStat['internal']}}</td>
+            </tr>
+        @endforeach
+    </table>
+    <br>
+    <table class="table table-condensed">
+        <tr>
+            <th>Distro</th>
+            <th class="text-center">Count</th>
+            <th class="text-center">Active</th>
+            <th class="text-center">Zombi</th>
+            <th class="text-center">Broken</th>
+            <th class="text-center">Success</th>
+            <th class="text-center">Rate</th>
+        </tr>
+        @foreach($distroStats as $distroName => $distroStat)
+            <tr>
+                <th class="">{{$distroName}}</th>
+                <td class="active text-right">{{$distroStat['count']}}</td>
+                <td class="info text-right">{{$distroStat['active']}}</td>
+                <td class="danger text-right">{{$distroStat['zombi']}}</td>
+                <td class="danger text-right">{{$distroStat['broken']}}</td>
+                <td class="success text-right">{{$distroStat['success']}}</td>
+                <td class="text-right">{{ round(($distroStat['success']+$distroStat['active'])/$distroStat['count']*100,0) }}%</td>
+            </tr>
+        @endforeach
+    </table>
+    <br>
     <table class="table">
         <tr>
             <th>Node</th>
             <th>Filename</th>
-            <th>Size</th>
-            <th>Downloaded</th>
             <th>Start/Finish</th>
             <th>Duration</th>
             <th>Canceld</th>
@@ -17,26 +61,19 @@
                 {{ $download['node']->short_name }}
             </td>
             <td>
-                {{ $download['filename'] }}<br>
-                <small>{{ $download['url'] }}</small>
+                {{ $download['url'] }}
             </td>
             <td>
-                @byteToSize($download['size'])
-            </td>
-            <td title="@byteToSize($download['downloaded'])">
-                {{$download['progress'] }}%
-            </td>
-            <td>
-                {{ $download['starttime']->format('Y-m-d H:i') }}<br>
+
+                {{ $download['starttime']->isToday() ? $download['starttime']->format('H:i') : $download['starttime']->format('Y-m-d H:i') }}<br>
                 @if($download['endtime'])
-                    {{ $download['endtime']->format('Y-m-d H:i') }}
+                    {{ $download['endtime']->isToday() ? $download['endtime']->format('H:i') : $download['endtime']->format('Y-m-d H:i') }}
                 @else
                     -
                 @endif
             </td>
             <td>
-                {{ $download['duration'] }}<br/>
-                <small>Last update: {{ $download['lastupdate']->format('Y-m-d H:i') }}</small>
+                {{ $download['duration'] }}
             </td>
             <td>
                 @if($download['break'] == '1')

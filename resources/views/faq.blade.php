@@ -40,6 +40,15 @@
 
     <br>
 
+    <h3>Wenn ich HQ-Mirror Premium kaufe, habe ich dann auch Premium bei OTR?</h3>
+
+    <p>
+        Nein! Das HQ-Mirror Premium ist auch nur bei HQ-Mirror gültig. Der Premium-Status
+        bei OTR ist davon unabhängig und muss ggf. separat bezahlt werden.
+    </p>
+
+    <br>
+
     <h3>Ist OnlineTvRecorder / HQ-Mirror legal?</h3>
 
     <p>
@@ -69,6 +78,11 @@
             <td>AC3</td>
             <td>mpg.HD.ac3</td>
             <td>Hierbei handelt es sich "nur" um die Tonspur der (HD-)Aufnahme</td>
+        </tr>
+        <tr>
+            <td>FRA</td>
+            <td>mpg.HQ.fra.mp3</td>
+            <td>Hierbei handelt es sich um die französische Tonspur der (HQ-)Aufnahme</td>
         </tr>
         <tr>
             <td>HQ</td>

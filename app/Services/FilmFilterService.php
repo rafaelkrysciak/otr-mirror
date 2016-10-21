@@ -106,6 +106,7 @@ class FilmFilterService
         'all'        => 'Alle',
         'mpg.HD.avi' => 'HD',
         'mpg.HD.ac3' => 'AC3',
+        'mpg.HQ.fra' => 'FRA mp3',
         'mpg.HQ.avi' => 'HQ',
         'mpg.avi'    => 'SD',
         'mpg.mp4'    => 'mp4',

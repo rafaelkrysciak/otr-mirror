@@ -88,7 +88,7 @@
 
                     <br><br>
                     @if($tvProgram->film && $tvProgram->film->amazon_link)
-                        <a id="amazon-link" href="{{$tvProgram->film->amazon_link}}" target="_blank"
+                        <a id="amazon-link" href="{{urldecode($tvProgram->film->amazon_link)}}" target="_blank"
                            class="btn btn-warning">
                             <i class="zocial amazon"></i> DVD/BluRay kaufen
                         </a>
@@ -131,46 +131,7 @@
                     <strong>Zu dieser Sendung sind zur Zeit keine Dateien vorhanden</strong>
                 </div>
             @else
-                <table class="table table-files">
-                    <tr>
-                        <th>Dateiname</th>
-                        <th>Größe</th>
-                        <th>Qualität</th>
-                        <th></th>
-                    </tr>
-                    @foreach($tvProgram->otrkeyFiles as $file)
-                        @if($file->isAvailable())
-                            <tr>
-                                <td class="vert-align">
-                                    <table class="fixed-table">
-                                        <tr>
-                                            <td>{{$file->name}}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td class="vert-align nowrap">@byteToSize($file->size)</td>
-                                <td class="vert-align nowrap">
-                                    @if($file->quality == 'mpg.avi')
-                                        <i class="glyphicon glyphicon-sd-video"></i> <strong>SD</strong>
-                                    @elseif($file->quality == 'mpg.HQ.avi')
-                                        <i class="glyphicon glyphicon-sd-video"></i> <strong>HQ</strong>
-                                    @elseif($file->quality == 'mpg.HD.avi')
-                                        <i class="glyphicon glyphicon-hd-video"></i> <strong>HD</strong>
-                                    @elseif($file->quality == 'mpg.mp4')
-                                        <i class="glyphicon glyphicon-phone"></i> <strong>mp4</strong>
-                                    @elseif($file->quality == 'mpg.HD.ac3')
-                                        <i class="glyphicon glyphicon-sound-dolby"></i> <strong>AC3</strong>
-                                    @endif
-                                </td>
-                                <td class="vert-align nowrap">
-                                    <a href="{{url('download', ['user' => Auth::user() ? Auth::user()->id:'guest', 'token' => $token[$file->id], 'filename' => $file->name])}}" class="btn btn-primary download">
-                                        <i class="glyphicon glyphicon-download-alt"></i> Download
-                                    </a>
-                                </td>
-                            </tr>
-                        @endif
-                    @endforeach
-                </table>
+                @include('tvprogram.download', ['otrkeyFiles' => $tvProgram->otrkeyFiles, 'token' => $token])
             @endif
             <div class="row nocontent">
                 @if(count($episodes) > 0)
@@ -277,7 +238,18 @@
                 padding     : 0
             });
         });
+
+        // jDownload
+        $('.jdownload-link').click(function(e) {
+            var url = $(this).data('url');
+            $('#jdownload-urls').val(url);
+            $('#jdownload-form').submit();
+            return false;
+        });
+
+        var jdownloader=false;
     </script>
+    <script language="javascript" src="http://127.0.0.1:9666/jdcheck.js"></script>
     <script id="dsq-count-scr" src="//hqmirror.disqus.com/count.js" async></script>
 @stop
 

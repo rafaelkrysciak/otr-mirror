@@ -53,6 +53,8 @@
                                         <i class="glyphicon glyphicon-sd-video"></i> <strong>SD</strong>
                                     @elseif($file->quality == 'mpg.HQ.avi')
                                         <i class="glyphicon glyphicon-sd-video"></i> <strong>HQ</strong>
+                                    @elseif($file->quality == 'mpg.HQ.fra')
+                                        <i class="glyphicon glyphicon-music"></i> <strong>HQ mp3</strong>
                                     @elseif($file->quality == 'mpg.HD.avi')
                                         <i class="glyphicon glyphicon-hd-video"></i> <strong>HD</strong>
                                     @elseif($file->quality == 'mpg.mp4')

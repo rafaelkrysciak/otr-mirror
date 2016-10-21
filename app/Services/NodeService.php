@@ -170,6 +170,11 @@ class NodeService
 	}
 
 
+	public function listFiles(Node $node)
+	{
+		return $this->execOrFail($node, 'listFiles', [], "Can't get file list from node");
+	}
+
 	/**
 	 * Read files from node an update database status
 	 *
@@ -190,7 +195,9 @@ class NodeService
 				$file = OtrkeyFile::where('name', $data['filename'])->first();
 
 				if (is_null($file)) {
+					Log::info(__METHOD__.' File:'.$data['filename'].' not found.');
 					$file = $this->otrkeyFileService->createByFilename($data['filename']);
+					Log::info(__METHOD__.' File:'.$data['filename'].' record created (id:'.$file->id.')');
 				}
 
 				$file->size = $data['size'];
@@ -324,11 +331,11 @@ class NodeService
 
 		foreach ($files as $file) {
 			try {
-				$url = $this->generateDownloadLink($file->availableFiles->first(), $file->name, DownloadService::PREMIUM);
+				$url = $this->generateDownloadLink($file->availableFiles->random(), $file->name, DownloadService::PREMIUM);
 				$missingNodes = $nodes->diff($file->nodes);
 				foreach ($missingNodes as $node) {
 					if (!config('app.debug')) {
-						$this->fetchFile($node, $url);
+						$this->fetchFile($node, $url, 2);
 					}
 					Log::debug("[rebalance] Download to {$node->short_name} : {$url}");
 				}
@@ -341,7 +348,7 @@ class NodeService
 		// usually a new node without much files
 		// this prevent to have much files from the same period on one node
 		$node = $nodes->sortByDesc('free_disk_space')->first();
-		if ($node->free_disk_space > 150 * pow(1024, 3)) {
+		if ($node->free_disk_space > 100 * pow(1024, 3) && $this->getAverageFreeDiskSpace() < 100 * pow(1024, 3)) {
 			$files = TvProgramsView::with('node')
 				->where('start', '<', Carbon::now()->subDays(config('keep_files_on_all_nodes_days', 4)))
 				->where('node_id', '!=', $node->id)
@@ -349,16 +356,20 @@ class NodeService
 				->limit(50)
 				->get();
 			foreach ($files as $file) {
-				$url = $this->generateDownloadLink($file->node, $file->name, DownloadService::PREMIUM);
-				if (!config('app.debug')) {
-					$this->fetchFile($node, $url);
+				try {
+					$url = $this->generateDownloadLink($file->node, $file->name, DownloadService::PREMIUM);
+					if (!config('app.debug')) {
+						$this->fetchFile($node, $url, 2);
+					}
+					Log::debug("[rebalance] Filling free node {$node->short_name} : {$url}");
+				} catch(\Exception $e) {
+					Log::error($e);
 				}
-				Log::debug("[rebalance] Filling free node {$node->short_name} : {$url}");
 			}
 		}
 
 		// delete files just in the night
-		if (date('G') >= 1 && date('G') <= 6) {
+		if (date('G') >= 23 && date('G') <= 5) {
 			$files = OtrkeyFile::rightJoin('node_otrkeyfile', 'id', '=', 'otrkeyfile_id')
 				->where('node_otrkeyfile.status', '=', Node::STATUS_DOWNLOADED)
 				->olderThen(Carbon::now()->subDays(config('keep_files_on_all_nodes_days', 4)))

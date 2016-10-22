@@ -89,7 +89,7 @@ class StatService
                     ->from('node_otrkeyfile')
                     ->where('status', '=', Node::STATUS_DOWNLOADED);
             })
-            ->where('start', '<', Carbon::now()->subDays(18))
+            ->where('start', '<', Carbon::now()->subDays(14))
             ->groupBy('otrkey_files.id')
             ->orderByRaw('SUM(downloads) + SUM(aws_downloads), otrkey_files.start')
             ->limit($limit)
@@ -119,6 +119,19 @@ class StatService
 
     }
 
+
+    public function getTvProgrammStats($tv_program_id)
+    {
+        $files = OtrkeyFile::where('tv_program_id','=',$tv_program_id)
+            ->orderBy('size', 'desc')->get();
+
+        $stats = [];
+        foreach($files as $file) {
+            $stats[$file->quality] = $file->statsDownloads->sum('downloads');
+        }
+
+        return $stats;
+    }
 
     /**
      * @param $tv_program_id

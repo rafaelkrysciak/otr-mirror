@@ -127,6 +127,11 @@ class OtrkeyFile extends Model {
             ->withTimestamps();
     }
 
+    public function statsDownloads()
+    {
+        return $this->hasMany('App\StatDownload', 'otrkey_file_id');
+    }
+
     public function isAvailable()
     {
         return $this->nodes()

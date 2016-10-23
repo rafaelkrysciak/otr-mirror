@@ -238,9 +238,11 @@ class TvProgramController extends Controller
 
         $statService->trackView($tvProgram->id);
 
-        $stats = [];
+        $stats = ['formats' => [], 'total' => 0, 'film' => 0];
         if(Auth::user() && Auth::user()->isAdmin()) {
-            $stats = $statService->getTvProgrammStats($id);
+            $stats['formats'] = $statService->getTvProgrammStats($id);
+            $stats['total'] = array_sum($stats['formats']);
+            $stats['film'] = $tvProgram->film_id > 0 ? $statService->getFilmStats($tvProgram->film_id):0;
         }
 
         if(Auth::user() && Auth::user()->isPremium() && $tvProgram->film && $tvProgram->film->id > 0) {

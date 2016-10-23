@@ -21,18 +21,19 @@
         @if($tvProgram->film_mapper_id)
                 data-src="{{action('FilmMapperController@edit', ['film_mapper' => $tvProgram->film_mapper_id])}}">
             @else
-                data-src="{{action('FilmMapperController@fromTvProgram', ['tv_program_id' => $tvProgram->id])}}">
+                data-src="{{action('FilmMapperController@create', ['tv_program_id' => $tvProgram->id])}}">
             @endif
             <i class="glyphicon glyphicon-link"></i> Mapper
         </button>
     </div>
-    <table class="table">
+    <br>
+    <table class="table table-condensed">
         <caption>Stats</caption>
         <tr>
             <th>Quality</th>
             <th>Downloads</th>
         </tr>
-        @foreach($stats as $quality => $downloads)
+        @foreach($stats['formats'] as $quality => $downloads)
             <tr>
                 <td>{{$quality}}</td>
                 <td>{{$downloads}}</td>
@@ -40,7 +41,11 @@
         @endforeach
         <tr>
             <th>Total</th>
-            <th>{{array_sum($stats)}}</th>
+            <th>{{$stats['total']}}</th>
+        </tr>
+        <tr>
+            <th>Film</th>
+            <th>{{$stats['film']}}</th>
         </tr>
     </table>
 @endif

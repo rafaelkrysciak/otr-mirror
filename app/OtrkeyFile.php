@@ -73,7 +73,7 @@ class OtrkeyFile extends Model {
     {
         $this->scopeAvailableInHq($query);
         $this->scopeAvailableOnDistro($query);
-        $this->scopeNotOlderThen($query, Carbon::now()->subWeeks(config('hqm.download_files_not_older_then_days', 7)));
+        $this->scopeNotOlderThen($query, Carbon::now()->subDays(config('hqm.download_files_not_older_then_days', 7)));
 
         // only files that were not downloaded yet
         // and they were requested more then 30 minutes ago

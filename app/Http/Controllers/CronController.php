@@ -81,9 +81,11 @@ class CronController extends Controller
         Log::info(__METHOD__." selected nodes");
 
         $files = OtrkeyFile::with('distros')
+            ->leftJoin('tv_programs', 'otrkey_files.tv_program_id', '=', 'tv_programs.id')
             ->forDownload()
-            ->orderBy('start')
-            ->limit($nodes->count() * 4)
+            ->orderBy('tv_programs.highlight', 'desc')
+            ->orderBy('start', 'desc')
+            ->limit($nodes->count() * 6)
             ->get();
         Log::info(__METHOD__." selected files");
 
@@ -106,7 +108,7 @@ class CronController extends Controller
                 Log::info(__METHOD__." generateDownloadLink: $url");
 
                 try {
-                    $nodeService->fetchFile($node, $url, 10);
+                    $nodeService->fetchFile($node, $url, 2);
                     Log::info(__METHOD__." Download request to {$node->short_name} - download $url");
                     break;
                 } catch (\Exception $e) {
@@ -182,8 +184,8 @@ class CronController extends Controller
     public function nodeDeleteOldFiles(StatService $statService, NodeService $nodeService)
     {
         if ($nodeService->getAverageFreeDiskSpace() > 30 * 1024 * 1024 * 1024) {
-            Log::notice('[nodeDeleteOldFiles] the avarage free disk space over 30GB. Delete aborted');
-            return ['status' => 'OK'];
+            Log::notice('[nodeDeleteOldFiles] the average free disk space over 30GB. Delete aborted');
+            return ['status' => 'OK', 'message' => 'The average free disk space over 30GB. Delete aborted.'];
         }
 
         $nodeService->deleteOldFiles($statService, 100);

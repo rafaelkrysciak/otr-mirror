@@ -20,9 +20,9 @@
     <table class="table">
         <tr>
             <th class="text-right">#</th>
-            <th>Listen</th>
+            <th class="hidden-xs">Listen</th>
             <th>Sender</th>
-            <th>Datum</th>
+            <th class="hidden-xs">Datum</th>
             <th>Titel</th>
             <th class="visible-md-block visible-lg-block">Beschreibung</th>
         </tr>

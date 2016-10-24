@@ -2,11 +2,11 @@
     <td class="nowrap text-right">
         <strong>{{$pos}}</strong> 
     </td>
-    <td class="nowrap">
+    <td class="nowrap hidden-xs">
         @include('tvprogram.lists_indicator', ['tv_program_id' => $item->tv_program_id, 'lists' => $lists])
     </td>
     <td class="nowrap"><span class="label label-default">{{$item->station}}</span></td>
-    <td class="nowrap">
+    <td class="nowrap hidden-xs">
         <i class="glyphicon glyphicon-calendar"></i> {{$item->start->format('Y-m-d')}}
         <i class="glyphicon glyphicon-time"></i> {{$item->start->format('H:i')}}
     </td>

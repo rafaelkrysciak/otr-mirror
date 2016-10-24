@@ -1,5 +1,5 @@
 @if(!(Auth::user() && Auth::user()->isPremium()))
-    <div class="text-center well">
+    <div class="text-center well adcontainer">
         <script type='text/javascript'><!--//<![CDATA[
         var m3_u = (location.protocol=='https:'?'https://r.hq-mirror.de/delivery/ajs.php':'http://r.hq-mirror.de/delivery/ajs.php');
         var m3_r = Math.floor(Math.random()*99999999999);

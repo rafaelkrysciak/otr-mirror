@@ -19,6 +19,9 @@
         <div id="views"></div>
     </div>
     <div class="row">
+        <div id="payments"></div>
+    </div>
+    <div class="row">
         <div id="stations"></div>
     </div>
     <div class="row">
@@ -66,6 +69,7 @@
             drawContentSizeByLanguage();
             drawContentSizeByQuality();
             drawViewsAndDownloads();
+            drawPayments();
             setTimeout("redrawCharts()", 60000);
         }
 
@@ -142,6 +146,31 @@
 
                 var chart = new google.visualization.LineChart(
                         document.getElementById('views'));
+
+                chart.draw(data, options);
+
+            });
+        }
+
+        function drawPayments() {
+
+            $.getJSON( "{{url('stats/payments')}}", function( payments ) {
+
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Month');
+                data.addColumn('number', 'Euro');
+                data.addColumn('number', 'Count');
+
+                data.addRows(payments);
+
+                var options = $.extend({}, chartGlobalOptions, {
+                    title: 'Payments',
+                    seriesType: 'bars',
+                    series: {1: {type: 'line'}}
+                });
+
+                var chart = new google.visualization.ComboChart(
+                        document.getElementById('payments'));
 
                 chart.draw(data, options);
 

@@ -4,6 +4,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Node;
+use App\PaypalTransaction;
 use App\Services\StatService;
 use App\Stat;
 use App\StatDownload;
@@ -33,6 +34,21 @@ class StatsController extends Controller
         return view('stats.index', compact('viewStatsData', 'downloadStatsData', 'topStatsions'));
     }
 
+
+    public function getPayments()
+    {
+        $data = PaypalTransaction::select(\DB::raw("date_format(ordertime, '%Y/%m') as month"), \DB::raw('SUM(amt) as amount'), \DB::raw('COUNT(*) as count'))
+            ->groupBy(\DB::raw("date_format(ordertime, '%Y%m')"))
+            ->orderBy(\DB::raw("date_format(ordertime, '%Y%m')"))
+            ->get();
+
+        $payments = [];
+        foreach($data as $payment) {
+            $payments[] = [$payment['month'], $payment['amount'], $payment['count']];
+        }
+
+        return $payments;
+    }
 
     public function getViewsAndDownloads(StatService $statService)
     {

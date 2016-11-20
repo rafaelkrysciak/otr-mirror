@@ -50,7 +50,15 @@ class HomeController extends Controller {
 
 	public function faq()
 	{
-		return view('faq');
+		$contact = ['name' => '', 'email' => ''];
+		if(\Auth::user()) {
+			$contact = [
+				'name' => \Auth::user()->name,
+				'email' => \Auth::user()->email
+			];
+		}
+
+		return view('faq', compact('contact'));
 	}
 
 

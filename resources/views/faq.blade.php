@@ -116,24 +116,12 @@
 
     <h3>Neue Frage Stellen</h3>
 
-    {!! Form::open(['method' => 'POST', 'url' => 'contact/send']) !!}
-    <!-- Boddy Form Input -->
-    <div class="form-group">
-        {!! Form::label('name', 'Name') !!}
-        {!! Form::text('name', null, ['class' => 'form-control']) !!}
-    </div>
-    <div class="form-group">
-        {!! Form::label('email', 'Email') !!}
-        {!! Form::email('email', null, ['class' => 'form-control']) !!}
-    </div>
-    <!-- Boddy Form Input -->
-    <div class="form-group">
-        {!! Form::label('message', 'Frage') !!}
-        {!! Form::textarea('message', null, ['class' => 'form-control']) !!}
-    </div>
+    @include('partials.contact_form', ['values' => $contact])
+@stop
 
-    {!! Form::submit('Senden', ['class' => 'btn btn-primary']) !!}
-
-    {!! Form::close() !!}
-
+@section('scripts')
+    @parent
+    @if(!Auth::user())
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+    @endif
 @stop

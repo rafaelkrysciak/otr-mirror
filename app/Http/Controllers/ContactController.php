@@ -5,13 +5,22 @@ use App\Http\Controllers\Controller;
 use \Input;
 use \Mail;
 use Illuminate\Http\Request;
+use ReCaptcha\ReCaptcha;
 
 
 class ContactController extends Controller {
 
 	public function form()
 	{
-		return view('contact_form');
+		$values = ['name' => '', 'email' => ''];
+		if(\Auth::user()) {
+			$values = [
+				'name' => \Auth::user()->name,
+				'email' => \Auth::user()->email
+			];
+		}
+
+		return view('contact_form', compact('values'));
 	}
 
 	public function send(Request $request)
@@ -24,6 +33,18 @@ class ContactController extends Controller {
 			'email' => 'Die Email-Adresse scheint ungültig zu sein.',
 			'min' => 'Die Nachricht sollte länger als :min Zeichen lang sein.'
 		]);
+
+		if(!\Auth::user()) {
+			$recaptcha = new ReCaptcha(config('hqm.recaptcha_secret'));
+			$resp = $recaptcha->verify(Input::get('g-recaptcha-response'), $request->getClientIp());
+			if (!$resp->isSuccess()) {
+				return redirect()
+					->back()
+					->withInput()
+					->withErrors(['Das Captcha war leider falsch. Bitte versuche noch mal']);
+			}
+		}
+
 
 		$name = Input::get('name', 'unknown');
 		$email = Input::get('email', 'unknown');

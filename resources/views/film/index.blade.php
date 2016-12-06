@@ -1,10 +1,10 @@
 @extends('app')
 
 @section('content')
-    <h1>Films</h1>
-    <ul class="nav nav-pills">
-        @include('film.intern_filters', ['query' => $query, 'filterService' => $filterService, 'action' => 'FilmController@index'])
-    </ul>
+    <div>
+        <h1>Films</h1>
+        @include('film.filters', ['filter' => $filter])
+    </div>
 
     <table class="table">
         <tr>
@@ -41,12 +41,14 @@
             </td>
             <td>
                 <a class="btn btn-default" href="{{'film/'.$film->id.'/edit'}}"><i class="glyphicon glyphicon-pencil"></i></a>
-                <a class="btn btn-default" href="{{url('film', ['film' => $film->id])}}" data-method="delete" data-confirm="Are you sure?"><i class="glyphicon glyphicon-trash"></i></a>
-                @if(array_key_exists('missing', $query) && in_array($query['missing'], ['trailer','dvdkritik']))
+                <a class="btn btn-default" href="{{url('film', ['film' => $film->id])}}" data-method="delete" data-confirm="Are you sure?" data-handler="form">
+                    <i class="glyphicon glyphicon-trash"></i>
+                </a>
+                @if(in_array($filter->getAttribute('missing')->getValue(), ['trailer','dvdkritik']))
                     <a href="https://www.youtube.com/results?search_query={!! urlencode($film->title.' trailer') !!}"
                        target="_blank" class="btn btn-default"><i class="zocial youtube"></i></a>
                 @endif
-                @if(array_key_exists('missing', $query) && in_array($query['missing'], ['amazon_asin','amazon_image','description']))
+                @if(in_array($filter->getAttribute('missing')->getValue(), ['amazon_asin','amazon_image','description']))
                     <a href="http://www.amazon.de/gp/search?ie=UTF8&camp=1638&creative=6742&index=dvd&linkCode=ur2&tag=hqmi-21&keywords={!! urlencode($film->title) !!}"
                        target="_blank" class="btn btn-default"><i class="zocial amazon"></i></a>
                 @endif
@@ -56,6 +58,6 @@
     </table>
 
     <div class="clearfix"> </div>
-    {!! $films->appends($query)->render() !!}
+    {!! $films->render() !!}
 
 @stop

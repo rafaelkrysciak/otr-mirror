@@ -80,13 +80,15 @@ class CronController extends Controller
         $nodes = Node::all()->getIterator();
         Log::info(__METHOD__." selected nodes");
 
-        $files = OtrkeyFile::with('distros')
+        $files = OtrkeyFile::select('otrkey_files.*')
+            ->with('distros')
             ->leftJoin('tv_programs', 'otrkey_files.tv_program_id', '=', 'tv_programs.id')
             ->forDownload()
             ->orderBy('tv_programs.highlight', 'desc')
-            ->orderBy('start', 'desc')
+            ->orderBy('otrkey_files.start', 'desc')
             ->limit($nodes->count() * 6)
             ->get();
+        
         Log::info(__METHOD__." selected files");
 
         foreach ($files as $file) {

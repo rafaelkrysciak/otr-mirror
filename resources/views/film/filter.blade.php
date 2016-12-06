@@ -1,16 +1,16 @@
 <li role="presentation" class="dropdown">
-    <a id="drop-{{$name}}" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
-        {{$title}}: {{$text}}
+    <a id="drop-{{$attribute->getName()}}" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
+        {{$attribute->getTitle()}}: {{$attribute->getText()}}
         <span class="caret"></span>
     </a>
-    <ul id="menu-{{$name}}" class="dropdown-menu" role="menu" aria-labelledby="drop-{{$name}}">
-        @foreach($filters as $filter)
+    <ul id="menu-{{$attribute->getName()}}" class="dropdown-menu" role="menu" aria-labelledby="drop-{{$attribute->getName()}}">
+        @foreach($attribute->getOptions() as $option)
             <li role="presentation">
-                <a role="menuitem" tabindex="-1" href="{{ action($action, array_merge($query, [$name=>$filter['key']])) }}">
-                    @if($filter['selected'])
-                        <b>{{$filter['text']}}</b>
+                <a role="menuitem" tabindex="-1" href="{{ action($action, $attribute->getOptionQueryStringArray($option['key'], $query)) }}">
+                    @if($option['selected'])
+                        <b>{{$option['text']}}</b>
                     @else
-                        {{$filter['text']}}
+                        {{$option['text']}}
                     @endif
                 </a>
             </li>

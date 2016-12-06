@@ -92,8 +92,13 @@
 		<hr>
 		@if(!Request::has('nomenu'))
 			<div class="row" id="final-footer">
-				<div class="col-sm-12 text-center">
-					Copyright &copy; 2015 HQ-Mirror. <a href="{{url('impressum')}}">Impressum</a>
+				<div class="col-sm-6 copyright">
+					Copyright &copy; 2012-{{date('Y')}} HQ-Mirror - <a href="{{url('impressum')}}">Impressum</a>
+				</div>
+				<div class="col-sm-6 text-right">
+					<a target="_blank" class="twitter btn btn-default" href="https://twitter.com/HQMirror"><span class="zocial twitter"></span></a>
+					<a target="_blank" class="facebook btn btn-default" href="https://www.facebook.com/hqmirror"><span class="zocial facebook"></span></a>
+					<a target="_blank" class="googleplus btn btn-default" href="https://plus.google.com/+HQ-MirrorDE"><span class="zocial googleplus"></span></a>
 				</div>
 			</div>
 			<br>

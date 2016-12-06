@@ -44,6 +44,9 @@
 					</form>
 				</div>
 			</div>
+			<div class="text-center">
+				<p>Noch kein Konto? Hier geht es zu <a href="{{url('/auth/register')}}" class="btn btn-sm btn-primary">Registrierung</a></p>
+			</div>
 		</div>
 	</div>
 </div>

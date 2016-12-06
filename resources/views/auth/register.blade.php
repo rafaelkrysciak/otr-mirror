@@ -48,6 +48,9 @@
 					</form>
 				</div>
 			</div>
+			<div class="text-center">
+				<p>Hast du bereits ein Konto? Hier geht es zum <a href="{{url('/auth/login')}}" class="btn btn-primary btn-sm">Login</a></p>
+			</div>
 		</div>
 	</div>
 </div>

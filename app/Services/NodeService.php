@@ -320,10 +320,12 @@ class NodeService
 		$files = OtrkeyFile::with('nodes')
 			->join('node_otrkeyfile', 'id', '=', 'otrkeyfile_id')
 			->join('stations', 'otrkey_files.station', '=', 'stations.otrkeyfile_name')
+			->join('tv_programs', 'otrkey_files.tv_program_id', '=', 'tv_programs.id')
 			->availableInHq()
-			->notOlderThen(Carbon::now()->subDays(config('keep_files_on_all_nodes_days', 4)))
+			->notOlderThen(Carbon::now()->subDays(config('hqm.keep_files_on_all_nodes_days', 4)))
 			->where('node_otrkeyfile.status', '=', Node::STATUS_DOWNLOADED)
 			->where('stations.language_short', '=', 'de')
+			->where('tv_programs.highlight', '=', '1')
 			->groupBy('otrkey_files.id')
 			->having(DB::raw('count(*)'), '<', $nodes->count())
 			->limit(50)
@@ -350,7 +352,7 @@ class NodeService
 		$node = $nodes->sortByDesc('free_disk_space')->first();
 		if ($node->free_disk_space > 100 * pow(1024, 3) && $this->getAverageFreeDiskSpace() < 100 * pow(1024, 3)) {
 			$files = TvProgramsView::with('node')
-				->where('start', '<', Carbon::now()->subDays(config('keep_files_on_all_nodes_days', 4)))
+				->where('start', '<', Carbon::now()->subDays(config('hqm.keep_files_on_all_nodes_days', 4)))
 				->where('node_id', '!=', $node->id)
 				->orderBy(DB::raw('rand()'))
 				->limit(50)
@@ -369,10 +371,13 @@ class NodeService
 		}
 
 		// delete files just in the night
-		if (date('G') >= 23 && date('G') <= 5) {
-			$files = OtrkeyFile::rightJoin('node_otrkeyfile', 'id', '=', 'otrkeyfile_id')
-				->where('node_otrkeyfile.status', '=', Node::STATUS_DOWNLOADED)
-				->olderThen(Carbon::now()->subDays(config('keep_files_on_all_nodes_days', 4)))
+		if (date('G') >= 23 || date('G') <= 5) {
+		//if (true) {
+			$files = OtrkeyFile::rightJoin('node_otrkeyfile', function($join) {
+					$join->on('id', '=', 'otrkeyfile_id');
+					$join->on('node_otrkeyfile.status', '=', DB::raw("'" . \App\Node::STATUS_DOWNLOADED . "'"));
+				})
+				->olderThen(Carbon::now()->subDays(config('hqm.keep_files_on_all_nodes_days', 4)))
 				->groupBy('otrkey_files.id')
 				->having(DB::raw('count(*)'), '>', 1)
 				->limit(100)
@@ -380,8 +385,16 @@ class NodeService
 
 			foreach ($files as $file) {
 				$toDelete = $file->nodes
-					->sortBy('free_disk_space')
-					->take($file->nodes->count() - 1);
+					->filter(function($value, $key) {
+						return $value->pivot->status == Node::STATUS_DOWNLOADED;
+					})
+					->sortBy('free_disk_space');
+
+				if($toDelete->count() == 1) {
+					continue;
+				}
+
+				$toDelete = $toDelete->take($toDelete->count() - 1);
 
 				try {
 					foreach ($toDelete as $node) {

@@ -42,6 +42,10 @@
                         <strong>Folge:</strong>
                         {{$tvProgram->episode}}<br>
                     @endif
+                    @if($tvProgram->film->fsk)
+                        <strong>FSK:</strong>
+                        {{$tvProgram->film->fsk}}<br>
+                    @endif
 
                     <strong>
                         <a href="http://www.imdb.com/title/tt{{$tvProgram->film->imdb_id}}" target="_blank">
@@ -53,9 +57,9 @@
                     <strong>Genre:</strong>
                     @foreach($tvProgram->film->genres() as $genre)
                         @if($tvProgram->film->tvseries)
-                            <a href="{{route('seriesview', ['genres[]' => strtolower($genre)])}}">{{$genre}}</a>,
+                            <a href="{{route('seriesview', ['genre' => strtolower($genre)])}}">{{$genre}}</a>,
                         @else
-                            <a href="{{route('filmview', ['genres[]' => strtolower($genre)])}}">{{$genre}}</a>,
+                            <a href="{{route('filmview', ['genre' => strtolower($genre)])}}">{{$genre}}</a>,
                         @endif
                     @endforeach
 

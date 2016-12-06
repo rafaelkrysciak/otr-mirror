@@ -57,3 +57,8 @@ FileETag none
 		</FilesMatch>
 		AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/x-javascript font/ttf application/x-font-ttf font/otf application/x-font-otf font/opentype
 </IfModule>
+
+#AuthUserFile /usr/www/users/hqwmir//.htpasswd
+#AuthName "Realm"
+#AuthType Basic
+#require valid-user

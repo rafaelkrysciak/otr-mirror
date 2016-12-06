@@ -84,14 +84,19 @@ class StatService
             $join->on('stat_downloads.otrkey_file_id', '=', 'otrkey_files.id')
                 ->where('stat_downloads.event_date', '>', Carbon::now()->subMonths(4));
         })
+            ->leftJoin('tv_programs', 'otrkey_files.tv_program_id', '=', 'tv_programs.id')
             ->whereIn('otrkey_files.id', function ($query) {
                 $query->select('otrkeyfile_id')
                     ->from('node_otrkeyfile')
                     ->where('status', '=', Node::STATUS_DOWNLOADED);
             })
-            ->where('start', '<', Carbon::now()->subDays(14))
+            ->where('otrkey_files.start', '<', Carbon::now()->subDays(12))
             ->groupBy('otrkey_files.id')
-            ->orderByRaw('SUM(downloads) + SUM(aws_downloads), otrkey_files.start')
+            ->orderByRaw('CASE
+                    WHEN tv_programs.highlight = 1  THEN (SUM(downloads) + SUM(aws_downloads))*2
+                    WHEN tv_programs.highlight != 1 THEN SUM(downloads) + SUM(aws_downloads)
+                END,
+                otrkey_files.start')
             ->limit($limit)
             ->get(['otrkey_files.*']);
 
@@ -131,6 +136,16 @@ class StatService
         }
 
         return $stats;
+    }
+
+    public function getFilmStats($filmid)
+    {
+        $downloads = StatDownload::leftJoin('otrkey_files', 'stat_downloads.otrkey_file_id', '=', 'otrkey_files.id')
+            ->leftJoin('tv_programs', 'otrkey_files.tv_program_id', '=', 'tv_programs.id')
+            ->where('film_id','=',$filmid)
+            ->sum('downloads');
+
+        return $downloads;
     }
 
     /**

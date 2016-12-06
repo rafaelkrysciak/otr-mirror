@@ -8,18 +8,19 @@
             <li><a href="{{ url('tvprogram') }}"> Alle Sprachen </a></li>
             <li><a href="{{ url('tvprogram/Deutsch') }}"> Deutsch </a></li>
             <li><a href="{{ url('tvprogram/Englisch') }}"> Englisch </a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{{ url('tvprogram/top100') }}"><i class="glyphicon glyphicon-sort-by-attributes-alt"></i> Top100</a></li>
         </ul>
     </li>
-    @if(Auth::user() && Auth::user()->isPremium())
-        <li><a href="{{ url('film/view') }}"><i class="glyphicon glyphicon-film"></i> Filme</a></li>
-        <li><a href="{{ url('series/view') }}"><i class="glyphicon glyphicon-fire"></i> Serien</a></li>
-    @endif
-    <li><a href="{{ url('tvprogram/top100') }}"><i class="glyphicon glyphicon-sort-by-attributes-alt"></i> Top100</a></li>
+
+    <li><a href="{{ url('filme/alle') }}"><i class="glyphicon glyphicon-film"></i> Filme</a></li>
+    <li><a href="{{ url('serien/alle') }}"><i class="glyphicon glyphicon-fire"></i> Serien</a></li>
+
     <li><a href="{{ url('tvprogram/search') }}"><i class="glyphicon glyphicon-search"></i> Suchen</a></li>
     @if(Auth::user())
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" style="color: #ff0000;font-weight: bold;">
-                <i class="fa fa-diamond"></i> Premium -50% <span class="caret"></span>
+                <i class="fa fa-diamond"></i> Premium <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
                 @if(Auth::user()->isPremium())
@@ -35,7 +36,7 @@
             </ul>
         </li>
     @else
-        <li><a href="{{ url('payment/prepare') }}"  style="color: #ff0000;font-weight: bold;"><i class="fa fa-diamond"></i> Premium -50% </a></li>
+        <li><a href="{{ url('payment/prepare') }}"  style="color: #ff0000;font-weight: bold;"><i class="fa fa-diamond"></i> Premium</a></li>
     @endif
 
     <li class="dropdown">
@@ -149,19 +150,31 @@
                     </a>
                 </li>
                 <li class="divider"></li>
-                <li class="disabled">
-                    <a href="#">
-                        @if(Auth::user()->isPremium())
+                @if(Auth::user()->isPremium())
+                    <li class="disabled">
+                        <a href="#" class="text-nowrap">
                             <i class="glyphicon glyphicon-king"></i>
-                            Premium Status:<br>gültig bis {{Auth::user()->premium_valid_until->format('d.m.Y')}}
-                        @else
+                            Premium Status: gültig bis {{Auth::user()->premium_valid_until->format('d.m.Y')}}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/payment/prepare') }}">
+                            <strong><i class="glyphicon glyphicon-ok-circle"></i> Premium Zugang verlängern</strong>
+                        </a>
+                    </li>
+                @else
+                    <li class="disabled">
+                        <a href="#" class="text-nowrap">
                             <i class="glyphicon glyphicon-knight"></i>
-                            Premium Status:<br>nicht aktiv
-                        @endif
-
-
-                    </a>
-                </li>
+                            Premium Status: nicht aktiv
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/payment/prepare') }}">
+                            <strong><i class="glyphicon glyphicon-ok-circle"></i> Premium Zugang starten</strong>
+                        </a>
+                    </li>
+                @endif
                 <li class="divider"></li>
                 <li>
                     <a href="{{ url('/auth/logout') }}">

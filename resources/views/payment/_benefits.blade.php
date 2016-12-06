@@ -1,4 +1,19 @@
+<a name="vorteile"></a>
+<h2>Die Vorteile</h2>
+<hr>
 <a name="filme"></a>
+<div class="row">
+    <div class="col-md-6">
+        <h2>Schneller Download</h2>
+        Keine Begrenzung der Download-Geschwindigkeit. Es steht die volle Geschwindigkeit des Servers zur Verfügung. Die Server sind mit einer Bandbreite von 250 Mbit/s an das Internet angeschlossen.<br>
+        Möglichkeit den Download durch öffnen mehrerer Datenströme wesentlich zu beschleunigen. Dabei werden mehrere Teilstücken der Datei gleichzeitig runter geladen und somit die Bandbreite besser ausgenutzt.<br>
+        Ich empfehle die Benutzung des <a target="_blank" href="https://www.heise.de/download/product/free-download-manager-19323"><i class="glyphicon glyphicon-share"></i> Free Download Managers</a>, der außerdem ermöglicht abgebrochene Downloads wieder fortzusetzen.
+    </div>
+    <div class="col-md-6">
+        <img src="{{asset('img/payment/hqm_speed.jpg')}}" class="img-responsive img-thumbnail">
+    </div>
+</div>
+<hr>
 <div class="row">
     <div class="col-md-6">
         <a href="{{asset('img/payment/hqm_filme_full.jpg')}}" class="fancybox">

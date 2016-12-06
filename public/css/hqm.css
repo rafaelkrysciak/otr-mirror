@@ -29,6 +29,55 @@
 body { font-family: 'Open Sans', "Helvetica Neue", Helvetica, Arial, sans-serif; }
 h1,h2,h3 { font-family: 'Open Sans Condensed', sans-serif; }
 
+#final-footer {
+    background-color: #F0F0F0;
+    padding: 5px 5px;
+    font-size: 12px;
+}
+
+
+#final-footer .copyright {
+    padding: 8px 10px;
+}
+
+#final-footer a.twitter:hover {background-color: #55acee; color: #ffffff; transition: color ease-out 0.4s;}
+#final-footer a.facebook:hover {background-color: #3b5998; color: #ffffff; transition: color ease-out 0.4s;}
+#final-footer a.googleplus:hover {background-color: #dd4b39; color: #ffffff; transition: color ease-out 0.4s;}
+
+#film-series-navigation.nav > li > a {
+    padding: 10px 13px;
+}
+
+#catalogue-header h1 {
+    padding: 50px;
+    background-color: lightgray;
+}
+
+#catalogue-header.filme.all h1 {background: url(../img/catalogue/filme_all.jpg) no-repeat;}
+#catalogue-header.filme.blockbuster h1 {background: url(../img/catalogue/filme_blockbuster.jpg) no-repeat;}
+#catalogue-header.filme.insiderstip h1 {background: black url(../img/catalogue/filme_geheimtipp.jpg) no-repeat;color: white;}
+#catalogue-header.filme.action_thriller_crime h1 {background: url(../img/catalogue/filme_action.jpg) no-repeat;}
+#catalogue-header.filme.drama h1 {background: url(../img/catalogue/filme_drama.jpg) no-repeat;}
+#catalogue-header.filme.comedy h1 {background: url(../img/catalogue/filme_comedy.jpg) no-repeat;}
+#catalogue-header.filme.scifi_fantasy h1 {background: url(../img/catalogue/filme_scifi.jpg) no-repeat;}
+#catalogue-header.filme.animation_family h1 {background: url(../img/catalogue/filme_animation.jpg) no-repeat;}
+#catalogue-header.filme.horror_mystery h1 {background: url(../img/catalogue/filme_horror.jpg) no-repeat;}
+#catalogue-header.filme.dokus h1 {background: black url(../img/catalogue/filme_docu.jpg) no-repeat;color: white;}
+#catalogue-header.filme.my h1 {background: url(../img/catalogue/filme_my.jpg) no-repeat;}
+
+#catalogue-header.serien.all h1 {background: url(../img/catalogue/serien_all.jpg) no-repeat;}
+#catalogue-header.serien.blockbuster h1 {background: url(../img/catalogue/serien_blockbuster.jpg) no-repeat;}
+#catalogue-header.serien.insiderstip h1 {background: white url(../img/catalogue/serien_insiderstip.jpg) no-repeat;}
+#catalogue-header.serien.action_thriller_crime h1 {background: black url(../img/catalogue/serien_action.jpg) no-repeat;color:white;}
+#catalogue-header.serien.drama h1 {background: black url(../img/catalogue/serien_drama.jpg) no-repeat;color: white;}
+#catalogue-header.serien.comedy h1 {background: url(../img/catalogue/serien_comedy.jpg) no-repeat;}
+#catalogue-header.serien.scifi_fantasy h1 {background: black url(../img/catalogue/serien_scifi.jpg) no-repeat;color: white;}
+#catalogue-header.serien.animation_family h1 {background: url(../img/catalogue/serien_animation.jpg) no-repeat;}
+#catalogue-header.serien.horror_mystery h1 {background: url(../img/catalogue/serien_horror.jpg) no-repeat;}
+#catalogue-header.serien.dokus h1 {background: white url(../img/catalogue/serien_doku.jpg) no-repeat;}
+#catalogue-header.serien.my h1 {background: url(../img/catalogue/serien_my.jpg) no-repeat;}
+
+
 .third-col {
     float: left;
 }

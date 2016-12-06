@@ -1,8 +1,17 @@
 @extends('app')
 
 @section('content')
+
+    @include('partials.film_nav', ['active' => $navActive])
+
     <h1>Filme <small><a href="{{url('my/films')}}">&raquo;Meine Filme</a></small></h1>
-    @include('film.filters', ['query' => $query, 'filterService' => $filterService, 'action' => 'FilmController@viewFilms', 'myName' => 'Meine Filme'])
+
+    @include('film.filters', [
+        'query' => $query,
+        'filter' => $filter,
+        'action' => 'FilmCatalogueController@all',
+        'fulltextSearch' => true
+    ])
 
     <hr/>
     @foreach($tvPrograms as $key => $tvProgram)

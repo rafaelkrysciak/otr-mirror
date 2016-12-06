@@ -12,7 +12,7 @@
             </a>
         @endif
         <a href="{{url('tvprogram', ['tv_program_id' => $tvProgram->id])}}" class="btn btn-danger"
-           data-method="delete" data-confirm="Are you sure?">
+           data-method="delete" data-confirm="Are you sure?" data-handler="form">
             <i class="glyphicon glyphicon-remove"></i> Delete
         </a>
 

@@ -20,7 +20,7 @@ class PromotionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Response
      */
     public function index()
     {
@@ -33,7 +33,7 @@ class PromotionController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return \Response
      */
     public function create()
     {
@@ -44,7 +44,7 @@ class PromotionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return Response
+     * @return \Response
      */
     public function store()
     {
@@ -78,7 +78,7 @@ class PromotionController extends Controller
      *
      * @param  int $id
      *
-     * @return Response
+     * @return \Response
      */
     public function show($id)
     {
@@ -91,7 +91,7 @@ class PromotionController extends Controller
      *
      * @param  int $id
      *
-     * @return Response
+     * @return \Response
      */
     public function edit($id)
     {
@@ -113,7 +113,7 @@ class PromotionController extends Controller
      *
      * @param  int $id
      *
-     * @return Response
+     * @return \Response
      */
     public function update($id)
     {
@@ -155,12 +155,16 @@ class PromotionController extends Controller
      *
      * @param  int $id
      *
-     * @return Response
+     * @return \Response
      */
     public function destroy($id)
     {
         Promotion::destroy($id);
-        unlink(public_path() . '/img/promotions/' . $id . '.jpg');
+        if(file_exists(public_path() . '/img/promotions/' . $id . '.jpg')) {
+            unlink(public_path() . '/img/promotions/' . $id . '.jpg');
+        }
+
+        flash('Promotion deleted.');
 
         return redirect('promotion');
     }

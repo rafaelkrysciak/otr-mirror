@@ -22,8 +22,6 @@ class PaymentController extends Controller
             'refund',
             'allTransactions',
         ]]);
-        $this->middleware('auth', ['except' => 'prepare']);
-
     }
 
 
@@ -37,6 +35,12 @@ class PaymentController extends Controller
 
     public function purchase($product_id)
     {
+        $user = Auth::user();
+        if(is_null($user)) {
+            flash('Du muss ein Konto haben und eingeloggt sein um Premium-Zugang zu kaufen.');
+            return redirect('/auth/register');
+        }
+
         $product = PaymentProduct::findOrFail($product_id);
 
         $params = [

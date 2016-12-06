@@ -354,9 +354,12 @@ class NodeController extends Controller
 
 	public function plannedDownloads()
 	{
-		$files = OtrkeyFile::with('distros')
+		$files = OtrkeyFile::select('otrkey_files.*')
+			->with('distros')
+			->leftJoin('tv_programs', 'otrkey_files.tv_program_id', '=', 'tv_programs.id')
 			->forDownload()
-			->orderBy('start')
+			->orderBy('tv_programs.highlight', 'desc')
+			->orderBy('otrkey_files.start', 'desc')
 			->paginate(50);
 
 		$totalSize = OtrkeyFile::forDownload()->sum('distro_size');

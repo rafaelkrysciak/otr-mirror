@@ -20,7 +20,7 @@
         @endif
         <div class="col-xs-12 col-sm-6 col-md-3">
             <div class="panel film">
-                <a href="{{url('tvprogram/film/'.$tvProgram->film_id.'/any/any')}}">
+                <a href="{{url('tvprogram/film/'.$tvProgram->film_id.'/'.$lang.'/'.$quality)}}">
                 @if($tvProgram->amazon_image)
                     <img class="img-r_esponsive center-block" src="{{$tvProgram->imageResize(335)}}">
                 @else

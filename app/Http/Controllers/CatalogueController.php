@@ -69,7 +69,17 @@ abstract class CatalogueController extends Controller
 
 		$type = $this->series == 1 ? 'serien' : 'filme';
 
-		return view('film.view_catalogue', compact('tvPrograms', 'title', 'filter', 'type'));
+		$lang = 'any';
+		if($filter->getAttribute('language') && !$filter->getAttribute('language')->isDefaultSelected()) {
+			$lang =  $filter->getAttribute('language')->getValue();
+		}
+
+		$quality = 'any';
+		if($filter->getAttribute('quality') && !$filter->getAttribute('quality')->isDefaultSelected()) {
+			$quality =  $filter->getAttribute('quality')->getValue();
+		}
+
+		return view('film.view_catalogue', compact('tvPrograms', 'title', 'filter', 'type', 'lang', 'quality'));
 	}
 
 
@@ -112,7 +122,10 @@ abstract class CatalogueController extends Controller
 		$title = 'Alle '.($this->series == 0 ? 'Filme' : 'Serien');
 		$type = $this->series == 1 ? 'serien' : 'filme';
 
-		return view('film.view_catalogue', compact('tvPrograms', 'title', 'filter', 'type'));
+		$lang = $filter->getAttribute('language')->isDefaultSelected() ? 'any' : $filter->getAttribute('language')->getValue();
+		$quality = $filter->getAttribute('quality')->isDefaultSelected() ? 'any' : $filter->getAttribute('quality')->getValue();
+
+		return view('film.view_catalogue', compact('tvPrograms', 'title', 'filter', 'type', 'lang', 'quality'));
 	}
 
 

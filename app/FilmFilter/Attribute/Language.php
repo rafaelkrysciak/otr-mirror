@@ -8,6 +8,7 @@ class Language extends AttributeAbstract
 
 	protected $name = 'language';
 	protected $title = 'Sprache';
+	protected $default = 'deutsch';
 
 	protected $options = [
 		'all'      => 'Alle',
@@ -18,7 +19,7 @@ class Language extends AttributeAbstract
 
 	public function apply(Builder $builder)
 	{
-		if ($this->isSelected($this->default)) {
+		if ($this->isSelected('all')) {
 			return $this;
 		}
 

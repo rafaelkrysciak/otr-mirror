@@ -20,6 +20,23 @@ class Node extends Model {
     }
 
 
+	/**
+     * Filter active nodes
+     *
+     * @param $query
+     */
+    public function scopeActive($query)
+    {
+        $query->where('status', '=', 'active');
+    }
+
+
+    public function scopeScrapped($query)
+    {
+        $query->where('status', '=', 'scrap');
+    }
+
+
     /**
      * Get otrkey files available on this node
      *

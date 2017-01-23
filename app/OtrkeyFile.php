@@ -116,6 +116,25 @@ class OtrkeyFile extends Model {
         $query->where('otrkey_files.start', '>', $time);
     }
 
+
+    public function scopeDistributed($query)
+    {
+        $query->where('status', '=', Node::STATUS_DOWNLOADED);
+        $query->whereIn('otrkey_files.id', function ($query) {
+//            select otrkeyfile_id
+//                from node_otrkeyfile
+//                where status = 'downloaded'
+//                group by otrkeyfile_id
+//                having count(*) > 1
+            $query->select('otrkeyfile_id')
+                ->from('node_otrkeyfile')
+                ->where('status', '=', Node::STATUS_DOWNLOADED)
+                ->groupBy('otrkeyfile_id')
+                ->havingRaw('count(*) > 1');
+        });
+    }
+
+
     /**
      * Get distros where the file is available
      *

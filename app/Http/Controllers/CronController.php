@@ -77,7 +77,7 @@ class CronController extends Controller
      */
     public function nodeStartDownloads(DistroService $distroService, NodeService $nodeService)
     {
-        $nodes = Node::all()->getIterator();
+        $nodes = Node::active()->get()->getIterator();
         Log::info(__METHOD__." selected nodes");
 
         $files = OtrkeyFile::select('otrkey_files.*')
@@ -253,7 +253,8 @@ class CronController extends Controller
             try {
                 $count += $distroService->fillDatabase($distro);
             } catch (\Exception $e) {
-                Log::notice($e);
+                Log::error('[distroSyncFiles] Fail to sync with '.$distro->host.' Error:'.$e->getMessage());
+                Log::debug($e);
             }
         }
 

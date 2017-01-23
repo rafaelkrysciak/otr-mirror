@@ -34,20 +34,32 @@ class NodeService
 
 
 	/**
+	 * @param bool $activeOnly
 	 * @return mixed
 	 */
-	public function getTotalFreeDiskSpace()
+	public function getTotalFreeDiskSpace($activeOnly = true)
 	{
-		return Node::sum('free_disk_space');
+		if($activeOnly) {
+			return Node::active()->sum('free_disk_space');
+		} else {
+			return Node::sum('free_disk_space');
+		}
 	}
 
 
 	/**
+	 * @param bool $activeOnly
 	 * @return float
 	 */
-	public function getAverageFreeDiskSpace()
+	public function getAverageFreeDiskSpace($activeOnly = true)
 	{
-		return Node::sum('free_disk_space') / Node::count();
+
+		if($activeOnly) {
+			return Node::active()->sum('free_disk_space') / Node::active()->count();
+		} else {
+			return Node::sum('free_disk_space') / Node::count();
+		}
+
 	}
 
 
@@ -110,6 +122,20 @@ class NodeService
 
 
 	/**
+	 * @param Node $node
+	 * @param string $filename
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function fileExists(Node $node, $filename)
+	{
+		$result = $this->execOrFail($node, 'fileExists', [$filename], "File status unknown");
+		return $result['data'];
+	}
+
+
+	/**
 	 * @param StatService $statService
 	 * @param int $count
 	 */
@@ -131,7 +157,8 @@ class NodeService
 	 */
 	public function deleteOtrkeyFile(OtrkeyFile $file)
 	{
-		foreach ($file->nodes as $node) {
+		foreach ($file->availableFiles as $node) {
+			Log::info('Delete file '.$file->id.':'.$file->name.' from '.$node->short_name);
 			$this->deleteFile($node, $file->name);
 			$node->pivot->status = Node::STATUS_DELETED;
 			$node->pivot->save();
@@ -170,6 +197,12 @@ class NodeService
 	}
 
 
+	/**
+	 * @param Node $node
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	 */
 	public function listFiles(Node $node)
 	{
 		return $this->execOrFail($node, 'listFiles', [], "Can't get file list from node");
@@ -310,12 +343,9 @@ class NodeService
 	}
 
 
-	/**
-	 *
-	 */
-	public function rebalance()
+	protected function distributeFilesAmongNodes()
 	{
-		$nodes = Node::all();
+		$nodes = Node::active()->get();
 
 		$files = OtrkeyFile::with('nodes')
 			->join('node_otrkeyfile', 'id', '=', 'otrkeyfile_id')
@@ -345,6 +375,12 @@ class NodeService
 				Log::error($e->getMessage());
 			}
 		}
+	}
+
+
+	protected function fillUpNode()
+	{
+		$nodes = Node::active()->get();
 
 		// copy random files to a node with a lot of free space
 		// usually a new node without much files
@@ -369,53 +405,134 @@ class NodeService
 				}
 			}
 		}
+	}
+
+
+	protected function deleteDistributedFiles()
+	{
+		$files = OtrkeyFile::rightJoin('node_otrkeyfile', function($join) {
+			$join->on('id', '=', 'otrkeyfile_id');
+			$join->on('node_otrkeyfile.status', '=', DB::raw("'" . \App\Node::STATUS_DOWNLOADED . "'"));
+		})
+			->olderThen(Carbon::now()->subDays(config('hqm.keep_files_on_all_nodes_days', 4)))
+			->groupBy('otrkey_files.id')
+			->having(DB::raw('count(*)'), '>', 1)
+			->limit(100)
+			->get(['otrkey_files.*']);
+
+		foreach ($files as $file) {
+			$toDelete = $file->nodes
+				->filter(function($value, $key) {
+					return $value->pivot->status == Node::STATUS_DOWNLOADED;
+				})
+				->sortBy('free_disk_space');
+
+			if($toDelete->count() == 1) {
+				continue;
+			}
+
+			$toDelete = $toDelete->take($toDelete->count() - 1);
+
+			try {
+
+				// Race Condition: Deleted files are updated to Downloaded short after delete
+				// Check if all the files that assumed as Downloaded really exists
+				foreach ($toDelete as $node) {
+					if($this->fileExists($node, $file->name) !== true) {
+						Log::debug("[rebalance] Delete aborted {$file->id}:{$file->name}. File do not exist on node ".$node->short_name);
+						$node->pivot->status = Node::STATUS_DELETED;
+						$node->pivot->save();
+						continue 2;
+					}
+				}
+
+				foreach ($toDelete as $node) {
+					if (!config('app.debug')) {
+
+						$this->deleteFile($node, $file->name);
+
+						$node->pivot->status = Node::STATUS_DELETED;
+						$node->pivot->save();
+
+						$node->free_disk_space = $node->free_disk_space + $file->size;
+						$node->save();
+
+					}
+
+					Log::debug("[rebalance] Delete {$file->id}:{$file->name} from {$node->short_name}");
+				}
+			} catch (\Exception $e) {
+				Log::error($e);
+			}
+		}
+	}
+
+
+	protected function unloadScrappedNodes()
+	{
+		$scrappedNodes = Node::scrapped()->get();
+
+		if($scrappedNodes->count() == 0) {
+			return;
+		}
+
+		$activeNodes = Node::active()->get()->getIterator();
+
+		foreach($scrappedNodes as $scrappedNode) {
+			// delete files which are available on other nodes
+			//select otrkey_files.*
+			//from node_otrkeyfile
+			//	left join otrkey_files on node_otrkeyfile.otrkeyfile_id = otrkey_files.id and node_otrkeyfile.`status` = 'downloaded'
+			//group by otrkey_files.id
+			//having count(*) > 1
+
+			$doubleFiles = OtrkeyFile::distributed()
+				->join('node_otrkeyfile', 'id', '=', 'otrkeyfile_id')
+				->where('node_otrkeyfile.node_id', $scrappedNode->id)
+				->get(['otrkey_files.*']);
+
+			foreach($doubleFiles as $doubleFile) {
+				Log::info('[unloadScrappedNodes] [try to delete file] [File:'.$scrappedNode->short_name.':'.$doubleFile->name.']');
+				$fileNode = $doubleFile->nodes->where('id',$scrappedNode->id)->first();
+				if($fileNode and $this->fileExists($scrappedNode, $doubleFile->name) == true) {
+					$this->deleteFile($scrappedNode, $doubleFile->name);
+					$fileNode->pivot->status = Node::STATUS_DELETED;
+					$fileNode->pivot->save();
+					Log::info('[unloadScrappedNodes] [deleted file] [File:'.$scrappedNode->short_name.':'.$doubleFile->name.']');
+				}
+			}
+
+
+			// move files to other nodes
+			$filesToUnload = $scrappedNode->available()->take(50)->get();
+			foreach($filesToUnload as $fileToUnload) {
+				$node = next($activeNodes) ?: reset($activeNodes);
+				try {
+					$url = $this->generateDownloadLink($scrappedNode, $fileToUnload->name, DownloadService::PREMIUM);
+					$this->fetchFile($node, $url, 2);
+					Log::info('[unloadScrappedNodes] [Source:'.$scrappedNode->short_name.'] [Dest:'.$node->short_name.'] [File:'.$fileToUnload->name.']');
+				} catch(\Exception $e) {
+					Log::notice($e);
+				}
+			}
+		}
+	}
+	
+
+	/**
+	 *
+	 */
+	public function rebalance()
+	{
+		// $this->distributeFilesAmongNodes();
+
+		$this->fillUpNode();
+		$this->unloadScrappedNodes();
 
 		// delete files just in the night
 		if (date('G') >= 23 || date('G') <= 5) {
 		//if (true) {
-			$files = OtrkeyFile::rightJoin('node_otrkeyfile', function($join) {
-					$join->on('id', '=', 'otrkeyfile_id');
-					$join->on('node_otrkeyfile.status', '=', DB::raw("'" . \App\Node::STATUS_DOWNLOADED . "'"));
-				})
-				->olderThen(Carbon::now()->subDays(config('hqm.keep_files_on_all_nodes_days', 4)))
-				->groupBy('otrkey_files.id')
-				->having(DB::raw('count(*)'), '>', 1)
-				->limit(100)
-				->get(['otrkey_files.*']);
-
-			foreach ($files as $file) {
-				$toDelete = $file->nodes
-					->filter(function($value, $key) {
-						return $value->pivot->status == Node::STATUS_DOWNLOADED;
-					})
-					->sortBy('free_disk_space');
-
-				if($toDelete->count() == 1) {
-					continue;
-				}
-
-				$toDelete = $toDelete->take($toDelete->count() - 1);
-
-				try {
-					foreach ($toDelete as $node) {
-						if (!config('app.debug')) {
-
-							$this->deleteFile($node, $file->name);
-
-							$node->pivot->status = Node::STATUS_DELETED;
-							$node->pivot->save();
-
-							$node->free_disk_space = $node->free_disk_space + $file->size;
-							$node->save();
-
-						}
-
-						Log::debug("[rebalance] Delete {$file->id}:{$file->name} from {$node->short_name}");
-					}
-				} catch (\Exception $e) {
-					Log::error($e);
-				}
-			}
+			$this->deleteDistributedFiles();
 		}
 	}
 

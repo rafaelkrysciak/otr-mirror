@@ -85,11 +85,15 @@ class StatService
                 ->where('stat_downloads.event_date', '>', Carbon::now()->subMonths(4));
         })
             ->leftJoin('tv_programs', 'otrkey_files.tv_program_id', '=', 'tv_programs.id')
-            ->whereIn('otrkey_files.id', function ($query) {
-                $query->select('otrkeyfile_id')
-                    ->from('node_otrkeyfile')
-                    ->where('status', '=', Node::STATUS_DOWNLOADED);
-            })
+	    ->rightJoin('node_otrkeyfile', function($join) {
+	    	$join->on('otrkey_files.id', '=', 'node_otrkeyfile.otrkeyfile_id');
+		    $join->on('node_otrkeyfile.status', '=', DB::raw("'DOWNLOADED'"));
+	    })
+            //->whereIn('otrkey_files.id', function ($query) {
+            //    $query->select('otrkeyfile_id')
+            //        ->from('node_otrkeyfile')
+            //        ->where('status', '=', Node::STATUS_DOWNLOADED);
+            //})
             ->where('otrkey_files.start', '<', Carbon::now()->subDays(12))
             ->groupBy('otrkey_files.id')
             ->orderByRaw('CASE

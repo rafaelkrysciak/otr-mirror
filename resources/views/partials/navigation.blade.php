@@ -10,6 +10,17 @@
             <li><a href="{{ url('tvprogram/Englisch') }}"> Englisch </a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{{ url('tvprogram/top100') }}"><i class="glyphicon glyphicon-sort-by-attributes-alt"></i> Top100</a></li>
+            <li role="separator" class="divider"></li>
+            <li>
+                <a href="{{ url('/user-list/favorite') }}">
+                    <i class="glyphicon glyphicon-star"></i> Gemerkte Sendungen
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/user-list/watched') }}">
+                    <i class="glyphicon glyphicon-ok-circle"></i> Angeschaut
+                </a>
+            </li>
         </ul>
     </li>
 
@@ -86,6 +97,8 @@
                 <li><a href="{{ url('film/create') }}"> Film Create </a></li>
                 <li role="presentation" class="divider"></li>
                 <li><a href="{{ url('film-mapper/verifier-index/de') }}"> Film Mapper Verifier </a></li>
+                <li role="presentation" class="divider"></li>
+                <li><a href="{{ url('system/session-dump') }}"> Session Dump </a></li>
             </ul>
         </li>
         <li class="dropdown">

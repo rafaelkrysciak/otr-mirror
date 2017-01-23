@@ -22,6 +22,9 @@
         <div id="payments"></div>
     </div>
     <div class="row">
+        <div id="registrations"></div>
+    </div>
+    <div class="row">
         <div id="stations"></div>
     </div>
     <div class="row">
@@ -70,6 +73,7 @@
             drawContentSizeByQuality();
             drawViewsAndDownloads();
             drawPayments();
+            drawRegistrations();
             setTimeout("redrawCharts()", 60000);
         }
 
@@ -171,6 +175,29 @@
 
                 var chart = new google.visualization.ComboChart(
                         document.getElementById('payments'));
+
+                chart.draw(data, options);
+
+            });
+        }
+
+        function drawRegistrations() {
+            $.getJSON( "{{url('stats/registrations')}}", function( registrations ) {
+
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Month');
+                data.addColumn('number', 'Confirmed');
+                data.addColumn('number', 'Unconfirmed');
+
+                data.addRows(registrations);
+
+                var options = $.extend({}, chartGlobalOptions, {
+                    title: 'Registrations',
+                    isStacked: true
+                });
+
+                var chart = new google.visualization.ColumnChart(
+                        document.getElementById('registrations'));
 
                 chart.draw(data, options);
 

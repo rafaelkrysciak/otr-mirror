@@ -10,6 +10,7 @@ use App\Stat;
 use App\StatDownload;
 use App\StatView;
 use App\TvProgramsView;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -49,6 +50,27 @@ class StatsController extends Controller
 
         return $payments;
     }
+
+
+    public function getRegistrations()
+    {
+        $data = User::select(
+            \DB::raw("date_format(created_at, '%Y/%m') as month"),
+            \DB::raw('count(CASE WHEN confirmed = 1 then 1 ELSE NULL END) as confirmed'),
+            \DB::raw('count(CASE WHEN confirmed = 1 then NULL ELSE 1 END) as notconfirmed'))
+            ->groupBy(\DB::raw("date_format(created_at, '%Y%m')"))
+            ->orderBy(\DB::raw("date_format(created_at, '%Y%m')"))
+            ->get();
+
+        $registrations = [];
+        foreach($data as $registration) {
+            $registrations[] = [$registration['month'], $registration['confirmed'], $registration['notconfirmed']];
+        }
+
+        return $registrations;
+
+    }
+
 
     public function getViewsAndDownloads(StatService $statService)
     {

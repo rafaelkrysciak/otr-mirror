@@ -11,6 +11,9 @@
         <i class="glyphicon glyphicon-time"></i> {{$item->start->format('H:i')}}
     </td>
     <td class="nowrap">
+        @if(Auth::user() && Auth::user()->isAdmin() && $item->film_id > 0)
+            <i class="glyphicon glyphicon-film"></i>
+        @endif
         <strong>
             <a href="{{url('tvprogram/show',['id' => $item->tv_program_id])}}">{{$item->title}}</a>
         </strong>

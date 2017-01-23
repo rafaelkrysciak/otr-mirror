@@ -173,7 +173,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where('genre', 'like', '%comedy%');
 
 		return $this->generate(
@@ -188,7 +188,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->Where('genre', 'like', '%animation%');
 
 		return $this->generate(
@@ -203,7 +203,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where('genre', 'like', '%family%');
 
 		return $this->generate(
@@ -218,7 +218,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where(function ($query) {
 				$query->orWhere('genre', 'like', '%family%')
 					->orWhere('genre', 'like', '%animation%');
@@ -236,7 +236,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where('genre', 'like', '%drama%');
 
 		return $this->generate(
@@ -251,7 +251,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where(function ($query) {
 				$query->orWhere('genre', 'like', '%horror%')
 					->orWhere('genre', 'like', '%mystery%');
@@ -269,7 +269,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where('genre', 'like', '%action%');
 
 		return $this->generate(
@@ -284,7 +284,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where('genre', 'like', '%thriller%');
 
 		return $this->generate(
@@ -299,7 +299,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where(function ($query) {
 				$query->orWhere('genre', 'like', '%action%')
 					->orWhere('genre', 'like', '%thriller%')
@@ -318,7 +318,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where('genre', 'like', '%Sci-Fi%');
 
 		return $this->generate(
@@ -333,7 +333,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where('genre', 'like', '%fantasy%');
 
 		return $this->generate(
@@ -348,7 +348,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where(function ($query) {
 				$query->orWhere('genre', 'like', '%Sci-Fi%')
 					->orWhere('genre', 'like', '%fantasy%');
@@ -366,7 +366,7 @@ abstract class CatalogueController extends Controller
 	{
 		$filmQuery = FilmView::whereNotNull('film_id')
 			->where('tvseries', '=', $this->series)
-			->where('imdb_votes', '>', 5000)
+			->where('imdb_votes', '>', 3000)
 			->where('genre', 'like', "%$genre%");
 
 		return $this->generate(

@@ -37,7 +37,11 @@
 								<input type="password" class="form-control" name="password_confirmation">
 							</div>
 						</div>
-
+						<div class="form-group" >
+							<div class="col-md-6 col-sm-offset-4">
+								<div class="g-recaptcha" data-sitekey="6LchjwgTAAAAAAZQ8roK4EgiYDef2z4qZKUwiIvM"></div>
+							</div>
+						</div>
 						<div class="form-group">
 							<div class="col-md-6 col-md-offset-4">
 								<button type="submit" class="btn btn-primary">
@@ -55,3 +59,8 @@
 	</div>
 </div>
 @endsection
+
+@section('scripts')
+	@parent
+	<script src='https://www.google.com/recaptcha/api.js'></script>
+@stop

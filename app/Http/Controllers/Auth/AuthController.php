@@ -5,6 +5,7 @@ use App\User;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use ReCaptcha\ReCaptcha;
 use Validator;
 
 class AuthController extends Controller {
@@ -52,11 +53,22 @@ class AuthController extends Controller {
 	 */
 	public function validator(array $data)
 	{
-		return Validator::make($data, [
+		$validator = Validator::make($data, [
 			'name' => 'required|max:255',
 			'email' => 'required|email|max:255|unique:users',
 			'password' => 'required|confirmed|min:6',
 		]);
+
+		$validator->after(function($validator) {
+			$recaptcha = new ReCaptcha(config('hqm.recaptcha_secret'));
+			$resp = $recaptcha->verify(\Request::get('g-recaptcha-response'), \Request::getClientIps());
+			if(!$resp->isSuccess()) {
+				$validator->errors()->add('Recaptcha', 'Das Captcha war leider falsch. Bitte versuche noch mal.');
+			}
+		});
+
+
+		return $validator;
 	}
 
 	/**
@@ -77,6 +89,8 @@ class AuthController extends Controller {
 		]);
 
 		$this->sendConfirmationMail($user);
+
+		flash('Du hast dich erfolgreich registriert. Wir haben eine Email geschickt um deine Email-Adresse zu verifizieren.');
 
 		return $user;
 	}

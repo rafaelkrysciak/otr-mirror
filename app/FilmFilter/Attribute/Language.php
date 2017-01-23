@@ -9,6 +9,7 @@ class Language extends AttributeAbstract
 	protected $name = 'language';
 	protected $title = 'Sprache';
 	protected $default = 'deutsch';
+	protected $value = 'deutsch';
 
 	protected $options = [
 		'all'      => 'Alle',

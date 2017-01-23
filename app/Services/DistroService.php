@@ -47,22 +47,12 @@ class DistroService {
      * @param string $url URL od the index
      * @return array rows
      */
-    public function downloadIndexData($url)
+    public function getIndexData($url)
     {
         $response = $this->httpClient->get($url);
-        return explode("\n", $response->content());
-    }
+        $rows =  explode("\n", $response->content());
 
-
-    /**
-     * Import the File data to the Database
-     *
-     * @param Carbon $date
-     * @return int imported rows
-     */
-    public function fillDatabase(Distro $distro)
-    {
-        $rows = $this->downloadIndexData($distro->index_url);
+        Log::info('[Distro sync] ['.$url.'] Row count: '.count($rows));
 
         $fields = [
             'name',
@@ -71,28 +61,88 @@ class DistroService {
             'distro_checksum'
         ];
 
-        $count = 0;
-        $otrkeyFileIds = [];
-        foreach($rows as $row) {
+        $fileRows = [];
+        foreach($rows as $row)
+        {
             $fileData = str_getcsv(trim($row), ';');
+
             if(count($fileData) != 4) {
-                Log::debug($distro->host.': Distro data error: '.implode(',', $fileData));
+                Log::debug('[Distro sync] ['.$url.'] Data error: '.implode(',', $fileData));
                 continue;
             }
-            $count++;
             $fileData = array_combine($fields, array_slice($fileData, 0, 17));
-            $fileData += $this->otrkeyFileService->parseFilename($fileData['name']);
+            $fileRows[] = $fileData;
+        }
 
+        return $fileRows;
+    }
+
+
+    public function getListingData($url)
+    {
+        $response = $this->httpClient->get($url);
+        $rows =  explode("\n", $response->content());
+
+        $fileRows = [];
+        foreach($rows as $row) {
+            $matches = [];
+            if(preg_match('/ (\d{3,}) (.* \d{2}:\d{2}) (.*otrkey)/', $row, $matches)) {
+                $fileRows[] = [
+                    'distro_size' => $matches[1],
+                    'mtime' => $matches[2],
+                    'name' => $matches[3]
+                ];
+            }
+        }
+
+        Log::info('[Distro sync] ['.$url.'] Row count: '.count($fileRows));
+
+        return $fileRows;
+    }
+
+    /**
+     * Import the File data to the Database
+     *
+     * @param Distro $distro
+     * @return int imported rows
+     */
+    public function fillDatabase(Distro $distro)
+    {
+        $rows = collect($this->getIndexData($distro->index_url))->keyBy('name');
+
+        if(!empty($distro->listing_url)) {
+            $listRows = $this->getListingData($distro->listing_url);
+            foreach($listRows as $row) {
+                if(!$rows->offsetExists($row['name'])) {
+                    Log::info('[Distro sync] ['.$distro->host.'] Added from listing: '.$row['name']);
+                    $rows->push($row);
+                }
+            }
+        }
+
+        $count = 0;
+        $otrkeyFileIds = [];
+        $now = new Carbon();
+        foreach($rows as $fileData) {
+            $count++;
+            $fileData += $this->otrkeyFileService->parseFilename($fileData['name']);
             $fileData['mtime'] = Carbon::parse($fileData['mtime']);
 
             try {
                 $otrkeyFile = OtrkeyFile::updateOrCreate(['name' => $fileData['name']], $fileData);
                 $otrkeyFileIds[] = $otrkeyFile->id;
+
+                if($otrkeyFile->created_at->diffInMinutes($now) < 10) {
+                    Log::info('[Distro sync] ['.$distro->host.'] New file: '.$fileData['name']);
+                }
             } catch(QueryException $e) {
                 Log::info($distro->host.': '.$e->getMessage());
             }
         }
         $distro->otrkeyFiles()->sync($otrkeyFileIds);
+
+        Log::info('[Distro sync] ['.$distro->host.'] File count: '.$count);
+
         return $count;
     }
 

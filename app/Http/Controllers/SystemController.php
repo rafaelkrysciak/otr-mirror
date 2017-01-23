@@ -43,4 +43,10 @@ class SystemController extends Controller
 
         return $sitemap->render('xml');
     }
+
+
+    public function sessionDump()
+    {
+        return \Session::all();
+    }
 }

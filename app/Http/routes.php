@@ -12,19 +12,6 @@
 */
 
 Route::get('test123', function(\App\Services\NodeService $nodeService) {
-    //phpinfo();
-    exit;
-    Log::info('call test123');
-
-    $node = \App\Node::find(5);
-    try {
-        $result = $nodeService->ftpUpload($node,
-            'gush.avengers.2.an.axel.braun.parody.mp4',
-            'ftp://rafael:Utakasoke#1@s03.hq-mirror.de//var/www/otrkeys/import/test.file');
-        return $result;
-    } catch(Exception $e) {
-        var_dump($e->getMessage());
-    }
 });
 
 /**
@@ -66,15 +53,58 @@ Route::get('file/plain-list', 'OtrkeyFileController@plainList');
 
 Route::resource('promotion', 'PromotionController');
 
+Route::get('filme/blockbuster', 'FilmCatalogueController@blockbuster');
+Route::get('filme/dokus', 'FilmCatalogueController@dokus');
+Route::get('filme/komoedie', 'FilmCatalogueController@comedy');
+Route::get('filme/action', 'FilmCatalogueController@action');
+Route::get('filme/thriller', 'FilmCatalogueController@thriller');
+Route::get('filme/action-thriller-crime', 'FilmCatalogueController@action_thriller_crime');
+Route::get('filme/familie', 'FilmCatalogueController@family');
+Route::get('filme/animation', 'FilmCatalogueController@animation');
+Route::get('filme/animation-familie', 'FilmCatalogueController@animation_family');
+Route::get('filme/sci-fi', 'FilmCatalogueController@scifi');
+Route::get('filme/fantasy', 'FilmCatalogueController@fantasy');
+Route::get('filme/sci-fi-fantasy', 'FilmCatalogueController@scifi_fantasy');
+Route::get('filme/horror', 'FilmCatalogueController@horror');
+Route::get('filme/geheimtipp', 'FilmCatalogueController@insiderstip');
+Route::get('filme/fantasy', 'FilmCatalogueController@fantasy');
+Route::get('filme/drama', 'FilmCatalogueController@drama');
+Route::get('filme/horror-mystery', 'FilmCatalogueController@horror_mystery');
+Route::get('film/view', function(){ return redirect('/filme/alle')->withInput(); });
+Route::get('filme/alle', ['as' => 'filmview', 'uses' =>  'FilmCatalogueController@all']);
+Route::get('my/films', function() {return redirect('/filme/meine');});
+Route::get('filme/meine', ['as' => 'myfilmsview', 'uses' =>  'FilmCatalogueController@my']);
+
+Route::get('filme/genre/{genre}', 'FilmController@genre');
+
+Route::get('serien/blockbuster', 'SeriesCatalogueController@blockbuster');
+Route::get('serien/dokus', 'SeriesCatalogueController@dokus');
+Route::get('serien/komoedie', 'SeriesCatalogueController@comedy');
+Route::get('serien/action', 'SeriesCatalogueController@action');
+Route::get('serien/thriller', 'SeriesCatalogueController@thriller');
+Route::get('serien/action-thriller-crime', 'SeriesCatalogueController@action_thriller_crime');
+Route::get('serien/familie', 'SeriesCatalogueController@family');
+Route::get('serien/animation', 'SeriesCatalogueController@animation');
+Route::get('serien/animation-familie', 'SeriesCatalogueController@animation_family');
+Route::get('serien/sci-fi', 'SeriesCatalogueController@scifi');
+Route::get('serien/fantasy', 'SeriesCatalogueController@fantasy');
+Route::get('serien/sci-fi-fantasy', 'SeriesCatalogueController@scifi_fantasy');
+Route::get('serien/horror', 'SeriesCatalogueController@horror');
+Route::get('serien/geheimtipp', 'SeriesCatalogueController@insiderstip');
+Route::get('serien/fantasy', 'SeriesCatalogueController@fantasy');
+Route::get('serien/drama', 'SeriesCatalogueController@drama');
+Route::get('serien/horror-mystery', 'SeriesCatalogueController@horror_mystery');
+Route::get('series/view', function(){ return redirect('/serien/alle')->withInput(); });
+Route::get('serien/alle', ['as' => 'seriesview', 'uses' =>  'SeriesCatalogueController@all']);
+Route::get('my/series', function() {return redirect('/serien/meine');});
+Route::get('serien/meine', ['as' => 'myseriesview', 'uses' =>  'SeriesCatalogueController@my']);
+
+
 Route::get('film/imdb-data/{imdbId}', 'FilmController@imdbData');
 Route::get('film/refresh-imdb-data', 'FilmController@refreshImdbData');
 Route::get('film/amazon-description/{asin}', 'FilmController@amazonDescription');
 Route::get('film/amazon-data/{asin}', 'FilmController@amazonData');
 Route::get('film/search-for-select', 'FilmController@searchForSelect');
-Route::get('film/view', ['as' => 'filmview', 'uses' =>  'FilmController@viewFilms']);
-Route::get('my/films', ['as' => 'myfilmsview', 'uses' =>  'FilmController@myFilms']);
-Route::get('series/view', ['as' => 'seriesview', 'uses' =>  'FilmController@viewSeries']);
-Route::get('my/series', ['as' => 'myseriesview', 'uses' =>  'FilmController@mySeries']);
 Route::resource('film', 'FilmController');
 Route::get('film/{id}/{title?}', 'FilmController@show');
 
@@ -137,6 +167,7 @@ Route::get('node/delete-plan', 'NodeController@deletePlan');
 
 Route::get('system/refresh-tvprogram-view', 'SystemController@refreshTvProgramView');
 Route::get('sitemap.xml', 'SystemController@generateSitemap');
+Route::get('system/session-dump', 'SystemController@sessionDump');
 
 Route::get('/', 'HomeController@index');
 Route::get('home', 'HomeController@index');

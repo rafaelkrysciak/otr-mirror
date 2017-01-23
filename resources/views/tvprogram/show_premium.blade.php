@@ -118,7 +118,7 @@
             </div>
             @if($tvProgram->film->description)
                 <h3>DVD Beschreibung:</h3>
-                <div class="text-justify description">
+                <div class="text-justify description clearfix">
                     {!! $tvProgram->film->description !!}
                 </div>
             @endif

@@ -45,32 +45,54 @@ class DistroService {
      * Download the file index data from the distro server
      *
      * @param string $url URL od the index
+     * @param string $host
      * @return array rows
      */
-    public function getIndexData($url)
+    public function getIndexData($url, $host)
     {
         $response = $this->httpClient->get($url);
         $rows =  explode("\n", $response->content());
 
         Log::info('[Distro sync] ['.$url.'] Row count: '.count($rows));
 
-        $fields = [
+        $fields_v1 = [
             'name',
             'distro_size',
             'mtime',
             'distro_checksum'
         ];
 
+        $fields_v2 = [
+            'distro',
+            'name',
+            'distro_size',
+            'mtime',
+            'distro_checksum'
+        ];
+        $errors = 0;
         $fileRows = [];
         foreach($rows as $row)
         {
             $fileData = str_getcsv(trim($row), ';');
 
-            if(count($fileData) != 4) {
+            if(count($fileData) == count($fields_v1)) { // Fields version 1
+                $fileData = array_combine($fields_v1, array_slice($fileData, 0, 17));
+                $fileData['distro'] = $host;
+            } elseif(count($fileData) == count($fields_v2)) { // Fields version 2
+                $fileData = array_combine($fields_v2, array_slice($fileData, 0, 17));
+            } else {
                 Log::debug('[Distro sync] ['.$url.'] Data error: '.implode(',', $fileData));
+                if($errors++ > 100) {
+                    Log::error('[Distro sync] ['.$url.'] Too many errors');
+                    break;
+                }
                 continue;
             }
-            $fileData = array_combine($fields, array_slice($fileData, 0, 17));
+
+            if($fileData['distro'] != $host) {
+                continue;
+            }
+
             $fileRows[] = $fileData;
         }
 
@@ -108,7 +130,7 @@ class DistroService {
      */
     public function fillDatabase(Distro $distro)
     {
-        $rows = collect($this->getIndexData($distro->index_url))->keyBy('name');
+        $rows = collect($this->getIndexData($distro->index_url, $distro->host))->keyBy('name');
 
         if(!empty($distro->listing_url)) {
             $listRows = $this->getListingData($distro->listing_url);

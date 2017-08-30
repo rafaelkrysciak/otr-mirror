@@ -48,4 +48,52 @@
             <th>{{$stats['film']}}</th>
         </tr>
     </table>
+
+    <div id="download-chart"></div>
+
+    @section('scripts')
+        @parent
+        <link href="//cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.4.0/metricsgraphics.css" rel="stylesheet">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.4.0/metricsgraphics.js"></script>
+
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+        <script>
+
+            var chartGlobalOptions = {
+                width: 'auto',
+                height: 250,
+                hAxis: {textStyle: {fontSize: 9}},
+                vAxis: {textStyle: {fontSize: 9}}
+            };
+            google.load('visualization', '1', {packages: ['corechart', 'bar']});
+            google.setOnLoadCallback(drawDownloadsChart);
+
+            function drawDownloadsChart() {
+
+                $.getJSON( "{{url('stats/downloads-by-tv-program-id/'.$tvProgram->id)}}", function( downloads ) {
+
+                    $.each(downloads, function(key, value) {if(value == null) return; value[0] = new Date(value[0])});
+
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('date', 'Date');
+                    data.addColumn('number', 'Downloads');
+
+                    data.addRows(downloads);
+
+                    var options = $.extend({}, chartGlobalOptions, {
+                        'legend': 'bottom',
+                        title: 'Downloads'
+                    });
+
+                    var chart = new google.visualization.ColumnChart(
+                            document.getElementById('download-chart'));
+
+                    chart.draw(data, options);
+
+                });
+            }
+        </script>
+    @stop
 @endif

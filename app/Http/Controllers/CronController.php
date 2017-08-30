@@ -366,19 +366,19 @@ class CronController extends Controller
                     $updateData['imdb_image'] = $imdbData['imdb_image'];
                 }
 
-                if (empty($film->year)) {
+                if (empty($film->year) && !empty($imdbData['year'])) {
                     $updateData['year'] = $imdbData['year'];
                 }
 
-                if (empty($film->country)) {
+                if (empty($film->country) && !empty($imdbData['country'])) {
                     $updateData['country'] = $imdbData['country'];
                 }
 
-                if (empty($film->director)) {
+                if (empty($film->director) && !empty($imdbData['director'])) {
                     $updateData['director'] = $imdbData['director'];
                 }
 
-                if (empty($film->genre)) {
+                if (empty($film->genre) && !empty($imdbData['genre'])) {
                     $updateData['genre'] = $imdbData['genre'];
                 }
 

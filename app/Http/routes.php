@@ -11,7 +11,9 @@
 |
 */
 
-Route::get('test123', function(\App\Services\NodeService $nodeService) {
+use Illuminate\Http\Request;
+
+Route::get('test123', function(\App\Services\NodeService $nodeService, Request $request) {
 });
 
 /**
@@ -129,6 +131,7 @@ Route::get('payment/success', 'PaymentController@success');
 Route::get('payment/cancel', 'PaymentController@cancel');
 
 Route::get('download/{user}/{token}/{filename}', 'TvProgramController@download');
+Route::get('download-link/{user}/{token}/{filename}', 'TvProgramController@downloadLink');
 
 Route::delete('tvprogram/{tv_program_id}', 'TvProgramController@destroy');
 Route::get('tvprogram/show/{id}', 'TvProgramController@show');

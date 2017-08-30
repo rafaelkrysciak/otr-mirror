@@ -7,14 +7,11 @@ use App\FilmFilter\FilmFilter;
 use App\Filmstar;
 use App\FilmView;
 use App\Http\Requests;
-use App\Services\FilmFilterService;
-use App\Services\FilmSearchService;
 use App\Services\ImdbService;
 use App\TvProgramsView;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Input;
-use Session;
 
 class FilmController extends Controller
 {
@@ -300,17 +297,23 @@ class FilmController extends Controller
 		$lookup->setResponseGroup(['Small', 'Large']);
 		$formattedResponse = $apaiIO->runOperation($lookup);
 
+		// in order to use xpath namespaces need to be set up
+		foreach($formattedResponse->getDocNamespaces() as $strPrefix => $strNamespace) {
+			if(strlen($strPrefix)==0) {
+				$strPrefix="a"; //Assign an arbitrary namespace prefix.
+			}
+			$formattedResponse->registerXPathNamespace($strPrefix,$strNamespace);
+		}
+
 		$title = "";
-		if (isset($formattedResponse['Items']['Item']['ItemAttributes']['Title'])) {
-			$title = $formattedResponse['Items']['Item']['ItemAttributes']['Title'];
+		$titles = $formattedResponse->xpath('//a:ItemAttributes/a:Title');
+		if(count($titles) > 0) {
+			$title = (string) $titles[0];
 		}
 
 		$reviews = [];
-		if (isset($formattedResponse['Items']['Item']['EditorialReviews']['EditorialReview'])) {
-			$reviews = $formattedResponse['Items']['Item']['EditorialReviews']['EditorialReview'];
-		}
-		if (array_key_exists('Content', $reviews)) {
-			$reviews = [$reviews];
+		foreach($formattedResponse->xpath('//a:EditorialReview[a:Content]') as $editorialReview) {
+			$reviews[] = (array) $editorialReview;
 		}
 
 		return view('film.amazon_description', compact('reviews', 'title'));
@@ -324,18 +327,27 @@ class FilmController extends Controller
 		$lookup->setResponseGroup(['Small', 'Large']);
 		$formattedResponse = $apaiIO->runOperation($lookup);
 
+		// in order to use xpath namespaces need to be set up
+		foreach($formattedResponse->getDocNamespaces() as $strPrefix => $strNamespace) {
+			if(strlen($strPrefix)==0) {
+				$strPrefix="a"; //Assign an arbitrary namespace prefix.
+			}
+			$formattedResponse->registerXPathNamespace($strPrefix,$strNamespace);
+		}
+
 		$amazon_image = "";
-		if (isset($formattedResponse['Items']['Item']['LargeImage'])) {
-			$amazon_image = $formattedResponse['Items']['Item']['LargeImage']['URL'];
-		} elseif ($formattedResponse['Items']['Item']['ImageSets']['ImageSet']['LargeImage']) {
-			$amazon_image = $formattedResponse['Items']['Item']['ImageSets']['ImageSet']['LargeImage'];
-		} elseif ($formattedResponse['Items']['Item']['ImageSets']['ImageSet'][0]['LargeImage']) {
-			$amazon_image = $formattedResponse['Items']['Item']['ImageSets']['ImageSet'][0]['LargeImage'];
+		if($formattedResponse->xpath('//a:LargeImage/a:URL')) {
+			$largeImageURL = $formattedResponse->xpath('//a:LargeImage/a:URL');
+			$amazon_image = (string) $largeImageURL[0];
+		} elseif($formattedResponse->xpath('//a:LargeImage[not(a:URL)]')) {
+			$largeImage = $formattedResponse->xpath('//a:LargeImage[not(a:URL)]');
+			$amazon_image = (string) $largeImage[0];
 		}
 
 		$amazon_link = "";
-		if (isset($formattedResponse['Items']['Item']['DetailPageURL'])) {
-			$amazon_link = $formattedResponse['Items']['Item']['DetailPageURL'];
+		$detailPageURL = $formattedResponse->xpath('//a:DetailPageURL');
+		if ($detailPageURL) {
+			$amazon_link = (string) $detailPageURL[0];
 		}
 
 		return compact('amazon_link', 'amazon_image');

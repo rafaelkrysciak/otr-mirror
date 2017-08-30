@@ -32,7 +32,7 @@ class TvProgram extends Model
     {
         if (empty($lang)) return;
 
-        $stations = Cache::remember(__METHOD__ . '::' . $lang, 60, function () use ($lang) {
+        $stations = \Cache::remember(__METHOD__ . '::' . $lang, 60, function () use ($lang) {
             return Station::where('language', '=', $lang)->pluck('tvprogram_name');
         });
 

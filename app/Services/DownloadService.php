@@ -16,18 +16,13 @@ class DownloadService {
     const REGISTERED = 'registered';
     const GUEST = 'guest';
     /**
-     * @var StatService
-     */
-    private $statService;
-    /**
      * @var NodeService
      */
     private $nodeService;
 
 
-    function __construct(StatService $statService, NodeService $nodeService)
+    function __construct(NodeService $nodeService)
     {
-        $this->statService = $statService;
         $this->nodeService = $nodeService;
     }
 
@@ -52,7 +47,7 @@ class DownloadService {
 
     /**
      * @param OtrkeyFile $otrkeyFile
-     * @param User $user
+     * @param string $downloadType
      *
      * @return string
      * @throws LimitExceededDownloadException
@@ -68,7 +63,6 @@ class DownloadService {
         if ($downloadType == self::PREMIUM && $node->busy_workers > 150 && $otrkeyFile->awsOtrkeyFile) {
             try {
                 $signedUrl = $this->createS3DownloadLink($otrkeyFile->name);
-                $this->statService->trackAwsDownload($otrkeyFile->id);
                 return $signedUrl;
             } catch (\Exception $e) {
                 // ToDo: Mail senden
@@ -83,7 +77,6 @@ class DownloadService {
             if ($downloadType == self::PREMIUM && $otrkeyFile->awsOtrkeyFile) {
                 try {
                     $signedUrl = $this->createS3DownloadLink($otrkeyFile->name);
-                    $this->statService->trackAwsDownload($otrkeyFile->id);
                     return $signedUrl;
                 } catch (\Exception $e) {
                     // ToDo: Mail senden
@@ -95,7 +88,6 @@ class DownloadService {
             }
         }
 
-        $this->statService->trackDownload($otrkeyFile->id);
         return $url;
     }
 
@@ -121,11 +113,11 @@ class DownloadService {
             return;
         }
 
-        if ($downloadType == self::REGISTERED && $node->busy_workers > 120) {
+        if ($downloadType == self::REGISTERED && $node->busy_workers > 90) {
             throw new NoCapacityDownloadException;
         }
 
-        if ($downloadType == self::GUEST && $node->busy_workers > 90) {
+        if ($downloadType == self::GUEST && $node->busy_workers > 60) {
             throw new NoCapacityDownloadException;
         }
     }

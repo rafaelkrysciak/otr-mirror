@@ -80,15 +80,16 @@ class StatService
      */
     public function getFilesForDelete($limit = 100)
     {
-        $files = OtrkeyFile::leftJoin('stat_downloads', function ($join) {
+
+        $eloquentBuilder = OtrkeyFile::leftJoin('stat_downloads', function ($join) {
             $join->on('stat_downloads.otrkey_file_id', '=', 'otrkey_files.id')
                 ->where('stat_downloads.event_date', '>', Carbon::now()->subMonths(4));
         })
             ->leftJoin('tv_programs', 'otrkey_files.tv_program_id', '=', 'tv_programs.id')
-	    ->rightJoin('node_otrkeyfile', function($join) {
-	    	$join->on('otrkey_files.id', '=', 'node_otrkeyfile.otrkeyfile_id');
-		    $join->on('node_otrkeyfile.status', '=', DB::raw("'DOWNLOADED'"));
-	    })
+	        ->rightJoin('node_otrkeyfile', function($join) {
+	    	    $join->on('otrkey_files.id', '=', 'node_otrkeyfile.otrkeyfile_id');
+		        $join->on('node_otrkeyfile.status', '=', DB::raw("'DOWNLOADED'"));
+	        })
             //->whereIn('otrkey_files.id', function ($query) {
             //    $query->select('otrkeyfile_id')
             //        ->from('node_otrkeyfile')
@@ -101,8 +102,14 @@ class StatService
                     WHEN tv_programs.highlight != 1 THEN SUM(downloads) + SUM(aws_downloads)
                 END,
                 otrkey_files.start')
-            ->limit($limit)
-            ->get(['otrkey_files.*']);
+            ->limit($limit);
+
+        \Log::info('getFilesForDelete query: '.$eloquentBuilder->getQuery()->toSql().
+            ' 1:'.Carbon::now()->subMonths(4).
+            ' 2:'.Carbon::now()->subDays(12)
+        );
+
+        $files = $eloquentBuilder->get(['otrkey_files.*']);
 
         return $files;
     }

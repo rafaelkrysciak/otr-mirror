@@ -4,27 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5d0567644c41267eaed324317f4ae454",
-    "content-hash": "343dbfd6cdaf1f0ae03cc2ac28135ec5",
+    "hash": "ea6ca2b0508e43cad9becd6230e9a417",
+    "content-hash": "4d20a8199ea0c4c1e5f081e769674a62",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.19.12",
+            "version": "3.24.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "5d5697c7bc9ab22ce718afb51e5496d0c5cb8778"
+                "reference": "2823e0a0742505f655b0cb3bcdb10844f60e6078"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5d5697c7bc9ab22ce718afb51e5496d0c5cb8778",
-                "reference": "5d5697c7bc9ab22ce718afb51e5496d0c5cb8778",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2823e0a0742505f655b0cb3bcdb10844f60e6078",
+                "reference": "2823e0a0742505f655b0cb3bcdb10844f60e6078",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^5.3.1|^6.2.1",
                 "guzzlehttp/promises": "~1.0",
-                "guzzlehttp/psr7": "~1.3.1",
+                "guzzlehttp/psr7": "^1.3.1, !=1.4.0",
                 "mtdowling/jmespath.php": "~2.2",
                 "php": ">=5.5"
             },
@@ -85,7 +85,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-09-29 21:07:49"
+            "time": "2017-03-14 00:56:44"
         },
         {
             "name": "aws/aws-sdk-php-laravel",
@@ -915,19 +915,20 @@
         },
         {
             "name": "imdbphp/imdbphp",
-            "version": "v4.1.1",
+            "version": "v5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tboothman/imdbphp.git",
-                "reference": "c90e0d17be73cf8274de2bd9c3ebed7d2def7f3a"
+                "reference": "ab2e40c47e707835e925219124dabad5dada935e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tboothman/imdbphp/zipball/c90e0d17be73cf8274de2bd9c3ebed7d2def7f3a",
-                "reference": "c90e0d17be73cf8274de2bd9c3ebed7d2def7f3a",
+                "url": "https://api.github.com/repos/tboothman/imdbphp/zipball/ab2e40c47e707835e925219124dabad5dada935e",
+                "reference": "ab2e40c47e707835e925219124dabad5dada935e",
                 "shasum": ""
             },
             "require": {
+                "ext-curl": "*",
                 "php": ">5.3",
                 "psr/log": "~1.0"
             },
@@ -937,12 +938,8 @@
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "BrowserEmulator": "src/"
-                },
                 "psr-4": {
-                    "Imdb\\": "src/Imdb",
-                    "MoviePosterDb\\": "src/MoviePosterDb"
+                    "Imdb\\": "src/Imdb"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -950,7 +947,7 @@
                 "GPL-2.0"
             ],
             "description": "Library for retrieving film and tv information from IMDb",
-            "time": "2016-09-14 19:29:14"
+            "time": "2017-01-21 22:54:46"
         },
         {
             "name": "intervention/image",

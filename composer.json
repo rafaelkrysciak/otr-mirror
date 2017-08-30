@@ -17,7 +17,7 @@
 		"omnipay/paypal": "~2.4",
 		"paypal/rest-api-sdk-php": "~1.7",
 		"intervention/image": "~2.2",
-		"imdbphp/imdbphp": "~4.1",
+		"imdbphp/imdbphp": "~5.0",
 		"exeu/apai-io": "^1.8",
 		"google/apiclient": "^1.1",
 		"openpsa/universalfeedcreator": "^1.8",

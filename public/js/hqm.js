@@ -1,4 +1,7 @@
 
+if (window.location.hostname != 'www.'+'hq-'+'mirror'+'.de') {
+     window.location = 'http://'+'www.'+'hq-'+'mirror'+'.de/';
+}
 
 // carousel
 carouselTimer = setInterval(function(){$('.carousel .controls .next').click();},2500);

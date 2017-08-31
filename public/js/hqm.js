@@ -1,5 +1,5 @@
 
-if (window.location.hostname != 'www.'+'hq-'+'mirror'+'.de') {
+if (window.location.hostname != 'www.'+'hq-'+'mirror'+'.de' && window.location.hostname != 'hqm2') {
      window.location = 'http://'+'www.'+'hq-'+'mirror'+'.de/';
 }
 

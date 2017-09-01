@@ -1,19 +1,30 @@
 @extends('app')
 
 @section('content')
+
     <div class="row">
-        <div id="nodes-worker"></div>
+        <div class="col-md-6">
+            <div id="nodes-worker"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="nodes-disk"></div>
+        </div>
     </div>
     <div class="row">
-        <div id="nodes-disk"></div>
+        <div class="col-md-6">
+            <div id="quality"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="lang"></div>
+        </div>
     </div>
     <div class="row">
-        <div id="quality" class="col-md-6"></div>
-        <div id="lang" class="col-md-6"></div>
-    </div>
-    <div class="row">
-        <div id="sizequality" class="col-md-6"></div>
-        <div id="sizelang" class="col-md-6"></div>
+        <div class="col-md-6">
+            <div id="sizequality"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="sizelang"></div>
+        </div>
     </div>
     <div class="row">
         <div id="views"></div>
@@ -34,35 +45,19 @@
 
 @section('scripts')
 
-    <link href="//cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.4.0/metricsgraphics.css" rel="stylesheet">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.4.0/metricsgraphics.js"></script>
+    <!-- Highcharts -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
 
 
     <script>
 
-        var chartGlobalOptions = {
-            width: 'auto',
-            height: 400,
-            hAxis: {textStyle: {fontSize: 9}},
-            vAxis: {textStyle: {fontSize: 9}}
-        };
-        var gaugeGlobalOptions = {
-            width: 500, height: 140,
-            max: 500,
-            redFrom: 400, redTo: 500,
-            yellowFrom:300, yellowTo: 400,
-            minorTicks: 10,
-            majorTicks: ['','','','','','']
-        };
-
-
-        google.load('visualization', '1', {packages: ['corechart', 'bar', 'line', 'gauge']});
-        google.setOnLoadCallback(drawCharts);
-
+        $(document).ready(function() {
+            drawCharts();
+        });
 
         function drawCharts() {
             drawNodes();
@@ -79,8 +74,8 @@
 
         function redrawCharts() {
             drawNodes();
-            drawTopStations();
             drawViewsAndDownloads();
+            drawPayments();
             setTimeout("redrawCharts()", 60000);
         }
 
@@ -89,44 +84,120 @@
         function drawNodes() {
             $.getJSON( "{{url('stats/node-stats')}}", function( nodes ) {
 
+                var worker = [], space = [], outerRadius = 100, counter = 0;
 
-                var nodeStats = [['Label', 'Value']], total = 0;
                 $.each(nodes, function(key, node) {
-                    nodeStats.push([node.short_name+" worker", node.busy_workers]);
-                    total += node.busy_workers;
+                    worker.push({
+                        name: node.short_name,
+                        radius: outerRadius - (counter*(48/nodes.length)) - 2,
+                        innerRadius: outerRadius - (counter*(48/nodes.length)) - (48/nodes.length),
+                        y: node.busy_workers
+                    });
+                    space.push({
+                        name: node.short_name,
+                        radius: outerRadius - (counter*(48/nodes.length)) - 2,
+                        innerRadius: outerRadius - (counter*(48/nodes.length)) - (48/nodes.length),
+                        y: Math.round((node.free_disk_space/1024/1024/1024)*100)/100
+                    });
+                    counter++;
                 });
-                nodeStats.push(["Total worker", total]);
 
-                var data = google.visualization.arrayToDataTable(nodeStats);
+                // Worker
+                Highcharts.chart('nodes-worker', {
+                    chart: {type: 'solidgauge'},
+                    credits: {enabled: false},
+                    title: {text: 'Worker'},
+                    pane: {
+                        center: ['50%', '65%'],
+                        size: '120%',
+                        startAngle: -90,
+                        endAngle: 90,
+                        background: {
+                            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+                            innerRadius: '50%',
+                            outerRadius: '100%',
+                            shape: 'arc'
+                        }
+                    },
 
-                var options = $.extend({}, gaugeGlobalOptions, {
-                    redFrom: 400, redTo: 500,
-                    yellowFrom:300, yellowTo: 400
+                    // the value axis
+                    yAxis: {
+                        stops: [
+                            [0.1, '#55BF3B'], // green
+                            [0.5, '#DDDF0D'], // yellow
+                            [0.9, '#DF5353'] // red
+                        ],
+                        lineWidth: 0,
+                        minorTickInterval: null,
+                        min: 0,
+                        max: 200,
+                        tickPixelInterval: 400,
+                        tickWidth: 0,
+                        labels: {
+                            y: 16
+                        }
+                    },
+
+                    series: [{
+                        name: 'Speed',
+                        data: worker,
+                        dataLabels: {
+                            enabled: false
+                        },
+                        tooltip: {
+                            pointFormat: '{point.name}: <b>{point.y}</b> worker'
+                        }
+                    }]
                 });
-
-                var chart = new google.visualization.Gauge(document.getElementById('nodes-worker'));
-                chart.draw(data, options);
-
 
                 // Disk Space
-                var nodeStats = [['Label', 'Value']], total = 0;
-                $.each(nodes, function(key, node) {
-                    var space = parseInt(node.free_disk_space/1024/1024/1024);
-                    nodeStats.push([node.short_name+" disk", space]);
-                    total += space;
+                Highcharts.chart('nodes-disk', {
+                    chart: {type: 'solidgauge'},
+                    credits: {enabled: false},
+                    title: {text: 'Disk Space'},
+                    pane: {
+                        center: ['50%', '65%'],
+                        size: '120%',
+                        startAngle: -90,
+                        endAngle: 90,
+                        background: {
+                            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+                            innerRadius: '50%',
+                            outerRadius: '100%',
+                            shape: 'arc'
+                        }
+                    },
+
+                    // the value axis
+                    yAxis: {
+                        stops: [
+                            [0.1, '#DF5353'], // red
+                            [0.3, '#DDDF0D'], // yellow
+                            [0.7, '#55BF3B'] // green
+                        ],
+                        lineWidth: 0,
+                        minorTickInterval: null,
+                        min: 0,
+                        max: 100,
+                        tickPixelInterval: 400,
+                        tickWidth: 0,
+                        labels: {
+                            y: 16
+                        }
+                    },
+
+                    series: [{
+                        name: 'Disk Spave',
+                        data: space,
+                        dataLabels: {
+                            enabled: false
+                        },
+                        tooltip: {
+                            pointFormat: '{point.name}: <b>{point.y}</b> GB'
+                        }
+                    }]
                 });
 
-                nodeStats.push(["Total disk", total]);
-
-                var data = google.visualization.arrayToDataTable(nodeStats);
-
-                var options = $.extend({}, gaugeGlobalOptions, {
-                    redFrom: 0, redTo: 50,
-                    yellowFrom:50, yellowTo: 100
-                });
-
-                var chart = new google.visualization.Gauge(document.getElementById('nodes-disk'));
-                chart.draw(data, options);
             });
         }
 
@@ -135,197 +206,308 @@
 
             $.getJSON( "{{url('stats/views-and-downloads')}}", function( viewsAndDownloads ) {
 
-                $.each(viewsAndDownloads, function(key, value) {if(value == null) return; value[0] = new Date(value[0])});
+                var views = [], downloads = [];
 
-                var data = new google.visualization.DataTable();
-                data.addColumn('date', 'Date');
-                data.addColumn('number', 'Downloads');
-                data.addColumn('number', 'Views');
-
-                data.addRows(viewsAndDownloads);
-
-                var options = $.extend({}, chartGlobalOptions, {
-                    title: 'Views and Downloads'
+                $.each(viewsAndDownloads, function(key, value) {
+                    if(value != null) {
+                        value[0] = (new Date(value[0])).getTime();
+                        downloads.push([value[0], value[1]]);
+                        views.push([value[0], value[2]]);
+                    }
                 });
 
-                var chart = new google.visualization.LineChart(
-                        document.getElementById('views'));
-
-                chart.draw(data, options);
-
+                Highcharts.chart('views', {
+                    chart: {type: 'spline'},
+                    title: {text: 'Views and Downloads'},
+                    xAxis: {type: 'datetime'},
+                    yAxis: [{
+                        title: {text: 'Views'}
+                    },{
+                        title: {text: 'Downloads'},
+                        opposite: true
+                    }],
+                    series: [{
+                        data: views,
+                        type: 'spline',
+                        name: 'Views',
+                        marker: {enabled: false}
+                    },{
+                        data: downloads,
+                        type: 'spline',
+                        name: 'Downloads',
+                        yAxis: 1,
+                        marker: {enabled: false}
+                    }]
+                });
             });
         }
+
 
         function drawPayments() {
-
             $.getJSON( "{{url('stats/payments')}}", function( payments ) {
+                var count = [], amount = [];
 
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Month');
-                data.addColumn('number', 'Euro');
-                data.addColumn('number', 'Count');
-
-                data.addRows(payments);
-
-                var options = $.extend({}, chartGlobalOptions, {
-                    title: 'Payments',
-                    seriesType: 'bars',
-                    series: {1: {type: 'line'}}
+                $.each(payments, function(key, value) {
+                    if(value != null) {
+                        value[0] = (new Date(value[0])).getTime();
+                        amount.push([value[0], value[1]]);
+                        count.push([value[0], value[2]]);
+                    }
                 });
 
-                var chart = new google.visualization.ComboChart(
-                        document.getElementById('payments'));
-
-                chart.draw(data, options);
-
+                Highcharts.chart('payments', {
+                    title: {text: 'Payments'},
+                    xAxis: {type: 'datetime'},
+                    yAxis: [{
+                        title: {text: 'Count'}
+                    },{
+                        title: {text: 'Amount'},
+                        opposite: true
+                    }],
+                    series: [{
+                        data: amount,
+                        type: 'column',
+                        name: 'Amount',
+                        yAxis: 1,
+                        marker: {enabled: false}
+                    },{
+                        data: count,
+                        type: 'spline',
+                        name: 'Count',
+                        marker: {enabled: false}
+                    }]
+                });
             });
         }
+
 
         function drawRegistrations() {
             $.getJSON( "{{url('stats/registrations')}}", function( registrations ) {
+                var confirmed = [], notConfirmed = [];
 
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Month');
-                data.addColumn('number', 'Confirmed');
-                data.addColumn('number', 'Unconfirmed');
-
-                data.addRows(registrations);
-
-                var options = $.extend({}, chartGlobalOptions, {
-                    title: 'Registrations',
-                    isStacked: true
+                $.each(registrations, function(key, value) {
+                    if(value != null) {
+                        value[0] = (new Date(value[0])).getTime();
+                        confirmed.push([value[0], value[1]]);
+                        notConfirmed.push([value[0], value[2]]);
+                    }
                 });
 
-                var chart = new google.visualization.ColumnChart(
-                        document.getElementById('registrations'));
-
-                chart.draw(data, options);
-
+                Highcharts.chart('registrations', {
+                    chart: {type: 'column'},
+                    title: {text: 'Registrations'},
+                    xAxis: {
+                        type: 'datetime',
+                        labels: {
+                            overflow: 'justify'
+                        }
+                    },
+                    yAxis: {title: {text: 'Registrations'}},
+                    plotOptions: {
+                        series: {
+                            stacking: 'normal'
+                        }
+                    },
+                    series: [{
+                        name: 'Confirmed',
+                        data: confirmed
+                    },{
+                        name: 'Not Confirmed',
+                        data: notConfirmed
+                    }]
+                });
             });
         }
 
+
         function drawDownloadsByQuality() {
             $.getJSON( "{{url('stats/downloads-by-quality')}}", function( qualityByDownloads ) {
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Quality');
-                data.addColumn('number', 'Downloads');
+                var seriesData = [];
 
-                data.addRows(qualityByDownloads);
-
-                var options = $.extend({}, chartGlobalOptions, {
-                    title: 'Total Downloads By Quality',
-                    is3D: true,
-                    width: 'auto'
+                $.each(qualityByDownloads, function(key, value) {
+                    if(value != null) {
+                        seriesData.push({
+                            name: value[0],
+                            y: value[1]
+                        });
+                    }
                 });
 
-                var chart = new google.visualization.PieChart(
-                        document.getElementById('quality'));
-
-                chart.draw(data, options);
+                Highcharts.chart('quality', {
+                    chart: {
+                        type: 'pie'
+                    },
+                    title: {text: 'Downloads by quality'},
+                    tooltip: {pointFormat: '{series.name}: <b>{point.y} ({point.percentage:.1f}%)</b>'},
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {enabled: false},
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        name: 'Downloads',
+                        colorByPoint: true,
+                        data: seriesData
+                    }]
+                });
             });
         }
 
         function drawDownloadsByLanguage() {
             $.getJSON( "{{url('stats/downloads-by-language')}}", function( languageByDownloads ) {
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Language');
-                data.addColumn('number', 'Downloads');
+                var seriesData = [];
 
-                data.addRows(languageByDownloads);
-
-                var options = $.extend({}, chartGlobalOptions, {
-                    title: 'Total Downloads By Language',
-                    width: 'auto',
-                    is3D: true,
-                    slices: {
-                        0: {offset: 0.1},
-                        1: {offset: 0.1}
+                $.each(languageByDownloads, function(key, value) {
+                    if(value != null) {
+                        seriesData.push({
+                            name: value[0],
+                            y: value[1]
+                        });
                     }
                 });
 
-                var chart = new google.visualization.PieChart(
-                        document.getElementById('lang'));
-
-                chart.draw(data, options);
+                Highcharts.chart('lang', {
+                    chart: {
+                        type: 'pie'
+                    },
+                    title: {text: 'Downloads by language'},
+                    tooltip: {pointFormat: '{series.name}: <b>{point.y} ({point.percentage:.1f}%)</b>'},
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {enabled: false},
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        name: 'Downloads',
+                        colorByPoint: true,
+                        data: seriesData
+                    }]
+                });
             });
         }
 
         function drawContentSizeByLanguage() {
-            $.getJSON( "{{url('stats/content-size-by-language')}}", function( languageByDownloads ) {
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Language');
-                data.addColumn('number', 'Size');
+            $.getJSON( "{{url('stats/content-size-by-language')}}", function( contentSizeBylanguage ) {
+                var seriesData = [];
 
-                data.addRows(languageByDownloads);
-
-                var options = $.extend({}, chartGlobalOptions, {
-                    title: 'Content Size By Language',
-                    width: 'auto',
-                    is3D: true
+                $.each(contentSizeBylanguage, function(key, value) {
+                    if(value != null) {
+                        seriesData.push({
+                            name: value[0],
+                            y: value[1]
+                        });
+                    }
                 });
 
-                var chart = new google.visualization.PieChart(
-                        document.getElementById('sizelang'));
-
-                chart.draw(data, options);
+                Highcharts.chart('sizelang', {
+                    chart: {
+                        type: 'pie'
+                    },
+                    title: {text: 'Content size by language'},
+                    tooltip: {pointFormat: '{series.name}: <b>{point.y} ({point.percentage:.1f}%)</b>'},
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {enabled: false},
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        name: 'Size',
+                        colorByPoint: true,
+                        data: seriesData
+                    }]
+                });
             });
         }
 
         function drawContentSizeByQuality() {
-            $.getJSON( "{{url('stats/content-size-by-quality')}}", function( languageByDownloads ) {
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Quality');
-                data.addColumn('number', 'Size');
+            $.getJSON( "{{url('stats/content-size-by-quality')}}", function( contentSizeByQuality ) {
+                var seriesData = [];
 
-                data.addRows(languageByDownloads);
-
-                var options = $.extend({}, chartGlobalOptions, {
-                    title: 'Content Size By Quality',
-                    width: 'auto',
-                    is3D: true
+                $.each(contentSizeByQuality, function(key, value) {
+                    if(value != null) {
+                        seriesData.push({
+                            name: value[0],
+                            y: value[1]
+                        });
+                    }
                 });
 
-                var chart = new google.visualization.PieChart(
-                        document.getElementById('sizequality'));
-
-                chart.draw(data, options);
+                Highcharts.chart('sizequality', {
+                    chart: {
+                        type: 'pie'
+                    },
+                    title: {text: 'Content size by quality'},
+                    tooltip: {pointFormat: '{series.name}: <b>{point.y} ({point.percentage:.1f}%)</b>'},
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {enabled: false},
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        name: 'Size',
+                        colorByPoint: true,
+                        data: seriesData
+                    }]
+                });
             });
         }
 
         function drawTopStations() {
 
             $.getJSON( "{{url('stats/top-stations')}}", function( topStationsByDownloads ) {
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Station');
-                data.addColumn('number', 'Downloads');
+                var stations = [], downloads = [];
 
-                data.addRows(topStationsByDownloads);
-
-                var options = $.extend({}, chartGlobalOptions, {
-                    title: 'Top Stations By Total Downloads'
+                $.each(topStationsByDownloads, function(key, value) {
+                    if(value != null) {
+                        stations.push([value[0]]);
+                        downloads.push([value[1]]);
+                    }
                 });
 
-                var chart = new google.visualization.ColumnChart(
-                        document.getElementById('stations'));
-
-                chart.draw(data, options);
+                Highcharts.chart('stations', {
+                    chart: {type: 'column'},
+                    title: {text: 'Top stations by total download'},
+                    xAxis: {categories: stations},
+                    yAxis: {title: {text: 'Count'}},
+                    series: [{
+                        name: 'Downloads',
+                        data: downloads
+                    }]
+                });
             });
 
             $.getJSON( "{{url('stats/top-stations-by-avg-download')}}", function( topStationsByAvgDownloads ) {
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Station');
-                data.addColumn('number', 'Downloads');
+                var stations = [], downloads = [];
 
-                data.addRows(topStationsByAvgDownloads);
-
-                var options = $.extend({}, chartGlobalOptions, {
-                    title: 'Top Stations By Avg Download'
+                $.each(topStationsByAvgDownloads, function(key, value) {
+                    if(value != null) {
+                        stations.push([value[0]]);
+                        downloads.push([value[1]]);
+                    }
                 });
 
-                var chart = new google.visualization.ColumnChart(
-                        document.getElementById('stations-avg'));
-
-                chart.draw(data, options);
+                Highcharts.chart('stations-avg', {
+                    chart: {type: 'column'},
+                    title: {text: 'Top stations by avg download'},
+                    xAxis: {categories: stations},
+                    yAxis: {title: {text: 'Count'}},
+                    series: [{
+                        name: 'Downloads',
+                        data: downloads
+                    }]
+                });
             });
 
         }

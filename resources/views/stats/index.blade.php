@@ -11,21 +11,20 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-3">
             <div id="quality"></div>
         </div>
-        <div class="col-md-6">
-            <div id="lang"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-3">
             <div id="sizequality"></div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
+            <div id="lang"></div>
+        </div>
+        <div class="col-md-3">
             <div id="sizelang"></div>
         </div>
     </div>
+    <div class="row"><br><br><br></div>
     <div class="row">
         <div id="views"></div>
     </div>

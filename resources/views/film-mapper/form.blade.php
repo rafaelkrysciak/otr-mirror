@@ -9,7 +9,12 @@
 
 <div class="form-group">
     {!! Form::label('new_title', 'New Title') !!}
-    {!! Form::text('new_title', null, ['class' => 'form-control']) !!}
+    <div class="input-group">
+        {!! Form::text('new_title', null, ['class' => 'form-control']) !!}
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default copy-title">Copy Title</button>
+        </div>
+    </div>
 </div>
 
 <div class="form-group">

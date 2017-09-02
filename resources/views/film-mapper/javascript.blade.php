@@ -35,4 +35,15 @@
             return repo.text || repo.text;
         }
     });
+
+    $('.copy-title').click(function() {
+        var filmTitle = "", titleRegExp, matches;
+
+        titleRegExp = new RegExp(/^(.*) \(/);
+        filmTitle = $('#film_id option:selected').text();
+        matches = filmTitle.match(titleRegExp);
+        if (matches) {
+            $('#new_title').val(matches[1]);
+        }
+    });
 </script>

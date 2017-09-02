@@ -133,6 +133,10 @@
                                    href="http://www.google.com/search?q={{urlencode($tvProgram->title.' '.$tvProgram->station)}}">
                                     <i class="zocial google"></i>
                                 </a>
+                                <a class="btn btn-default btn-xs" role="button" target="_blank"
+                                   href="https://www.fernsehserien.de/suche/{{urlencode($tvProgram->title)}}">
+                                    <img src="https://www.fernsehserien.de/favicon.ico" width="21" height="21">
+                                </a>
                             </td>
                         </tr>
                     @endforeach

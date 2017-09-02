@@ -116,6 +116,7 @@ Route::get('film-mapper/find-mapper-rules', 'FilmMapperController@findMapperRule
 Route::get('film-mapper/verifier-index/{language?}', 'FilmMapperController@verifierIndex');
 Route::put('film-mapper/{id}/verify', 'FilmMapperController@verify');
 Route::put('film-mapper/{id}/skip', 'FilmMapperController@skip');
+Route::put('film-mapper/{id}/skip-plus-10-minutes', 'FilmMapperController@skipPlus10Minutes');
 Route::resource('film-mapper', 'FilmMapperController');
 Route::get('film-mapper/create/{tv_program_id?}', 'FilmMapperController@create');
 

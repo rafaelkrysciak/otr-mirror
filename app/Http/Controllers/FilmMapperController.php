@@ -47,6 +47,31 @@ class FilmMapperController extends Controller
     }
 
 
+	public function skipPlus10Minutes($id, FilmMapperService $filmMapperService)
+	{
+		$filmMapper = FilmMapper::findOrFail($id);
+
+		$maxLength = TvProgram::where('title','=',$filmMapper->org_title)
+			->whereNull('film_id')->max('length');
+		if(empty($maxLength)) {
+			return ['status' => 'KO', 'message' => "May length not found"];
+		}
+
+		$filmMapper->verified = true;
+		$filmMapper->film_id = 0;
+		$filmMapper->min_length = 0;
+        $filmMapper->year = null;
+        $filmMapper->channel = null;
+        $filmMapper->director = null;
+		$filmMapper->max_length = $maxLength+10;
+		$filmMapper->save();
+
+		$filmMapperService->map($filmMapper);
+
+		return ['status' => 'OK'];
+	}
+
+
     public function fromTvProgram($tv_program_id)
     {
         $tvProgram = TvProgram::findOrFail($tv_program_id);

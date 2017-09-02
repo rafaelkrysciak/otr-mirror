@@ -89,6 +89,7 @@
                 <div class="btn-group-vertical" role="group">
                     <button class="btn btn-default verify" data-mapper-id="{{$mapper->id}}"><i class="glyphicon glyphicon-ok"></i> Verify</button>
                     <button class="btn btn-default skip" data-mapper-id="{{$mapper->id}}"><i class="glyphicon glyphicon-share-alt"></i> Skip</button>
+                    <button class="btn btn-default skip-plus-10-minutes" data-mapper-id="{{$mapper->id}}"><i class="glyphicon glyphicon-share-alt"></i> Clear & Skip +10m</button>
                     <a href="{{url('film-mapper/'.$mapper->id)}}" class="btn btn-default delete"
                        data-method="delete" data-confirm="Are you sure?" data-handler="ajax">
                         <i class="glyphicon glyphicon-trash"></i> Delete Mapper
@@ -151,6 +152,12 @@
             var button = $(this), id = $(this).data('mapper-id');
             e.stopPropagation();
             putRequest("{{url('/film-mapper/$id$/skip')}}".replace('$id$', id), button);
+        });
+
+        $('.skip-plus-10-minutes').on('click', function(e) {
+            var button = $(this), id = $(this).data('mapper-id');
+            e.stopPropagation();
+            putRequest("{{url('/film-mapper/$id$/skip-plus-10-minutes')}}".replace('$id$', id), button);
         });
 
         // verify teh mapper

@@ -53,45 +53,40 @@
 
     @section('scripts')
         @parent
-        <link href="//cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.4.0/metricsgraphics.css" rel="stylesheet">
-        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.4.0/metricsgraphics.js"></script>
 
-        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <!-- Highcharts -->
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/highcharts-more.js"></script>
+        <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 
         <script>
 
-            var chartGlobalOptions = {
-                width: 'auto',
-                height: 250,
-                hAxis: {textStyle: {fontSize: 9}},
-                vAxis: {textStyle: {fontSize: 9}}
-            };
-            google.load('visualization', '1', {packages: ['corechart', 'bar']});
-            google.setOnLoadCallback(drawDownloadsChart);
+            $(drawDownloadsChart);
 
             function drawDownloadsChart() {
 
                 $.getJSON( "{{url('stats/downloads-by-tv-program-id/'.$tvProgram->id)}}", function( downloads ) {
 
-                    $.each(downloads, function(key, value) {if(value == null) return; value[0] = new Date(value[0])});
-
-                    var data = new google.visualization.DataTable();
-                    data.addColumn('date', 'Date');
-                    data.addColumn('number', 'Downloads');
-
-                    data.addRows(downloads);
-
-                    var options = $.extend({}, chartGlobalOptions, {
-                        'legend': 'bottom',
-                        title: 'Downloads'
+                    var downloadData = [];
+                    $.each(downloads, function(key, value) {
+                        if(value != null) {
+                            value[0] = (new Date(value[0])).getTime();
+                            downloadData.push([value[0], value[1]]);
+                        }
                     });
 
-                    var chart = new google.visualization.ColumnChart(
-                            document.getElementById('download-chart'));
-
-                    chart.draw(data, options);
-
+                    Highcharts.chart('download-chart', {
+                        title: {text: 'Downloads'},
+                        xAxis: {type: 'datetime'},
+                        yAxis: [{title: {text: 'Downloads'}}],
+                        tooltip: {dateTimeLabelFormats: {hour:"%A, %b %e, %Y"}},
+                        series: [{
+                            data: downloadData,
+                            type: 'column',
+                            name: 'Downloads',
+                            marker: {enabled: false}
+                        }]
+                    });
                 });
             }
         </script>

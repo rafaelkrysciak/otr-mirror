@@ -16,35 +16,35 @@ class FilmMapperController extends Controller
 {
 
 
-    function __construct()
-    {
-        $this->middleware('admin');
-    }
+	function __construct()
+	{
+		$this->middleware('admin');
+	}
 
 
-    public function verify($id, FilmMapperService $filmMapperService)
-    {
-        $filmMapper = FilmMapper::findOrFail($id);
-        $filmMapper->verified = true;
-        $filmMapper->save();
+	public function verify($id, FilmMapperService $filmMapperService)
+	{
+		$filmMapper = FilmMapper::findOrFail($id);
+		$filmMapper->verified = true;
+		$filmMapper->save();
 
-        $filmMapperService->map($filmMapper);
+		$filmMapperService->map($filmMapper);
 
-        return ['status' => 'OK'];
-    }
+		return ['status' => 'OK'];
+	}
 
 
-    public function skip($id, FilmMapperService $filmMapperService)
-    {
-        $filmMapper = FilmMapper::findOrFail($id);
-        $filmMapper->verified = true;
-        $filmMapper->film_id = 0;
-        $filmMapper->save();
+	public function skip($id, FilmMapperService $filmMapperService)
+	{
+		$filmMapper = FilmMapper::findOrFail($id);
+		$filmMapper->verified = true;
+		$filmMapper->film_id = 0;
+		$filmMapper->save();
 
-        $filmMapperService->map($filmMapper);
+		$filmMapperService->map($filmMapper);
 
-        return ['status' => 'OK'];
-    }
+		return ['status' => 'OK'];
+	}
 
 
 	public function skipPlus10Minutes($id, FilmMapperService $filmMapperService)
@@ -60,9 +60,9 @@ class FilmMapperController extends Controller
 		$filmMapper->verified = true;
 		$filmMapper->film_id = 0;
 		$filmMapper->min_length = 0;
-        $filmMapper->year = null;
-        $filmMapper->channel = null;
-        $filmMapper->director = null;
+		$filmMapper->year = null;
+		$filmMapper->channel = null;
+		$filmMapper->director = null;
 		$filmMapper->max_length = $maxLength+10;
 		$filmMapper->save();
 
@@ -72,224 +72,224 @@ class FilmMapperController extends Controller
 	}
 
 
-    public function fromTvProgram($tv_program_id)
-    {
-        $tvProgram = TvProgram::findOrFail($tv_program_id);
+	public function fromTvProgram($tv_program_id)
+	{
+		$tvProgram = TvProgram::findOrFail($tv_program_id);
 
-        return $tvProgram;
-    }
-
-
-    public function applyMapRules(FilmMapperService $filmMapperService)
-    {
-        $numRows = $filmMapperService->mapAll(true);
-        flash($numRows . ' Tv-Programs mapped');
-
-        return redirect()->back();
-    }
+		return $tvProgram;
+	}
 
 
-    public function verifierIndex($language = 'de')
-    {
-        $mappers = FilmMapper::with('film')
-            ->where('verified', '=', false)
-            ->where('language', '=', $language)
-            ->limit(100)
-            ->get();
+	public function applyMapRules(FilmMapperService $filmMapperService)
+	{
+		$numRows = $filmMapperService->mapAll(true);
+		flash($numRows . ' Tv-Programs mapped');
 
-        $languages = Station::groupBy('language_short')
-            ->orderBy('language')
-            ->lists('language', 'language_short')
-            ->toArray();
-
-        return view('film-mapper.verifier_index', compact('mappers', 'languages', 'language'));
-    }
+		return redirect()->back();
+	}
 
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        //
-    }
+	public function verifierIndex($language = 'de')
+	{
+		$mappers = FilmMapper::with('film')
+			->where('verified', '=', false)
+			->where('language', '=', $language)
+			->limit(100)
+			->get();
+
+		$languages = Station::groupBy('language_short')
+			->orderBy('language')
+			->lists('language', 'language_short')
+			->toArray();
+
+		return view('film-mapper.verifier_index', compact('mappers', 'languages', 'language'));
+	}
 
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create($tv_program_id)
-    {
-        $tvProgram = TvProgram::findOrFail($tv_program_id);
-
-        $filmMapper = new FilmMapper();
-        $filmMapper->org_title = $tvProgram->org_title;
-        $filmMapper->new_title = $tvProgram->org_title;
-        $filmMapper->language = $tvProgram->tvstation->language_short;
-
-        if ($tvProgram->year > 1900) {
-            $filmMapper->year = $tvProgram->year;
-        }
-
-        if ($tvProgram->director) {
-            $filmMapper->director = $tvProgram->director;
-        }
-
-        $languages = Station::groupBy('language_short')
-            ->orderBy('language')
-            ->lists('language', 'language_short')
-            ->toArray();
-
-        $films = [];
-
-        return view('film-mapper.create', compact('filmMapper', 'films', 'languages'));
-    }
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function index()
+	{
+		//
+	}
 
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @param FilmMapperService $filmMapperService
-     *
-     * @return Response
-     */
-    public function store(Request $request, FilmMapperService $filmMapperService, ImdbService $imdbService)
-    {
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return Response
+	 */
+	public function create($tv_program_id)
+	{
+		$tvProgram = TvProgram::findOrFail($tv_program_id);
 
-        $film_id = $request->get('film_id');
-        if (preg_match('/^tt[0-9]{7}$/', $film_id)) {
-            $imdbId = trim($film_id, 't');
-            $film = Film::create($imdbService->getImdbData($imdbId));
-            Filmstar::createCast($film, $imdbService->cast($imdbId, 20));
-            $film_id = $film->id;
-        }
+		$filmMapper = new FilmMapper();
+		$filmMapper->org_title = $tvProgram->org_title;
+		$filmMapper->new_title = $tvProgram->org_title;
+		$filmMapper->language = $tvProgram->tvstation->language_short;
 
-        $mapper = FilmMapper::create([
-            'org_title'  => $request->get('org_title'),
-            'new_title'  => $request->get('new_title'),
-            'min_length' => $request->get('min_length'),
-            'max_length' => $request->get('max_length'),
-            'film_id'    => $film_id,
-            'language'   => $request->get('language'),
-            'year'       => $request->get('year'),
-            'channel'    => $request->get('channel'),
-            'director'   => $request->get('director'),
-            'verified'   => $request->get('verified', 0),
-        ]);
+		if ($tvProgram->year > 1900) {
+			$filmMapper->year = $tvProgram->year;
+		}
 
-        $filmMapperService->map($mapper, $request->get('overwrite') == 1);
+		if ($tvProgram->director) {
+			$filmMapper->director = $tvProgram->director;
+		}
 
-        flash('Mapper Saved');
+		$languages = Station::groupBy('language_short')
+			->orderBy('language')
+			->lists('language', 'language_short')
+			->toArray();
 
-        return redirect('film-mapper/'.$mapper->id.'/edit');
-    }
+		$films = [];
+
+		return view('film-mapper.create', compact('filmMapper', 'films', 'languages'));
+	}
 
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return Response
-     */
-    public function show($id)
-    {
-        $filmMapper = FilmMapper::with('film')->findOrFail($id);
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param Request $request
+	 * @param FilmMapperService $filmMapperService
+	 *
+	 * @return Response
+	 */
+	public function store(Request $request, FilmMapperService $filmMapperService, ImdbService $imdbService)
+	{
 
-        return $filmMapper;
-    }
+		$film_id = $request->get('film_id');
+		if (preg_match('/^tt[0-9]{7}$/', $film_id)) {
+			$imdbId = trim($film_id, 't');
+			$film = Film::create($imdbService->getImdbData($imdbId));
+			Filmstar::createCast($film, $imdbService->cast($imdbId, 20));
+			$film_id = $film->id;
+		}
 
+		$mapper = FilmMapper::create([
+			'org_title'  => $request->get('org_title'),
+			'new_title'  => $request->get('new_title'),
+			'min_length' => $request->get('min_length'),
+			'max_length' => $request->get('max_length'),
+			'film_id'    => $film_id,
+			'language'   => $request->get('language'),
+			'year'       => $request->get('year'),
+			'channel'    => $request->get('channel'),
+			'director'   => $request->get('director'),
+			'verified'   => $request->get('verified', 0),
+		]);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return Response
-     */
-    public function edit($id)
-    {
-        $filmMapper = FilmMapper::findOrFail($id);
-        $film = $filmMapper->film;
-        $films = [
-            $film->id => $film->title . ' (' . $film->year . ')' . ($film->tvseries ? ' Series' : ''),
-        ];
+		$filmMapperService->map($mapper, $request->get('overwrite') == 1);
 
-        $languages = Station::groupBy('language_short')
-            ->orderBy('language')
-            ->lists('language', 'language_short')
-            ->toArray();
+		flash('Mapper Saved');
 
-        return view('film-mapper.edit', compact('filmMapper', 'films', 'languages'));
-    }
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int $id
-     * @param Request $request
-     * @param FilmMapperService $filmMapperService
-     * @param ImdbService $imdbService
-     *
-     * @return Response
-     */
-    public function update($id, Request $request, FilmMapperService $filmMapperService, ImdbService $imdbService)
-    {
-        $mapper = FilmMapper::findOrFail($id);
-
-        $film_id = $request->get('film_id');
-        if (preg_match('/^tt[0-9]{7}$/', $film_id)) {
-            $imdbId = trim($film_id, 't');
-            $film = Film::create($imdbService->getImdbData($imdbId));
-            Filmstar::createCast($film, $imdbService->cast($imdbId, 20));
-            $film_id = $film->id;
-        }
-
-        $mapper->update([
-            'new_title'  => $request->get('new_title'),
-            'min_length' => $request->get('min_length'),
-            'max_length' => $request->get('max_length'),
-            'film_id'    => $film_id,
-            'language'   => $request->get('language'),
-            'year'       => $request->get('year'),
-            'channel'    => $request->get('channel'),
-            'director'   => $request->get('director'),
-            'verified'   => $request->get('verified', 0),
-        ]);
-        $filmMapperService->map($mapper, $request->get('overwrite') == 1);
-
-        flash('Mapper Saved');
-
-        return redirect()->back();
-    }
+		return redirect('film-mapper/'.$mapper->id.'/edit');
+	}
 
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     *
-     * @return Response
-     */
-    public function destroy($id, FilmMapperService $filmMapperService, Request $request)
-    {
-        $mapper = FilmMapper::findOrFail($id);
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int $id
+	 *
+	 * @return Response
+	 */
+	public function show($id)
+	{
+		$filmMapper = FilmMapper::with('film')->findOrFail($id);
 
-        $filmMapperService->unmap($mapper, $mapper->verified);
+		return $filmMapper;
+	}
 
-        $mapper->delete();
 
-        if ($request->ajax()) {
-            return ['status' => 'OK'];
-        } else {
-            return redirect()->back();
-        }
-    }
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int $id
+	 *
+	 * @return Response
+	 */
+	public function edit($id)
+	{
+		$filmMapper = FilmMapper::findOrFail($id);
+		$film = $filmMapper->film;
+		$films = [
+			$film->id => $film->title . ' (' . $film->year . ')' . ($film->tvseries ? ' Series' : ''),
+		];
+
+		$languages = Station::groupBy('language_short')
+			->orderBy('language')
+			->lists('language', 'language_short')
+			->toArray();
+
+		return view('film-mapper.edit', compact('filmMapper', 'films', 'languages'));
+	}
+
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int $id
+	 * @param Request $request
+	 * @param FilmMapperService $filmMapperService
+	 * @param ImdbService $imdbService
+	 *
+	 * @return Response
+	 */
+	public function update($id, Request $request, FilmMapperService $filmMapperService, ImdbService $imdbService)
+	{
+		$mapper = FilmMapper::findOrFail($id);
+
+		$film_id = $request->get('film_id');
+		if (preg_match('/^tt[0-9]{7}$/', $film_id)) {
+			$imdbId = trim($film_id, 't');
+			$film = Film::create($imdbService->getImdbData($imdbId));
+			Filmstar::createCast($film, $imdbService->cast($imdbId, 20));
+			$film_id = $film->id;
+		}
+
+		$mapper->update([
+			'new_title'  => $request->get('new_title'),
+			'min_length' => $request->get('min_length'),
+			'max_length' => $request->get('max_length'),
+			'film_id'    => $film_id,
+			'language'   => $request->get('language'),
+			'year'       => $request->get('year'),
+			'channel'    => $request->get('channel'),
+			'director'   => $request->get('director'),
+			'verified'   => $request->get('verified', 0),
+		]);
+		$filmMapperService->map($mapper, $request->get('overwrite') == 1);
+
+		flash('Mapper Saved');
+
+		return redirect()->back();
+	}
+
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int $id
+	 *
+	 * @return Response
+	 */
+	public function destroy($id, FilmMapperService $filmMapperService, Request $request)
+	{
+		$mapper = FilmMapper::findOrFail($id);
+
+		$filmMapperService->unmap($mapper, $mapper->verified);
+
+		$mapper->delete();
+
+		if ($request->ajax()) {
+			return ['status' => 'OK'];
+		} else {
+			return redirect()->back();
+		}
+	}
 
 }

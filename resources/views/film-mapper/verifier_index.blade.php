@@ -54,7 +54,15 @@
                         <dt>Channel</dt> <dd>{{$mapper->channel}}</dd>
                     @endif
                     @if(!empty($mapper->director))
-                        <dt>Director</dt> <dd>{{$mapper->director}}</dd>
+                        <dt>Director</dt>
+                        <dd>
+                            {{$mapper->director}}
+                            <small>
+                                <a href="{{url('http://www.imdb.com/find?q='.urlencode($mapper->director))}}" target="_blank">
+                                    <i class="glyphicon glyphicon-new-window"></i> IMDb
+                                </a>
+                            </small>
+                        </dd>
                     @endif
                 </dl>
                 <h4>

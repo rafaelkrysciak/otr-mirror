@@ -9,6 +9,12 @@ use App\Http\Requests;
 
 class UserController extends Controller
 {
+	function __construct()
+	{
+		$this->middleware('admin');
+	}
+
+
 	public function select()
 	{
 		$q = \Input::get('q');

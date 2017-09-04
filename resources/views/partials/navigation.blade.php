@@ -43,6 +43,7 @@
                 @if(Auth::user() && Auth::user()->isAdmin())
                     <li><a href="{{ url('payment/all-transactions') }}"> Alle Transaktionen </a></li>
                     <li><a href="{{ url('payment/verify') }}"> Verify </a></li>
+                    <li><a href="{{ url('payment/create') }}"> Create </a></li>
                 @endif
             </ul>
         </li>

@@ -11,10 +11,7 @@
 |
 */
 
-use Illuminate\Http\Request;
-
-Route::get('test123', function(\App\Services\NodeService $nodeService, Request $request) {
-});
+Route::get('test123', function() {});
 
 /**
  * User -> Film
@@ -130,6 +127,8 @@ Route::get('payment/prepare', 'PaymentController@prepare');
 Route::get('payment/purchase/{product_id}', 'PaymentController@purchase');
 Route::get('payment/success', 'PaymentController@success');
 Route::get('payment/cancel', 'PaymentController@cancel');
+Route::get('payment/create', 'PaymentController@create');
+Route::post('payment/store', 'PaymentController@store');
 
 Route::get('download/{user}/{token}/{filename}', 'TvProgramController@download');
 Route::get('download-link/{user}/{token}/{filename}', 'TvProgramController@downloadLink');
@@ -172,6 +171,8 @@ Route::get('node/delete-plan', 'NodeController@deletePlan');
 Route::get('system/refresh-tvprogram-view', 'SystemController@refreshTvProgramView');
 Route::get('sitemap.xml', 'SystemController@generateSitemap');
 Route::get('system/session-dump', 'SystemController@sessionDump');
+
+Route::get('user/select', 'UserController@select');
 
 Route::get('/', 'HomeController@index');
 Route::get('home', 'HomeController@index');

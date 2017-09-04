@@ -40,6 +40,7 @@ class PaymentController extends Controller
 		$data = Request::all();
 
 		$user = User::find($data['user_id']);
+		$org_premium_valid_until = $user->premium_valid_until;
 		$product = PaymentProduct::find($data['product_id']);
 
 		$payment = new PaypalTransaction([
@@ -65,6 +66,14 @@ class PaymentController extends Controller
 		$payment->save();
 
 		$user->extendPremium($product->premium_months);
+
+		Log::info('Payment cretae', [
+			'user' => $user->id.':'.$user->email,
+		    'product' => $product->id.':'.$product->name,
+		    'org_premium_valid_until' => $org_premium_valid_until,
+			'new_premium_valid_until' => $user->premium_valid_until
+		]);
+
 
 		\Mail::send('emails.payment', compact('user'), function ($message) use ($user) {
 			$message->to($user->email, $user->name)

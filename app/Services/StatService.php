@@ -95,7 +95,7 @@ class StatService
             //        ->from('node_otrkeyfile')
             //        ->where('status', '=', Node::STATUS_DOWNLOADED);
             //})
-            ->where('otrkey_files.start', '<', Carbon::now()->subDays(12))
+            ->where('otrkey_files.start', '<', Carbon::now()->subDays(9))
             ->groupBy('otrkey_files.id')
             ->orderByRaw('CASE
                     WHEN tv_programs.highlight = 1  THEN (SUM(downloads) + SUM(aws_downloads))*2
@@ -106,7 +106,7 @@ class StatService
 
         \Log::info('getFilesForDelete query: '.$eloquentBuilder->getQuery()->toSql().
             ' 1:'.Carbon::now()->subMonths(4).
-            ' 2:'.Carbon::now()->subDays(12)
+            ' 2:'.Carbon::now()->subDays(9)
         );
 
         $files = $eloquentBuilder->get(['otrkey_files.*']);

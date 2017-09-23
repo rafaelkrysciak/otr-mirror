@@ -322,6 +322,12 @@ class CronController extends Controller
             Log::error($e);
         }
 
+	    try {
+		    $deleted = $cleanUpDatabase->cleanEpgProgramTable();
+		    Log::info("$deleted EPG-programs deleted.");
+	    } catch (\Exception $e) {
+		    Log::error($e);
+	    }
 
         $nodes = Node::get();
         foreach ($nodes as $node) {

@@ -16,8 +16,7 @@ class CleanUpDatabase {
             FROM tv_programs
             WHERE
                 start < DATE_SUB(CURRENT_DATE, INTERVAL ".config('hqm.database_cleanup_older_then', '2 WEEK').")
-                AND id NOT IN (SELECT DISTINCT tv_program_id FROM otrkey_files WHERE tv_program_id > 0)
-                AND id NOT IN (SELECT DISTINCT tv_program_id FROM stat_views WHERE tv_program_id > 0)";
+                AND id NOT IN (SELECT DISTINCT tv_program_id FROM otrkey_files WHERE tv_program_id > 0)";
 
         return  DB::delete($sql);
     }
@@ -37,8 +36,7 @@ class CleanUpDatabase {
                 start < DATE_SUB(CURDATE(),INTERVAL ".config('hqm.database_cleanup_older_then', '2 WEEK').") AND
                 id NOT IN (SELECT otrkeyfile_id FROM node_otrkeyfile WHERE status = 'downloaded') AND
                 id NOT IN (SELECT otrkeyfile_id FROM distro_otrkeyfile) AND
-                id NOT IN (SELECT otrkeyfile_id FROM aws_otrkey_files) AND
-                id NOT IN (SELECT otrkey_file_id FROM stat_downloads)";
+                id NOT IN (SELECT otrkeyfile_id FROM aws_otrkey_files)";
 
         return DB::delete($sql);
     }
@@ -53,4 +51,15 @@ class CleanUpDatabase {
 
         return DB::delete($sql);
     }
+
+
+	public function cleanEpgProgramTable()
+	{
+		$sql = "DELETE FROM epg_programs
+            WHERE
+              start < DATE_SUB(CURDATE(),INTERVAL 6 WEEK)";
+
+		return DB::delete($sql);
+	}
+
 }

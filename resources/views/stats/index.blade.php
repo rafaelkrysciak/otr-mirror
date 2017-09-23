@@ -35,6 +35,9 @@
         <div id="registrations"></div>
     </div>
     <div class="row">
+        <div id="otrkeyfiles"></div>
+    </div>
+    <div class="row">
         <div id="stations"></div>
     </div>
     <div class="row">
@@ -66,6 +69,7 @@
             drawContentSizeByLanguage();
             drawContentSizeByQuality();
             drawViewsAndDownloads();
+            drawFileCount();
             drawPayments();
             drawRegistrations();
             setTimeout("redrawCharts()", 60000);
@@ -462,6 +466,43 @@
                 });
             });
         }
+
+
+        function drawFileCount() {
+
+            $.getJSON("{{url('stats/file-count-by-day')}}", function (otrkeyFilesCountByDate) {
+                var count = [];
+
+                $.each(otrkeyFilesCountByDate, function (key, value) {
+                    if (value != null) {
+                        value.date = (new Date(value.date)).getTime();
+                        count.push([value.date, value.count]);
+                    }
+                });
+
+                Highcharts.chart('otrkeyfiles', {
+                    chart: {type: 'column'},
+                    title: {text: 'Files count'},
+                    xAxis: {
+                        type: 'datetime',
+                        labels: {
+                            overflow: 'justify'
+                        }
+                    },
+                    yAxis: {title: {text: 'Count'}},
+                    plotOptions: {
+                        series: {
+                            stacking: 'normal'
+                        }
+                    },
+                    series: [{
+                        name: 'File count',
+                        data: count
+                    }]
+                });
+            });
+        }
+
 
         function drawTopStations() {
 

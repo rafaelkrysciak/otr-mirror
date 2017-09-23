@@ -2,6 +2,7 @@
 
 use App\Http\Requests;
 use App\Node;
+use App\OtrkeyFile;
 use App\PaypalTransaction;
 use App\Services\StatService;
 use App\Stat;
@@ -242,6 +243,25 @@ class StatsController extends Controller
 		return $data;
 	}
 
+
+	public function getFileCountByDay()
+	{
+		set_time_limit(600);
+
+		$data = \DB::table('otrkey_files')
+			->where('start', '>', Carbon::now()->subDay(30)->setTime(0,0,0))
+			->whereIn('id', function ($query) {
+				$query->select(['otrkeyfile_id'])
+					->from('node_otrkeyfile')
+					->where('status', '=', Node::STATUS_DOWNLOADED);
+			})
+			->groupBy(\DB::raw('1'))
+			->orderBy(\DB::raw('1'))
+			->select([\DB::raw("date(start) as date"), \DB::raw("count(*) as count")])
+			->get();
+
+		return $data;
+	}
 
 	/**
 	 *

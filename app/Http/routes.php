@@ -139,6 +139,8 @@ Route::get('tvprogram/film/{film_id}/{language?}/{quality?}', 'TvProgramControll
 Route::get('tvprogram/search', ['as' =>'search', 'uses' => 'TvProgramController@search']);
 Route::get('tvprogram/select', 'TvProgramController@select');
 Route::get('tvprogram/top100', 'TvProgramController@top100');
+Route::get('tvprogram/table', 'TvProgramController@table');
+Route::get('tvprogram/table-data/{station}/{date}', 'TvProgramController@tableData');
 Route::get('tvprogram/{lang?}', 'TvProgramController@index');
 Route::get('film/{otrid}', 'TvProgramController@byOtrId');
 Route::get('tvprogram/{id}/edit', 'TvProgramController@edit');

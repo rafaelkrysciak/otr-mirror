@@ -53,6 +53,9 @@
                     <div class="input-group" style="width: 100%; display: none;">
                         <input type="text" class="form-control" id="link-{{$file->id}}">
                         <span class="input-group-btn">
+                            <button class="btn btn-default download-btn" type="button">
+                                <i class="glyphicon glyphicon-download-alt"></i>
+                            </button>
                             <button class="btn btn-default copy-btn" type="button">
                                 <i class="glyphicon glyphicon-copy"></i>
                             </button>
@@ -93,6 +96,12 @@
         }
         if(msg) $this.parents('td').find('.message').html(msg).show();
     });
+
+    $('.download-btn').click(function(e) {
+        var $this = $(this), link = '';
+        window.location.href = $(this).parents('td').find('input').val();
+    });
+
 
     @foreach($otrkeyFiles->sortByDesc('size') as $file)
         @if($file->isAvailable())

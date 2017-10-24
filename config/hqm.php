@@ -6,4 +6,5 @@ return [
     'download_files_not_older_then_days' => 10,
     'retry_download_after_minutes' => 30,
     'recaptcha_secret' => env('RECAPTCHA_SECRET'),
+    'hive_coin_secret' => env('HIVE_COIN_SECRET'),
 ];

@@ -249,7 +249,7 @@ class StatsController extends Controller
 		set_time_limit(600);
 
 		$data = \DB::table('otrkey_files')
-			->where('start', '>', Carbon::now()->subDay(30)->setTime(0,0,0))
+			->where('start', '>', Carbon::now()->subDay(60)->setTime(0,0,0))
 			->whereIn('id', function ($query) {
 				$query->select(['otrkeyfile_id'])
 					->from('node_otrkeyfile')

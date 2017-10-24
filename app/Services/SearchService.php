@@ -63,6 +63,53 @@ class SearchService {
         return $query;
     }
 
+	/**
+	 * create a query for search
+	 *
+	 * @param $term
+	 * @param string $lang
+	 *
+	 * @return \Illuminate\Database\Eloquent\Builder
+	 */
+	public function searchTnt($term, $lang = 'all')
+	{
+
+		$tnt = new \TeamTNT\TNTSearch\TNTSearch();
+
+		$defaultConnection = config('database.default');
+		$tnt->loadConfig([
+			'driver'    => config("database.connections.$defaultConnection.driver"),
+			'host'      => config("database.connections.$defaultConnection.host"),
+			'database'  => config("database.connections.$defaultConnection.database"),
+			'username'  => config("database.connections.$defaultConnection.username"),
+			'password'  => config("database.connections.$defaultConnection.password"),
+			'storage'   => storage_path()
+		]);
+
+		$tnt->selectIndex('index.tvprograms');
+		$tnt->maxDocs = 500;
+		//$tnt->fuzziness = true;
+
+		$tntResult = $tnt->search($term, 5000);
+
+
+		$query = \App\TvProgramsView::whereIn('tv_program_id', $tntResult['ids']);
+		if($lang != 'all') {
+			$query->where('language', $lang);
+		}
+
+		$items = $query->get()
+			->keyBy('tv_program_id');
+
+		$sorted = $items->sortBy(function($value, $key) use ($tntResult) {
+			return array_search($key, $tntResult['ids']);
+		});
+
+		$tntResult['items'] = $sorted;
+
+		return $sorted;
+	}
+
 
     /**
      * create a query for search

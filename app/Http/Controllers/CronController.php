@@ -484,4 +484,13 @@ class CronController extends Controller
         return ['status' => 'OK'];
     }
 
+
+	/**
+	 * Create the TNT search index by calling artisan command
+	 */
+	public function createSearchIndex()
+	{
+		set_time_limit(2400);
+		\Artisan::call('index:tvprograms');
+    }
 }

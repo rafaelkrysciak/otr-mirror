@@ -47,6 +47,7 @@ Route::get('cron/refresh-imdb-data', 'CronController@refreshImdbData');
 Route::get('cron/find-mapper-rules', 'CronController@findMapperRules');
 Route::get('cron/generate-sitemap', 'CronController@generateSitemap');
 Route::get('cron/read-highlights', 'CronController@readHighlights');
+Route::get('cron/create-search-index', 'CronController@createSearchIndex');
 
 Route::get('file/plain-list', 'OtrkeyFileController@plainList');
 
@@ -134,6 +135,8 @@ Route::get('download/{user}/{token}/{filename}', 'TvProgramController@download')
 Route::get('download-link/{user}/{token}/{filename}', 'TvProgramController@downloadLink');
 
 Route::delete('tvprogram/{tv_program_id}', 'TvProgramController@destroy');
+Route::get('tvprogram/verify-view/{key}', 'TvProgramController@verifyDownloadView');
+Route::get('tvprogram/view-download/{tv_program_id}', 'TvProgramController@hiveCoinRedirect');
 Route::get('tvprogram/show/{id}', 'TvProgramController@show');
 Route::get('tvprogram/film/{film_id}/{language?}/{quality?}', 'TvProgramController@film');
 Route::get('tvprogram/search', ['as' =>'search', 'uses' => 'TvProgramController@search']);

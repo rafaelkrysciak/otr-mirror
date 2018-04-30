@@ -6,6 +6,7 @@ use App\Exceptions\QualityViolationDownloadException;
 use App\Film;
 use App\Filmstar;
 use App\Http\Requests;
+use App\Node;
 use App\OtrkeyFile;
 use App\Services\DownloadService;
 use App\Services\ImdbService;
@@ -18,10 +19,12 @@ use App\User;
 use Auth;
 use Cache;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\BootstrapThreePresenter;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Input;
 use Log;
 
@@ -153,14 +156,10 @@ class TvProgramController extends Controller
 
 		if(!empty($q)) {
 
-			$items = $searchService->search($q, $lang)
-				->groupBy('tv_program_id')
-				->forPage($page, $perPage)
-				->get();
+			$fullResult = $searchService->searchTnt($q, $lang);
+			$items = $fullResult->forPage($page, $perPage);
 
-			$count = $searchService->search($q, $lang)
-				->distinct()
-				->count('tv_program_id');
+			$count = count($fullResult);
 
 			$paginator = new LengthAwarePaginator($items, $count, $perPage, $page);
 			$paginator->setPath('/tvprogram/search')->appends(['q' => $q, 'language' => $lang]);
@@ -213,6 +212,8 @@ class TvProgramController extends Controller
 			abort(404);
 		}
 
+		$showDownload = \Session::get('open_downloads.'.$id) === true || (Auth::user() && Auth::user()->isPremium());
+
 		$episodes = [];
 		if($tvProgram->film && $tvProgram->film->tvseries) {
 			$episodes = TvProgramsView::where('film_id', '=', $tvProgram->film_id)
@@ -247,11 +248,11 @@ class TvProgramController extends Controller
 		}
 
 		if(Auth::user() && Auth::user()->isPremium() && $tvProgram->film && $tvProgram->film->id > 0) {
-			return view('tvprogram.show_premium', compact('tvProgram', 'lists', 'token', 'relatedItems', 'episodes', 'seriesLists', 'stats'));
+			return view('tvprogram.show_premium', compact('tvProgram', 'lists', 'token', 'relatedItems', 'episodes', 'seriesLists', 'stats', 'showDownload'));
 		} elseif($tvProgram->film && $tvProgram->film->id > 0) {
-			return view('tvprogram.show_film', compact('tvProgram', 'lists', 'token', 'relatedItems', 'episodes', 'seriesLists', 'stats'));
+			return view('tvprogram.show_film', compact('tvProgram', 'lists', 'token', 'relatedItems', 'episodes', 'seriesLists', 'stats', 'showDownload'));
 		} else {
-			return view('tvprogram.show', compact('tvProgram', 'lists', 'token', 'relatedItems', 'tvseries', 'stats'));
+			return view('tvprogram.show', compact('tvProgram', 'lists', 'token', 'relatedItems', 'tvseries', 'stats', 'showDownload'));
 		}
 
 	}
@@ -330,6 +331,52 @@ class TvProgramController extends Controller
 
 			return redirect()->back()->withErrors(['Es konnte kein Link generiert werden. Versuche bitte später noch mal.']);
 		}
+	}
+
+
+	public function hiveCoinRedirect($tv_program_id)
+	{
+		$key = str_random(40);
+
+		\Session::put('open_downloads.'.$tv_program_id, $key);
+		try {
+			$client = new Client();
+			$res = $client->post('https://api.coinhive.com/link/create', [
+				'verify' => false,
+				'form_params' => [
+					'secret' => 'mx7qVmim0i2BxTCEvPiMdvHUzgqKk7ax',
+					'url' => url('tvprogram/verify-view', ['key' => $key]),
+					'hashes' => 1024,
+				],
+			]);
+			$data = \GuzzleHttp\json_decode($res->getBody()->getContents());
+			if (!$data->success) {
+				Log::error(__METHOD__." [tv_program_id=$tv_program_id] Response=".$data->error);
+				flash()->error('Es ist ein Fehler beim aufrufen eines externen Dienstes aufgetreten. Bitte versuche später noch mal.');
+				return redirect('tvprogram/show/'.$tv_program_id);
+			}
+		} catch (\Exception $e) {
+			Log::error($e);
+			flash()->error('Es ist ein Fehler beim aufrufen eines externen Dienstes aufgetreten. Bitte versuche später noch mal.');
+			return redirect('tvprogram/show/'.$tv_program_id);
+		}
+
+		Log::info(__METHOD__." [Key=$key] [tv-program-id=$tv_program_id] redirected");
+
+		return \Redirect::away($data->url);
+	}
+
+
+	public function verifyDownloadView($key)
+	{
+		$list = (array) \Session::get('open_downloads');
+		$tvProgramId = (int) array_search($key, $list, true);
+
+		\Session::put('open_downloads.'.$tvProgramId, true);
+
+		Log::info(__METHOD__." [Key=$key] [tv-program-id=$tvProgramId] verified");
+
+		return redirect('tvprogram/show/'.$tvProgramId);
 	}
 
 
@@ -578,5 +625,126 @@ class TvProgramController extends Controller
 
 		return view('tvprogram/top100', compact('paginator', 'lists'));
 	}
+
+
+	public function table()
+	{
+		$date = Carbon::parse(Input::get('date', new Carbon()));
+		$stationGroup = Input::get('station-group', 'public');
+
+		switch ($stationGroup) {
+			case 'public':
+				$stations = ['ARTE','ARD','ZDF','ZDF NEO','3sat','ONE','BAY3','WDR','NDR','MDR','SWR','HR','RBB','ZDF INFO','ARDALPHA','KIKA','PHOENIX'];
+				break;
+			case 'others':
+				$stations = ['ORF1','ORF2','ORF3','SF1','SF2','BIBELTV','FAMILYTV','NTV','SPORT1','VIVA'];
+				break;
+			default:
+			case 'privat':
+				$stations = ['PRO7','SAT1','RTL','VOX','TELE5','RTL2','PRO7MAXX','KABEL 1','RTLNITRO','DISNEY','SIXX','SRTL','3PLUS','4PLUS','DMAX','KABEL1DOKU','PULS8','NICKELODEON','RIC','RTLPLUS','SAT1GOLD','SERVUSTV','ZEEONE'];
+				break;
+		}
+
+
+		$stations = ['PRO7','SAT1','RTL','VOX'];
+
+		$data = \DB::table('tv_programs')
+			->leftJoin('otrkey_files', 'tv_programs.id','=', 'otrkey_files.tv_program_id')
+			->leftJoin('node_otrkeyfile', function($join) {
+				$join->on('otrkey_files.id', '=', 'node_otrkeyfile.otrkeyfile_id')
+					->where('node_otrkeyfile.status', '=', Node::STATUS_DOWNLOADED);
+			})
+			->leftJoin('tv_programs_view', 'tv_programs.id','=', 'tv_programs_view.tv_program_id')
+			->whereIn('tv_programs.station', $stations)
+			->where('tv_programs.start', '>=', $date->format('Y-m-d'))
+			->where('tv_programs.start', '<', $date->copy()->addDay()->format('Y-m-d'))
+			->groupBy('tv_programs.id')
+			->orderBy('tv_programs.start')
+			->select(
+				\DB::raw('hour(tv_programs.start) as hour'),
+				'tv_programs.id as tv_program_id',
+				'tv_programs.start', 'tv_programs.title',
+				'tv_programs.station',
+				\DB::raw('max(node_otrkeyfile.node_id) as node_id'),
+				\DB::raw("CASE WHEN GROUP_CONCAT(DISTINCT tv_programs_view.quality) LIKE '%mpg.HD.avi%' THEN 1 ELSE 0 END as hd"),
+				'tv_programs_view.imdb_votes as imdb_votes',
+				'tv_programs_view.imdb_rating as imdb_rating',
+				'tv_programs_view.amazon_image as amazon_image'
+			)
+			->get();
+
+		$hours = collect($data)->groupBy('hour')->keys()->toArray();
+		$tvprogram = collect($data)->groupBy('station');
+		//$stations = $tvprogram->keys()->toArray();
+
+		foreach ($stations as $station) {
+			if(!$tvprogram->has($station)) {
+				$tvprogram->put($station, new Collection());
+			}
+			$prev[$station] = null;
+		}
+		//var_dump($tvprogram);exit;
+		
+		return view('tvprogram/table', compact('tvprogram', 'stations', 'date', 'hours', 'stationGroup', 'prev'));
+	}
+
+
+	public function tableData($station, $date)
+	{
+		$date = Carbon::parse($date);
+
+		$data = \DB::table('tv_programs')
+			->leftJoin('otrkey_files', 'tv_programs.id','=', 'otrkey_files.tv_program_id')
+			->leftJoin('node_otrkeyfile', function($join) {
+				$join->on('otrkey_files.id', '=', 'node_otrkeyfile.otrkeyfile_id')
+					->where('node_otrkeyfile.status', '=', Node::STATUS_DOWNLOADED);
+			})
+			->leftJoin('tv_programs_view', 'tv_programs.id','=', 'tv_programs_view.tv_program_id')
+			->where('tv_programs.station', '=', $station)
+			->where('tv_programs.start', '>=', $date->format('Y-m-d'))
+			->where('tv_programs.start', '<', $date->copy()->addDay()->format('Y-m-d'))
+			->groupBy('tv_programs.id')
+			->orderBy('tv_programs.start')
+			->select(
+				\DB::raw('hour(tv_programs.start) as hour'),
+				'tv_programs.id as tv_program_id',
+				'tv_programs.start', 'tv_programs.title',
+				'tv_programs.station',
+				\DB::raw('max(node_otrkeyfile.node_id) as node_id'),
+				\DB::raw("CASE WHEN GROUP_CONCAT(DISTINCT tv_programs_view.quality) LIKE '%mpg.HD.avi%' THEN 1 ELSE 0 END as hd"),
+				'tv_programs_view.imdb_votes as imdb_votes',
+				'tv_programs_view.imdb_rating as imdb_rating',
+				'tv_programs_view.amazon_image as amazon_image'
+			)
+			->get();
+
+		$prevImgUrl = null;
+		foreach ($data as &$rec) {
+			$rec->hourFormated = date('H:i', strtotime($rec->start));
+			$rec->link = url('tvprogram/show', ['id' => $rec->tv_program_id]);
+			$rec->available = $rec->node_id > 0;
+
+			if(!empty($rec->amazon_image)) {
+
+				if(($rec->imdb_votes > 80000 || ($rec->imdb_votes > 24000 && $rec->imdb_rating > 5.7)) && $rec->amazon_image != $prevImgUrl) {
+					$prevImgUrl = $rec->amazon_image;
+				} else {
+					$prevImgUrl = $rec->amazon_image;
+					$rec->amazon_image = null;
+				}
+			}
+
+			unset($rec->start);
+			unset($rec->node_id);
+			unset($rec->station);
+			unset($rec->imdb_votes);
+			unset($rec->imdb_rating);
+			unset($rec->tv_program_id);
+
+		}
+
+		return $data;
+	}
+
 
 }

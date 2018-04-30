@@ -110,7 +110,11 @@
                     <strong>Zu dieser Sendung sind zur Zeit keine Dateien vorhanden</strong>
                 </div>
             @else
-                @include('tvprogram.download', ['otrkeyFiles' => $tvProgram->otrkeyFiles, 'token' => $token])
+                @if($showDownload)
+                    @include('tvprogram.download', ['otrkeyFiles' => $tvProgram->otrkeyFiles, 'token' => $token])
+                @else
+                    @include('tvprogram.download_hidden', ['tv_program_id' => $tvProgram->id])
+                @endif
             @endif
             @include('partials.ad_728x90')
             <div class="row nocontent">

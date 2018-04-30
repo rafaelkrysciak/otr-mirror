@@ -23,7 +23,8 @@
 		"openpsa/universalfeedcreator": "^1.8",
 		"barryvdh/laravel-ide-helper": "^2.1",
 		"vinelab/rss": "^1.0",
-		"google/recaptcha": "~1.1"
+		"google/recaptcha": "~1.1",
+		"teamtnt/tntsearch": "^1.1"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "~4.0",

@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.2.45 on 2017-03-23.
+ * Generated for Laravel 5.2.45 on 2017-10-22.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -2530,7 +2530,7 @@ namespace {
          * @static 
          */
         public static function supported($key, $cipher){
-            return \Illuminate\Encryption\McryptEncrypter::supported($key, $cipher);
+            return \Illuminate\Encryption\Encrypter::supported($key, $cipher);
         }
         
         /**
@@ -2542,7 +2542,7 @@ namespace {
          * @static 
          */
         public static function encrypt($value){
-            return \Illuminate\Encryption\McryptEncrypter::encrypt($value);
+            return \Illuminate\Encryption\Encrypter::encrypt($value);
         }
         
         /**
@@ -2550,10 +2550,11 @@ namespace {
          *
          * @param string $payload
          * @return string 
+         * @throws \Illuminate\Contracts\Encryption\DecryptException
          * @static 
          */
         public static function decrypt($payload){
-            return \Illuminate\Encryption\McryptEncrypter::decrypt($payload);
+            return \Illuminate\Encryption\Encrypter::decrypt($payload);
         }
         
     }

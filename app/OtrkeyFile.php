@@ -12,6 +12,7 @@ class OtrkeyFile extends Model {
         'checksum',
         'distro_size',
         'distro_checksum',
+        'org_checksum',
         'title',
         'start',
         'mtime',

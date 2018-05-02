@@ -223,6 +223,7 @@ class NodeService
 		$result = $this->execOrFail($node, 'listFiles', [], "Can't get file list from node");
 
 		$files = [];
+		$deleted = 0;
 		foreach ($result['data'] as $data) {
 			try {
 				$file = OtrkeyFile::where('name', $data['filename'])->first();
@@ -230,6 +231,7 @@ class NodeService
 				if (is_null($file)) {
 					Log::info(__METHOD__.' File:'.$data['filename'].' not found.');
 					$file = $this->otrkeyFileService->createByFilename($data['filename']);
+					$file->save();
 					Log::info(__METHOD__.' File:'.$data['filename'].' record created (id:'.$file->id.')');
 				}
 
@@ -237,11 +239,21 @@ class NodeService
 				$file->checksum = $data['md5sum'];
 				$file->save();
 
-				$files[$file->id] = ['status' => 'downloaded'];
+				if(!empty($file->checksum) && !empty($file->distro_checksum) && $file->checksum != $file->distro_checksum && $file->org_checksum != $file->checksum && $deleted++ < 100) {
+					// corupt file = delete
+					Log::info(__METHOD__.' File:'.$file->name.' corrupt checksum:'.$file->checksum.' distro_checksum:'.$file->distro_checksum);
+					$this->deleteFile($node, $file->name);
+					$file->org_checksum = $file->checksum;
+					$file->checksum = '';
+					$file->save();
+				} else {
+					$files[$file->id] = ['status' => Node::STATUS_DOWNLOADED];
+				}
 
 				if (in_array($file->id, $keepFileIds)) {
 					unset($keepFileIds[array_search($file->id, $keepFileIds)]);
 				}
+
 			} catch (\Exception $e) {
 				Log::error($e->getMessage());
 			}

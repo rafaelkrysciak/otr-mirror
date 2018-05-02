@@ -150,6 +150,12 @@ class DistroService {
             $fileData += $this->otrkeyFileService->parseFilename($fileData['name']);
             $fileData['mtime'] = Carbon::parse($fileData['mtime']);
 
+            // File might be not finished yet
+            if($fileData['mtime']->diffInMinutes(Carbon::now()) < 45) {
+	            Log::info('[Distro sync] [File '.$fileData['name'].'] ['.$fileData['mtime'].'] Skip because of age');
+            	continue;
+            }
+
             try {
                 $otrkeyFile = OtrkeyFile::updateOrCreate(['name' => $fileData['name']], $fileData);
                 $otrkeyFileIds[] = $otrkeyFile->id;

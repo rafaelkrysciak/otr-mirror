@@ -212,7 +212,7 @@ class TvProgramController extends Controller
 			abort(404);
 		}
 
-		$showDownload = \Session::get('open_downloads.'.$id) === true || (Auth::user() && Auth::user()->isPremium());
+		$showDownload = true; //\Session::get('open_downloads.'.$id) === true || (Auth::user() && Auth::user()->isPremium());
 
 		$episodes = [];
 		if($tvProgram->film && $tvProgram->film->tvseries) {

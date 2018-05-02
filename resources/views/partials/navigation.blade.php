@@ -120,6 +120,8 @@
                 <li><a href="{{ url('cron/refresh-imdb-data') }}"> Refresh IMDb Data </a></li>
                 <li><a href="{{ url('cron/find-mapper-rules') }}"> Find Mapper Rules </a></li>
                 <li><a href="{{ url('cron/generate-sitemap') }}"> Generate sitemap.xml </a></li>
+                <li><a href="{{ url('cron/read-highlights') }}"> Read Highlights </a></li>
+                <li><a href="{{ url('cron/create-search-index') }}"> Create Search Index </a></li>
             </ul>
         </li>
     @endif

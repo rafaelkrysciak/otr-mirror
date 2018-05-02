@@ -55,6 +55,7 @@ class IndexTvPrograms extends Command
 
 	    $tnt->setDatabaseHandle(app('db')->connection()->getPdo());
 	    $indexer = $tnt->createIndex('index.pre.tvprograms');
+	    $indexer->disableOutput = true;
 
 	    $indexer->query("select 
 				tv_programs_view.tv_program_id as id,

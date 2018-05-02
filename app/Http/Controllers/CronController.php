@@ -490,7 +490,10 @@ class CronController extends Controller
 	 */
 	public function createSearchIndex()
 	{
+		\Log::info(__METHOD__ . ' start');
 		set_time_limit(2400);
 		\Artisan::call('index:tvprograms');
+		\Log::info(__METHOD__ . ' done');
+		return ['status' => 'OK'];
     }
 }

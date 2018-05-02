@@ -297,7 +297,7 @@
                 });
 
                 Highcharts.chart('registrations', {
-                    chart: {type: 'column'},
+                    chart: {type: 'column', zoomType: 'x'},
                     title: {text: 'Registrations'},
                     xAxis: {
                         type: 'datetime',
@@ -481,7 +481,7 @@
                 });
 
                 Highcharts.chart('otrkeyfiles', {
-                    chart: {type: 'column'},
+                    chart: {type: 'column', zoomType: 'x'},
                     title: {text: 'Files count'},
                     xAxis: {
                         type: 'datetime',

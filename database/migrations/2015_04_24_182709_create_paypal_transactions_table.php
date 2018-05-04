@@ -26,7 +26,7 @@ class CreatePaypalTransactionsTable extends Migration {
 			$table->string('transactionid', 30)->index();
 			$table->string('transactiontype', 30);
 			$table->string('paymenttype', 30);
-			$table->timestamp('ordertime');
+			$table->timestamp('ordertime')->default('0000-00-00 00:00:00');
 			$table->float('amt');
 			$table->float('feeamt');
 			$table->string('currencycode', 3);

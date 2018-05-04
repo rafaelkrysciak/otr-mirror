@@ -22,7 +22,7 @@ class CreateOtrkeyFilesTable extends Migration {
 			$table->bigInteger('distro_size')->unsigned()->nullable();
 			$table->string('distro_checksum')->nullable();
 			$table->string('title');
-			$table->timestamp('start')->index();
+			$table->timestamp('start')->default('0000-00-00 00:00:00')->index();
 			$table->timestamp('mtime')->nullable();
 			$table->string('station')->index();
 			$table->smallInteger('duration')->unsigned();

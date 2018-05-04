@@ -16,7 +16,7 @@ class CreateAwsOtrkeyFilesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('otrkeyfile_id')->unsigned()->unique();
-			$table->timestamp('last_modified');
+			$table->timestamp('last_modified')->default('0000-00-00 00:00:00');
 			$table->bigInteger('size')->unsigned();
 			$table->string('checksum');
 			$table->timestamps();

@@ -16,8 +16,8 @@ class CreateTvProgramsTable extends Migration
         Schema::create('tv_programs', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('otr_epg_id')->unsigned();
-            $table->timestamp('start')->index();
-            $table->timestamp('end');
+            $table->timestamp('start')->default('0000-00-00 00:00:00')->index();
+            $table->timestamp('end')->default('0000-00-00 00:00:00');
             $table->smallInteger('length');
             $table->string('station', 50)->index();
             $table->string('title');

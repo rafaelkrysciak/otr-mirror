@@ -29,7 +29,7 @@ class CreateFilmsTable extends Migration {
 			$table->string('amazon_link')->nullable();
 			$table->string('amazon_image')->nullable();
 
-			$table->timestamp('imdb_last_update');
+			$table->timestamp('imdb_last_update')->default('0000-00-00 00:00:00');
 			$table->string('imdb_id', 10)->unique();
 			$table->float('imdb_rating')->unsigned()->nullable();
 			$table->integer('imdb_votes')->unsigned()->nullable();

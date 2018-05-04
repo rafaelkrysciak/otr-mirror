@@ -19,7 +19,7 @@ class CreatePaymentProductsTable extends Migration {
 			$table->string('description');
 			$table->float('price')->unsigned();
 			$table->smallInteger('premium_months')->unsigned();
-			$table->timestamp('valid_until');
+			$table->timestamp('valid_until')->default('0000-00-00 00:00:00');
 			$table->timestamps();
 		});
 	}

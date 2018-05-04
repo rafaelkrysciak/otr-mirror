@@ -17,8 +17,8 @@ class CreateEpgProgramsTable extends Migration {
 			$table->increments('id');
 			$table->integer('tv_program_id')->unsigned()->index();
 			$table->string('channel')->index();
-			$table->timestamp('start')->index();
-			$table->timestamp('stop');
+			$table->timestamp('start')->default('0000-00-00 00:00:00')->index();
+			$table->timestamp('stop')->default('0000-00-00 00:00:00');
 			$table->string('title_de');
 			$table->string('title_xx');
 			$table->string('sub_title');

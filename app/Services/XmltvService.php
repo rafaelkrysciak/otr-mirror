@@ -137,7 +137,11 @@ class XmltvService
 	                  and epg_programs.`start` = tv_programs.`start`
                   set epg_programs.tv_program_id = tv_programs.id
                   where epg_programs.tv_program_id = 0";
-        $affectedRows += \DB::affectingStatement($query);
+		try {
+			$affectedRows += \DB::affectingStatement($query);
+		} catch(QueryException $e) {
+			\Log::error($e);
+		}
 
         $affectedRows += $this->matchTvProgramsWithTimeshift('-', 5);
         $affectedRows += $this->matchTvProgramsWithTimeshift('+', 5);
@@ -161,9 +165,13 @@ class XmltvService
 
         $count = 0;
         foreach ($data as $row) {
-            $count += \DB::table('epg_programs')
-                ->where('id', '=', $row->epg_program_id)
-                ->update(['tv_program_id' => $row->tv_program_id]);
+			try {
+				$count += \DB::table('epg_programs')
+					->where('id', '=', $row->epg_program_id)
+					->update(['tv_program_id' => $row->tv_program_id]);
+			} catch(QueryException $e) {
+				\Log::error($e);
+			}
         }
 
         return $count;

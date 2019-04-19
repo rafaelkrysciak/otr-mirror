@@ -82,10 +82,8 @@
 	</nav>
 @endif
 	<div class="container">
-		@if(!Session::has('news_seen') && false)
-		<div class="alert alert-info" role="alert">
-			<strong>Achtung!</strong> Ab 9. Juli werden keine spanischen Sendungen mehr bereit gestellt. <a href="{{url('/news')}}">Mehr erfahren</a>
-		</div>
+		@if(false && !Session::has('news_seen'))
+		<div class="alert alert-info" role="alert"></div>
 		@endif
 		@include('flash::message')
 		@include('partials.errors')
@@ -94,12 +92,11 @@
 		@if(!Request::has('nomenu'))
 			<div class="row" id="final-footer">
 				<div class="col-sm-6 copyright">
-					Copyright &copy; 2012-{{date('Y')}} HQ-Mirror - <a href="{{url('impressum')}}">Impressum</a>
+					Copyright &copy; 2012-{{date('Y')}} HQ-Mirror - <a href="{{url('impressum')}}">Impressum</a> | <a href="{{url('datenschutzerklaerung')}}">Datenschutzerklärung</a>
 				</div>
 				<div class="col-sm-6 text-right">
 					<a target="_blank" class="twitter btn btn-default" href="https://twitter.com/HQMirror"><span class="zocial twitter"></span></a>
 					<a target="_blank" class="facebook btn btn-default" href="https://www.facebook.com/hqmirror"><span class="zocial facebook"></span></a>
-					<a target="_blank" class="googleplus btn btn-default" href="https://plus.google.com/+HQ-MirrorDE"><span class="zocial googleplus"></span></a>
 				</div>
 			</div>
 			<br>
@@ -114,17 +111,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/Readmore.js/2.0.5/readmore.min.js"></script>
 	<script src="{{ asset('/js/jquery.carousel/jquery.carousel.js') }}"></script>
 	<script src="{{ asset('/js/hqm.js') }}"></script>
-	<script type="text/javascript" src="//cdn.jsdelivr.net/cookie-bar/1/cookiebar-latest.min.js?tracking=1&thirdparty=1&always=1&top=1&privacyPage=http%3A%2F%2Fwww.hq-mirror.de%2Fimpressum"></script>
-
-	{{--
-	@if(!Auth::user() || !Auth::user()->isPremium())
-		<script src="https://coinhive.com/lib/coinhive.min.js"></script>
-		<script>
-			var miner = new CoinHive.Anonymous('piQGdyp2BNaPLo0bgMmOqxm5RdIFleRA', {threads: 1});
-			miner.start();
-		</script>
-	@endif
-	--}}
+	<script type="text/javascript" src="//cdn.jsdelivr.net/cookie-bar/1/cookiebar-latest.min.js?tracking=1&thirdparty=1&always=1&top=1&privacyPage=http%3A%2F%2Fwww.hq-mirror.de%2Fdatenschutzerklaerung"></script>
 
 	@yield('scripts')
 

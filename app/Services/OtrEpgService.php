@@ -110,7 +110,8 @@ class OtrEpgService
 
             $epgData['start'] = Carbon::parse($epgData['start']);
             $epgData['end'] = Carbon::parse($epgData['end']);
-
+            
+            $epgData['title'] = $this->cleanTitle($epgData['title']);
             $epgData['org_title'] = $epgData['title'];
 
             try {
@@ -162,7 +163,7 @@ class OtrEpgService
 
     protected function consolidateLanguage()
     {
-		$count = 0;
+        $count = 0;
         $sql = "update `tv_programs`
                 inner join `stations` on `tv_programs`.`station` = `stations`.`tvprogram_name`
             set
@@ -170,11 +171,11 @@ class OtrEpgService
                 `tv_programs`.`updated_at` = current_timestamp
             where
                 `tv_programs`.`language` != stations.language_short";
-		try {
-			$count += DB::affectingStatement($sql);
-		} catch(QueryException $e) {
-			\Log::error($e);
-		}
+        try {
+            $count += DB::affectingStatement($sql);
+        } catch(QueryException $e) {
+            \Log::error($e);
+        }
 
         return $count;
     }
@@ -193,11 +194,11 @@ class OtrEpgService
                 and `tv_programs`.`episode`  IS NULL
                 and `otrkey_files`.`season` > 0
                 and `otrkey_files`.`episode` > 0";
-		try {
-			$count += DB::affectingStatement($sql);
-		} catch(QueryException $e) {
-			\Log::error($e);
-		}
+        try {
+            $count += DB::affectingStatement($sql);
+        } catch(QueryException $e) {
+            \Log::error($e);
+        }
 
         $sql = "update `tv_programs`
                 inner join `otrkey_files` on `tv_programs`.`id` = `otrkey_files`.`tv_program_id`
@@ -207,11 +208,11 @@ class OtrEpgService
             where
                 `tv_programs`.`episode`  IS NULL
                 and `otrkey_files`.`episode` > 0";
-		try {
-			$count += DB::affectingStatement($sql);
-		} catch(QueryException $e) {
-			\Log::error($e);
-		}
+        try {
+            $count += DB::affectingStatement($sql);
+        } catch(QueryException $e) {
+            \Log::error($e);
+        }
 
         return $count;
     }
@@ -231,12 +232,12 @@ class OtrEpgService
                 and `epg_programs`.`season` > 0
                 and `epg_programs`.`episode` > 0";
         
-		try {
-			$count += DB::affectingStatement($sql);
-		} catch(QueryException $e) {
-			\Log::error($e);
-		}
-		
+        try {
+            $count += DB::affectingStatement($sql);
+        } catch(QueryException $e) {
+            \Log::error($e);
+        }
+        
         $sql = "update `tv_programs`
                 inner join `epg_programs` on `tv_programs`.`id` = `epg_programs`.`tv_program_id`
             set
@@ -245,11 +246,11 @@ class OtrEpgService
             where
                 `tv_programs`.`episode`  IS NULL
                 and `epg_programs`.`episode` > 0";
-		try {
-			$count += DB::affectingStatement($sql);
-		} catch(QueryException $e) {
-			\Log::error($e);
-		}
+        try {
+            $count += DB::affectingStatement($sql);
+        } catch(QueryException $e) {
+            \Log::error($e);
+        }
 
         return $count;
     }
@@ -257,25 +258,37 @@ class OtrEpgService
     protected function consolidateYearDirectorFromXmlTvData()
     {
         $count = 0;
-		try {
-			$count += DB::affectingStatement("update tv_programs
-					join epg_programs on epg_programs.tv_program_id = tv_programs.id
-				set tv_programs.year = epg_programs.date
-				where epg_programs.date > 0 and tv_programs.year < 1");
-		} catch(QueryException $e) {
-			\Log::error($e);
-		}
-		
-		try {
-			$count += DB::affectingStatement("update tv_programs
-					join epg_programs on epg_programs.tv_program_id = tv_programs.id
-				set tv_programs.director = epg_programs.directors
-				where epg_programs.directors != '' and (tv_programs.director is null or tv_programs.director = '')");
-		} catch(QueryException $e) {
-			\Log::error($e);
-		}      
+        try {
+            $count += DB::affectingStatement("update tv_programs
+                    join epg_programs on epg_programs.tv_program_id = tv_programs.id
+                set tv_programs.year = epg_programs.date
+                where epg_programs.date > 0 and tv_programs.year < 1");
+        } catch(QueryException $e) {
+            \Log::error($e);
+        }
+        
+        try {
+            $count += DB::affectingStatement("update tv_programs
+                    join epg_programs on epg_programs.tv_program_id = tv_programs.id
+                set tv_programs.director = epg_programs.directors
+                where epg_programs.directors != '' and (tv_programs.director is null or tv_programs.director = '')");
+        } catch(QueryException $e) {
+            \Log::error($e);
+        }      
 
         return $count;
+    }
+    
+    protected function cleanTitle($title)
+    {
+		$replace = [
+			chr(150) => '-',
+			'–' => '-'
+		];
+		
+        $cleanTitle = str_replace(array_keys($replace), array_values($replace), $title);
+        
+        return $cleanTitle;
     }
 
 }

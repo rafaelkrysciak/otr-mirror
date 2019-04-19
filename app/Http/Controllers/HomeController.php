@@ -46,7 +46,13 @@ class HomeController extends Controller {
 	{
 		return view('impressum');
 	}
-
+	
+	
+	public function privacyPolicy()
+	{
+		return view('privacy_policy');
+	}
+	
 
 	public function faq()
 	{
